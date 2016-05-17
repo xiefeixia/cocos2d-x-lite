@@ -1,0 +1,28 @@
+{
+    "ndk_module_path" :[
+        "jni",
+        "${COCOS_X_ROOT}/cocos2d-x/external"
+    ],
+    "copy_resources": [
+        {
+            "from": "../../../src",
+            "to": "src"
+        },
+        {
+            "from": "../../../res",
+            "to": "res"
+        },
+        {
+            "from": "../../../main.js",
+            "to": ""
+        },
+        {
+            "from": "../../../../../../cc/cocos2d-x/cocos/scripting/js-bindings/script",
+            "to": "script"
+        },
+        {
+            "from": "../../../project.json",
+            "to": ""
+        }
+    ]
+}
