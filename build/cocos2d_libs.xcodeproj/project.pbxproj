@@ -696,6 +696,14 @@
 		4D76BE3B1A4AAF0A00102962 /* CCActionTimelineNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D76BE381A4AAF0A00102962 /* CCActionTimelineNode.cpp */; };
 		4D76BE3C1A4AAF0A00102962 /* CCActionTimelineNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D76BE391A4AAF0A00102962 /* CCActionTimelineNode.h */; };
 		4D76BE3D1A4AAF0A00102962 /* CCActionTimelineNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D76BE391A4AAF0A00102962 /* CCActionTimelineNode.h */; };
+		4DC62AFF1D420F3D0030E113 /* CCFilterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4DC62AFD1D420F3D0030E113 /* CCFilterNode.cpp */; };
+		4DC62B001D420F3D0030E113 /* CCFilterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4DC62AFD1D420F3D0030E113 /* CCFilterNode.cpp */; };
+		4DC62B011D420F3D0030E113 /* CCFilterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DC62AFE1D420F3D0030E113 /* CCFilterNode.h */; };
+		4DC62B021D420F3D0030E113 /* CCFilterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DC62AFE1D420F3D0030E113 /* CCFilterNode.h */; };
+		4DC62B061D4221140030E113 /* CCFilterTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4DC62B041D4221140030E113 /* CCFilterTexture.cpp */; };
+		4DC62B071D4221150030E113 /* CCFilterTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4DC62B041D4221140030E113 /* CCFilterTexture.cpp */; };
+		4DC62B081D4221150030E113 /* CCFilterTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DC62B051D4221140030E113 /* CCFilterTexture.h */; };
+		4DC62B091D4221150030E113 /* CCFilterTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DC62B051D4221140030E113 /* CCFilterTexture.h */; };
 		4DFA4C171CBCE34100E3B736 /* CCScale9Sprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4DFA4C151CBCE34100E3B736 /* CCScale9Sprite.cpp */; };
 		4DFA4C181CBCE34100E3B736 /* CCScale9Sprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4DFA4C151CBCE34100E3B736 /* CCScale9Sprite.cpp */; };
 		4DFA4C191CBCE34100E3B736 /* CCScale9Sprite.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DFA4C161CBCE34100E3B736 /* CCScale9Sprite.h */; };
@@ -1862,6 +1870,10 @@
 		4D2E69061CC543B40032DD5C /* Triangulate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Triangulate.h; path = creator/Triangulate.h; sourceTree = "<group>"; };
 		4D76BE381A4AAF0A00102962 /* CCActionTimelineNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCActionTimelineNode.cpp; sourceTree = "<group>"; };
 		4D76BE391A4AAF0A00102962 /* CCActionTimelineNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCActionTimelineNode.h; sourceTree = "<group>"; };
+		4DC62AFD1D420F3D0030E113 /* CCFilterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCFilterNode.cpp; path = creator/CCFilterNode.cpp; sourceTree = "<group>"; };
+		4DC62AFE1D420F3D0030E113 /* CCFilterNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCFilterNode.h; path = creator/CCFilterNode.h; sourceTree = "<group>"; };
+		4DC62B041D4221140030E113 /* CCFilterTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCFilterTexture.cpp; path = creator/CCFilterTexture.cpp; sourceTree = "<group>"; };
+		4DC62B051D4221140030E113 /* CCFilterTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCFilterTexture.h; path = creator/CCFilterTexture.h; sourceTree = "<group>"; };
 		4DFA4C151CBCE34100E3B736 /* CCScale9Sprite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCScale9Sprite.cpp; path = creator/CCScale9Sprite.cpp; sourceTree = "<group>"; };
 		4DFA4C161CBCE34100E3B736 /* CCScale9Sprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCScale9Sprite.h; path = creator/CCScale9Sprite.h; sourceTree = "<group>"; };
 		5012168C1AC47380009A4BEA /* CCRenderState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCRenderState.cpp; sourceTree = "<group>"; };
@@ -3329,6 +3341,10 @@
 				4D2E69061CC543B40032DD5C /* Triangulate.h */,
 				4DFA4C151CBCE34100E3B736 /* CCScale9Sprite.cpp */,
 				4DFA4C161CBCE34100E3B736 /* CCScale9Sprite.h */,
+				4DC62AFD1D420F3D0030E113 /* CCFilterNode.cpp */,
+				4DC62AFE1D420F3D0030E113 /* CCFilterNode.h */,
+				4DC62B041D4221140030E113 /* CCFilterTexture.cpp */,
+				4DC62B051D4221140030E113 /* CCFilterTexture.h */,
 			);
 			name = creator;
 			sourceTree = "<group>";
@@ -3744,6 +3760,7 @@
 				50ABBE851925AB6F00A911A9 /* ccFPSImages.h in Headers */,
 				38B8E2E319E671D2002D7CE7 /* UILayoutComponent.h in Headers */,
 				5034CA39191D591100CE6051 /* ccShader_PositionColorLengthTexture.frag in Headers */,
+				4DC62B081D4221150030E113 /* CCFilterTexture.h in Headers */,
 				292DB14B19B4574100A80320 /* UIEditBoxImpl-mac.h in Headers */,
 				B29A7E3F19EE1B7700872B35 /* AnimationState.h in Headers */,
 				50ABBE891925AB6F00A911A9 /* CCMap.h in Headers */,
@@ -3758,6 +3775,7 @@
 				5091A7A319BFABA800AC8789 /* CCPlatformDefine.h in Headers */,
 				5034CA3F191D591100CE6051 /* ccShader_Position_uColor.vert in Headers */,
 				B29A7DD319EE1B7700872B35 /* Skin.h in Headers */,
+				4DC62B011D420F3D0030E113 /* CCFilterNode.h in Headers */,
 				A679D1221C74BB3A00620A6C /* CCUtilMath.h in Headers */,
 				50ABBD461925AB0000A911A9 /* CCVertex.h in Headers */,
 				B63990CE1A490AFE00B07923 /* CCAsyncTaskPool.h in Headers */,
@@ -4259,6 +4277,7 @@
 				1A570122180BC90D0088DEC7 /* CCGrid.h in Headers */,
 				5034CA2E191D591100CE6051 /* ccShader_PositionTextureA8Color.frag in Headers */,
 				29394CF519B01DBA00D2DE1A /* UIWebViewImpl-ios.h in Headers */,
+				4DC62B021D420F3D0030E113 /* CCFilterNode.h in Headers */,
 				50ABBD5B1925AB0000A911A9 /* Vec2.h in Headers */,
 				43015DC21B60DF4000E75161 /* CCComExtensionData.h in Headers */,
 				50ABBD411925AB0000A911A9 /* CCMath.h in Headers */,
@@ -4430,6 +4449,7 @@
 				50ABBE6C1925AB6F00A911A9 /* CCEventListenerFocus.h in Headers */,
 				5034CA3E191D591100CE6051 /* ccShader_PositionColor.frag in Headers */,
 				A679D13D1C74C49B00620A6C /* CCArmatureDataManager.h in Headers */,
+				4DC62B091D4221150030E113 /* CCFilterTexture.h in Headers */,
 				50ABBE301925AB6F00A911A9 /* ccConfig.h in Headers */,
 				15AE195819AAD35100C27E9E /* CCInputDelegate.h in Headers */,
 				50ABBDAC1925AB4100A911A9 /* CCRenderCommandPool.h in Headers */,
@@ -4631,6 +4651,7 @@
 				C503066D1B60B583001E6D43 /* CCSkinNode.cpp in Sources */,
 				50ABBDA71925AB4100A911A9 /* CCRenderCommand.cpp in Sources */,
 				15AE1B9B19AADFDF00C27E9E /* UIRelativeBox.cpp in Sources */,
+				4DC62B061D4221140030E113 /* CCFilterTexture.cpp in Sources */,
 				50ABBD501925AB0000A911A9 /* Quaternion.cpp in Sources */,
 				15AE190119AAD35000C27E9E /* CCComController.cpp in Sources */,
 				15AE1BE619AAE01E00C27E9E /* CCTableViewCell.cpp in Sources */,
@@ -4736,6 +4757,7 @@
 				C50306691B60B583001E6D43 /* CCBoneNode.cpp in Sources */,
 				50ABBE491925AB6F00A911A9 /* CCEventAcceleration.cpp in Sources */,
 				50ABBD4C1925AB0000A911A9 /* MathUtil.cpp in Sources */,
+				4DC62AFF1D420F3D0030E113 /* CCFilterNode.cpp in Sources */,
 				50ABBD831925AB4100A911A9 /* CCBatchCommand.cpp in Sources */,
 				15AE18FF19AAD35000C27E9E /* CCComAudio.cpp in Sources */,
 				1A5701C7180BCB5A0088DEC7 /* CCLabelTextFormatter.cpp in Sources */,
@@ -5008,6 +5030,7 @@
 				15AE1BF119AAE01E00C27E9E /* CCControlPotentiometer.cpp in Sources */,
 				15AE1B8419AADA9A00C27E9E /* UITextField.cpp in Sources */,
 				50ABBE621925AB6F00A911A9 /* CCEventListenerAcceleration.cpp in Sources */,
+				4DC62B071D4221150030E113 /* CCFilterTexture.cpp in Sources */,
 				292DB13E19B4574100A80320 /* UIEditBox.cpp in Sources */,
 				B29A7E0619EE1B7700872B35 /* extension.c in Sources */,
 				15AE18B219AAD33D00C27E9E /* CCBReader.cpp in Sources */,
@@ -5233,6 +5256,7 @@
 				50ABBEB01925AB6F00A911A9 /* CCUserDefault.cpp in Sources */,
 				294D7D9D1D0E93A2002CE7B7 /* CCDevice-apple.mm in Sources */,
 				50ABBE521925AB6F00A911A9 /* CCEventDispatcher.cpp in Sources */,
+				4DC62B001D420F3D0030E113 /* CCFilterNode.cpp in Sources */,
 				52B47A2F1A5349A3004E4C60 /* HttpAsynConnection-apple.m in Sources */,
 				15AE1B8019AADA9A00C27E9E /* UITextAtlas.cpp in Sources */,
 				15AE18D319AAD33D00C27E9E /* CCParticleSystemQuadLoader.cpp in Sources */,
