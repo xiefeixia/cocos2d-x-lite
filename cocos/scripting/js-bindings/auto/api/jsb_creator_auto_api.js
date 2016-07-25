@@ -733,15 +733,33 @@ GraphicsNode : function (
 cc.FilterNode = {
 
 /**
- * @method drawFilter
- * @param {creator::FilterTexture} arg0
- * @param {creator::FilterTexture} arg1
+ * @method setBeginDrawCallback
+ * @param {function} arg0
  */
-drawFilter : function (
-filtertexture, 
-filtertexture 
+setBeginDrawCallback : function (
+func 
 )
 {
+},
+
+/**
+ * @method setEndDrawCallback
+ * @param {function} arg0
+ */
+setEndDrawCallback : function (
+func 
+)
+{
+},
+
+/**
+ * @method getTexture
+ * @return {creator::FilterTexture}
+ */
+getTexture : function (
+)
+{
+    return creator::FilterTexture;
 },
 
 /**
@@ -755,13 +773,15 @@ filtertexture
 },
 
 /**
- * @method getTexture
- * @return {creator::FilterTexture}
+ * @method drawFilter
+ * @param {creator::FilterTexture} arg0
+ * @param {creator::FilterTexture} arg1
  */
-getTexture : function (
+drawFilter : function (
+filtertexture, 
+filtertexture 
 )
 {
-    return creator::FilterTexture;
 },
 
 /**

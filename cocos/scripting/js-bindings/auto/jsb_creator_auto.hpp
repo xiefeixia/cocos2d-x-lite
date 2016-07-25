@@ -92,9 +92,11 @@ bool js_creator_FilterNode_constructor(JSContext *cx, uint32_t argc, jsval *vp);
 void js_creator_FilterNode_finalize(JSContext *cx, JSObject *obj);
 void js_register_creator_FilterNode(JSContext *cx, JS::HandleObject global);
 void register_all_creator(JSContext* cx, JS::HandleObject obj);
-bool js_creator_FilterNode_drawFilter(JSContext *cx, uint32_t argc, jsval *vp);
-bool js_creator_FilterNode_returnTexture(JSContext *cx, uint32_t argc, jsval *vp);
+bool js_creator_FilterNode_setBeginDrawCallback(JSContext *cx, uint32_t argc, jsval *vp);
+bool js_creator_FilterNode_setEndDrawCallback(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_creator_FilterNode_getTexture(JSContext *cx, uint32_t argc, jsval *vp);
+bool js_creator_FilterNode_returnTexture(JSContext *cx, uint32_t argc, jsval *vp);
+bool js_creator_FilterNode_drawFilter(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_creator_FilterNode_FilterNode(JSContext *cx, uint32_t argc, jsval *vp);
 
 #endif // __creator_h__

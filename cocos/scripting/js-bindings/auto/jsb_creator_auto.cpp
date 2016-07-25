@@ -1721,6 +1721,150 @@ void js_register_creator_GraphicsNode(JSContext *cx, JS::HandleObject global) {
 JSClass  *jsb_creator_FilterNode_class;
 JSObject *jsb_creator_FilterNode_prototype;
 
+bool js_creator_FilterNode_setBeginDrawCallback(JSContext *cx, uint32_t argc, jsval *vp)
+{
+    JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+    bool ok = true;
+    JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+    js_proxy_t *proxy = jsb_get_js_proxy(obj);
+    creator::FilterNode* cobj = (creator::FilterNode *)(proxy ? proxy->ptr : NULL);
+    JSB_PRECONDITION2( cobj, cx, false, "js_creator_FilterNode_setBeginDrawCallback : Invalid Native Object");
+    if (argc == 1) {
+        std::function<creator::FilterTexture *()> arg0;
+        do {
+		    if(JS_TypeOfValue(cx, args.get(0)) == JSTYPE_FUNCTION)
+		    {
+		        JS::RootedObject jstarget(cx, args.thisv().toObjectOrNull());
+		        std::shared_ptr<JSFunctionWrapper> func(new JSFunctionWrapper(cx, jstarget, args.get(0)));
+		        auto lambda = [=]() -> FilterTexture {
+		            JSB_AUTOCOMPARTMENT_WITH_GLOBAL_OBJCET
+		            JS::RootedValue rval(cx);
+		            bool succeed = func->invoke(0, nullptr, &rval);
+		            if (!succeed && JS_IsExceptionPending(cx)) {
+		                JS_ReportPendingException(cx);
+		            }
+		            creator::FilterTexture ret;
+		            do {
+		            if (rval.isNull()) { ret = nullptr; break; }
+		            if (!rval.isObject()) { ok = false; break; }
+		            js_proxy_t *jsProxy;
+		            JS::RootedObject tmpObj(cx, rval.toObjectOrNull());
+		            jsProxy = jsb_get_js_proxy(tmpObj);
+		            ret = (creator::FilterTexture)(jsProxy ? jsProxy->ptr : NULL);
+		            JSB_PRECONDITION2( ret, cx, false, "Invalid Native Object");
+		        } while (0);
+		            return ret;
+		        };
+		        arg0 = lambda;
+		    }
+		    else
+		    {
+		        arg0 = nullptr;
+		    }
+		} while(0)
+		;
+        JSB_PRECONDITION2(ok, cx, false, "js_creator_FilterNode_setBeginDrawCallback : Error processing arguments");
+        cobj->setBeginDrawCallback(arg0);
+        args.rval().setUndefined();
+        return true;
+    }
+
+    JS_ReportError(cx, "js_creator_FilterNode_setBeginDrawCallback : wrong number of arguments: %d, was expecting %d", argc, 1);
+    return false;
+}
+bool js_creator_FilterNode_setEndDrawCallback(JSContext *cx, uint32_t argc, jsval *vp)
+{
+    JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+    bool ok = true;
+    JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+    js_proxy_t *proxy = jsb_get_js_proxy(obj);
+    creator::FilterNode* cobj = (creator::FilterNode *)(proxy ? proxy->ptr : NULL);
+    JSB_PRECONDITION2( cobj, cx, false, "js_creator_FilterNode_setEndDrawCallback : Invalid Native Object");
+    if (argc == 1) {
+        std::function<void ()> arg0;
+        do {
+		    if(JS_TypeOfValue(cx, args.get(0)) == JSTYPE_FUNCTION)
+		    {
+		        JS::RootedObject jstarget(cx, args.thisv().toObjectOrNull());
+		        std::shared_ptr<JSFunctionWrapper> func(new JSFunctionWrapper(cx, jstarget, args.get(0)));
+		        auto lambda = [=]() -> void {
+		            JSB_AUTOCOMPARTMENT_WITH_GLOBAL_OBJCET
+		            JS::RootedValue rval(cx);
+		            bool succeed = func->invoke(0, nullptr, &rval);
+		            if (!succeed && JS_IsExceptionPending(cx)) {
+		                JS_ReportPendingException(cx);
+		            }
+		        };
+		        arg0 = lambda;
+		    }
+		    else
+		    {
+		        arg0 = nullptr;
+		    }
+		} while(0)
+		;
+        JSB_PRECONDITION2(ok, cx, false, "js_creator_FilterNode_setEndDrawCallback : Error processing arguments");
+        cobj->setEndDrawCallback(arg0);
+        args.rval().setUndefined();
+        return true;
+    }
+
+    JS_ReportError(cx, "js_creator_FilterNode_setEndDrawCallback : wrong number of arguments: %d, was expecting %d", argc, 1);
+    return false;
+}
+bool js_creator_FilterNode_getTexture(JSContext *cx, uint32_t argc, jsval *vp)
+{
+    JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+    JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+    js_proxy_t *proxy = jsb_get_js_proxy(obj);
+    creator::FilterNode* cobj = (creator::FilterNode *)(proxy ? proxy->ptr : NULL);
+    JSB_PRECONDITION2( cobj, cx, false, "js_creator_FilterNode_getTexture : Invalid Native Object");
+    if (argc == 0) {
+        creator::FilterTexture* ret = cobj->getTexture();
+        jsval jsret = JSVAL_NULL;
+        do {
+            if (ret) {
+                js_proxy_t *jsProxy = js_get_or_create_proxy<creator::FilterTexture>(cx, (creator::FilterTexture*)ret);
+                jsret = OBJECT_TO_JSVAL(jsProxy->obj);
+            } else {
+                jsret = JSVAL_NULL;
+            }
+        } while (0);
+        args.rval().set(jsret);
+        return true;
+    }
+
+    JS_ReportError(cx, "js_creator_FilterNode_getTexture : wrong number of arguments: %d, was expecting %d", argc, 0);
+    return false;
+}
+bool js_creator_FilterNode_returnTexture(JSContext *cx, uint32_t argc, jsval *vp)
+{
+    JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+    bool ok = true;
+    JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+    js_proxy_t *proxy = jsb_get_js_proxy(obj);
+    creator::FilterNode* cobj = (creator::FilterNode *)(proxy ? proxy->ptr : NULL);
+    JSB_PRECONDITION2( cobj, cx, false, "js_creator_FilterNode_returnTexture : Invalid Native Object");
+    if (argc == 1) {
+        creator::FilterTexture* arg0 = nullptr;
+        do {
+            if (args.get(0).isNull()) { arg0 = nullptr; break; }
+            if (!args.get(0).isObject()) { ok = false; break; }
+            js_proxy_t *jsProxy;
+            JS::RootedObject tmpObj(cx, args.get(0).toObjectOrNull());
+            jsProxy = jsb_get_js_proxy(tmpObj);
+            arg0 = (creator::FilterTexture*)(jsProxy ? jsProxy->ptr : NULL);
+            JSB_PRECONDITION2( arg0, cx, false, "Invalid Native Object");
+        } while (0);
+        JSB_PRECONDITION2(ok, cx, false, "js_creator_FilterNode_returnTexture : Error processing arguments");
+        cobj->returnTexture(arg0);
+        args.rval().setUndefined();
+        return true;
+    }
+
+    JS_ReportError(cx, "js_creator_FilterNode_returnTexture : wrong number of arguments: %d, was expecting %d", argc, 1);
+    return false;
+}
 bool js_creator_FilterNode_drawFilter(JSContext *cx, uint32_t argc, jsval *vp)
 {
     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
@@ -1757,59 +1901,6 @@ bool js_creator_FilterNode_drawFilter(JSContext *cx, uint32_t argc, jsval *vp)
     }
 
     JS_ReportError(cx, "js_creator_FilterNode_drawFilter : wrong number of arguments: %d, was expecting %d", argc, 2);
-    return false;
-}
-bool js_creator_FilterNode_returnTexture(JSContext *cx, uint32_t argc, jsval *vp)
-{
-    JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-    bool ok = true;
-    JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-    js_proxy_t *proxy = jsb_get_js_proxy(obj);
-    creator::FilterNode* cobj = (creator::FilterNode *)(proxy ? proxy->ptr : NULL);
-    JSB_PRECONDITION2( cobj, cx, false, "js_creator_FilterNode_returnTexture : Invalid Native Object");
-    if (argc == 1) {
-        creator::FilterTexture* arg0 = nullptr;
-        do {
-            if (args.get(0).isNull()) { arg0 = nullptr; break; }
-            if (!args.get(0).isObject()) { ok = false; break; }
-            js_proxy_t *jsProxy;
-            JS::RootedObject tmpObj(cx, args.get(0).toObjectOrNull());
-            jsProxy = jsb_get_js_proxy(tmpObj);
-            arg0 = (creator::FilterTexture*)(jsProxy ? jsProxy->ptr : NULL);
-            JSB_PRECONDITION2( arg0, cx, false, "Invalid Native Object");
-        } while (0);
-        JSB_PRECONDITION2(ok, cx, false, "js_creator_FilterNode_returnTexture : Error processing arguments");
-        cobj->returnTexture(arg0);
-        args.rval().setUndefined();
-        return true;
-    }
-
-    JS_ReportError(cx, "js_creator_FilterNode_returnTexture : wrong number of arguments: %d, was expecting %d", argc, 1);
-    return false;
-}
-bool js_creator_FilterNode_getTexture(JSContext *cx, uint32_t argc, jsval *vp)
-{
-    JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-    JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-    js_proxy_t *proxy = jsb_get_js_proxy(obj);
-    creator::FilterNode* cobj = (creator::FilterNode *)(proxy ? proxy->ptr : NULL);
-    JSB_PRECONDITION2( cobj, cx, false, "js_creator_FilterNode_getTexture : Invalid Native Object");
-    if (argc == 0) {
-        creator::FilterTexture* ret = cobj->getTexture();
-        jsval jsret = JSVAL_NULL;
-        do {
-            if (ret) {
-                js_proxy_t *jsProxy = js_get_or_create_proxy<creator::FilterTexture>(cx, (creator::FilterTexture*)ret);
-                jsret = OBJECT_TO_JSVAL(jsProxy->obj);
-            } else {
-                jsret = JSVAL_NULL;
-            }
-        } while (0);
-        args.rval().set(jsret);
-        return true;
-    }
-
-    JS_ReportError(cx, "js_creator_FilterNode_getTexture : wrong number of arguments: %d, was expecting %d", argc, 0);
     return false;
 }
 bool js_creator_FilterNode_constructor(JSContext *cx, uint32_t argc, jsval *vp)
@@ -1883,9 +1974,11 @@ void js_register_creator_FilterNode(JSContext *cx, JS::HandleObject global) {
     };
 
     static JSFunctionSpec funcs[] = {
-        JS_FN("drawFilter", js_creator_FilterNode_drawFilter, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-        JS_FN("returnTexture", js_creator_FilterNode_returnTexture, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+        JS_FN("setBeginDrawCallback", js_creator_FilterNode_setBeginDrawCallback, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+        JS_FN("setEndDrawCallback", js_creator_FilterNode_setEndDrawCallback, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_FN("getTexture", js_creator_FilterNode_getTexture, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+        JS_FN("returnTexture", js_creator_FilterNode_returnTexture, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+        JS_FN("drawFilter", js_creator_FilterNode_drawFilter, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_FN("ctor", js_creator_FilterNode_ctor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_FS_END
     };
