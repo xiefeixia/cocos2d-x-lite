@@ -22,12 +22,13 @@ class CC_DLL FilterNode : public cocos2d::Node
 public:
     virtual void visit(cocos2d::Renderer *renderer, const cocos2d::Mat4 &parentTransform, uint32_t parentFlags);
     
+    FilterTexture* getSourceTexture();
     FilterTexture* getTexture();
     void returnTexture(FilterTexture* texture);
     
     void drawFilter(FilterTexture* input, FilterTexture* output);
     
-    void setBeginDrawCallback(std::function<FilterTexture*()> callback);
+    void setBeginDrawCallback(std::function<bool()> callback);
     void setEndDrawCallback(std::function<void()> callback);
     
 CC_CONSTRUCTOR_ACCESS:
@@ -50,8 +51,10 @@ protected:
     
     bool _beginDraw;
     
-    std::function<FilterTexture*()> _beginDrawCallback;
+    std::function<bool()> _beginDrawCallback;
     std::function<void()> _endDrawCallback;
+    
+    FilterTexture* _sourceTexture;
 };
 
 }

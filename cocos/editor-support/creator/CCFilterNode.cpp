@@ -30,6 +30,11 @@ FilterTexture* FilterNode::getTexture()
 {
     return nullptr;
 }
+
+FilterTexture* FilterNode::getSourceTexture()
+{
+    return nullptr;
+}
     
 void FilterNode::returnTexture(FilterTexture*)
 {
@@ -44,8 +49,7 @@ void FilterNode::onBeginDraw()
         return;
     }
     
-    FilterTexture* texture = _beginDrawCallback();
-    if (!texture) {
+    if (!_beginDrawCallback()) {
         return;
     }
     
@@ -53,7 +57,8 @@ void FilterNode::onBeginDraw()
     
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_oldFBO);
     
-    glBindFramebuffer(GL_FRAMEBUFFER, texture->frameBuffer);
+    _sourceTexture = getTexture();
+    glBindFramebuffer(GL_FRAMEBUFFER, _sourceTexture->frameBuffer);
     
     // save clear color
     glGetFloatv(GL_COLOR_CLEAR_VALUE, _oldClearColor);
