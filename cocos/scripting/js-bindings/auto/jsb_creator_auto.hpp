@@ -85,6 +85,15 @@ bool js_creator_GraphicsNode_setStrokeColor(JSContext *cx, uint32_t argc, jsval 
 bool js_creator_GraphicsNode_create(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_creator_GraphicsNode_GraphicsNode(JSContext *cx, uint32_t argc, jsval *vp);
 
+extern JSClass  *jsb_creator_FilterTexture_class;
+extern JSObject *jsb_creator_FilterTexture_prototype;
+
+bool js_creator_FilterTexture_constructor(JSContext *cx, uint32_t argc, jsval *vp);
+void js_creator_FilterTexture_finalize(JSContext *cx, JSObject *obj);
+void js_register_creator_FilterTexture(JSContext *cx, JS::HandleObject global);
+void register_all_creator(JSContext* cx, JS::HandleObject obj);
+bool js_creator_FilterTexture_FilterTexture(JSContext *cx, uint32_t argc, jsval *vp);
+
 extern JSClass  *jsb_creator_FilterNode_class;
 extern JSObject *jsb_creator_FilterNode_prototype;
 
@@ -96,6 +105,7 @@ bool js_creator_FilterNode_setBeginDrawCallback(JSContext *cx, uint32_t argc, js
 bool js_creator_FilterNode_setEndDrawCallback(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_creator_FilterNode_getTexture(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_creator_FilterNode_returnTexture(JSContext *cx, uint32_t argc, jsval *vp);
+bool js_creator_FilterNode_getSourceTexture(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_creator_FilterNode_drawFilter(JSContext *cx, uint32_t argc, jsval *vp);
 bool js_creator_FilterNode_FilterNode(JSContext *cx, uint32_t argc, jsval *vp);
 

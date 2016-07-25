@@ -728,6 +728,22 @@ GraphicsNode : function (
 };
 
 /**
+ * @class FilterTexture
+ */
+cc.FilterTexture = {
+
+/**
+ * @method FilterTexture
+ * @constructor
+ */
+FilterTexture : function (
+)
+{
+},
+
+};
+
+/**
  * @class FilterNode
  */
 cc.FilterNode = {
@@ -770,6 +786,16 @@ returnTexture : function (
 filtertexture 
 )
 {
+},
+
+/**
+ * @method getSourceTexture
+ * @return {creator::FilterTexture}
+ */
+getSourceTexture : function (
+)
+{
+    return creator::FilterTexture;
 },
 
 /**

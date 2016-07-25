@@ -3,6 +3,7 @@
 #include "creator/CCScale9Sprite.h"
 #include "creator/CCGraphicsNode.h"
 #include "creator/CCFilterNode.h"
+#include "creator/CCFilterTexture.h"
 
 template<class T>
 static bool dummy_constructor(JSContext *cx, uint32_t argc, jsval *vp) {
@@ -1718,6 +1719,85 @@ void js_register_creator_GraphicsNode(JSContext *cx, JS::HandleObject global) {
     jsb_register_class<creator::GraphicsNode>(cx, jsb_creator_GraphicsNode_class, proto, parent_proto);
     anonEvaluate(cx, global, "(function () { cc.GraphicsNode.extend = cc.Class.extend; })()");
 }
+JSClass  *jsb_creator_FilterTexture_class;
+JSObject *jsb_creator_FilterTexture_prototype;
+
+bool js_creator_FilterTexture_constructor(JSContext *cx, uint32_t argc, jsval *vp)
+{
+    JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+    bool ok = true;
+    creator::FilterTexture* cobj = new (std::nothrow) creator::FilterTexture();
+    TypeTest<creator::FilterTexture> t;
+    js_type_class_t *typeClass = nullptr;
+    std::string typeName = t.s_name();
+    auto typeMapIter = _js_global_type_map.find(typeName);
+    CCASSERT(typeMapIter != _js_global_type_map.end(), "Can't find the class type!");
+    typeClass = typeMapIter->second;
+    CCASSERT(typeClass, "The value is null.");
+    JS::RootedObject proto(cx, typeClass->proto.ref());
+    JS::RootedObject parent(cx, typeClass->parentProto.ref());
+    JS::RootedObject obj(cx, JS_NewObject(cx, typeClass->jsclass, proto, parent));
+    args.rval().set(OBJECT_TO_JSVAL(obj));
+    // link the native object with the javascript object
+    jsb_new_proxy(cobj, obj);
+    if (JS_HasProperty(cx, obj, "_ctor", &ok) && ok)
+        ScriptingCore::getInstance()->executeFunctionWithOwner(OBJECT_TO_JSVAL(obj), "_ctor", args);
+    return true;
+}
+
+void js_creator_FilterTexture_finalize(JSFreeOp *fop, JSObject *obj) {
+    CCLOGINFO("jsbindings: finalizing JS object %p (FilterTexture)", obj);
+    JSContext *cx = ScriptingCore::getInstance()->getGlobalContext();
+    JS::RootedObject jsobj(cx, obj);
+    auto proxy = jsb_get_js_proxy(jsobj);
+    if (proxy) {
+        creator::FilterTexture *nobj = static_cast<creator::FilterTexture *>(proxy->ptr);
+
+        if (nobj) {
+            jsb_remove_proxy(proxy);
+            delete nobj;
+        }
+        else jsb_remove_proxy(proxy);
+    }
+}
+void js_register_creator_FilterTexture(JSContext *cx, JS::HandleObject global) {
+    jsb_creator_FilterTexture_class = (JSClass *)calloc(1, sizeof(JSClass));
+    jsb_creator_FilterTexture_class->name = "FilterTexture";
+    jsb_creator_FilterTexture_class->addProperty = JS_PropertyStub;
+    jsb_creator_FilterTexture_class->delProperty = JS_DeletePropertyStub;
+    jsb_creator_FilterTexture_class->getProperty = JS_PropertyStub;
+    jsb_creator_FilterTexture_class->setProperty = JS_StrictPropertyStub;
+    jsb_creator_FilterTexture_class->enumerate = JS_EnumerateStub;
+    jsb_creator_FilterTexture_class->resolve = JS_ResolveStub;
+    jsb_creator_FilterTexture_class->convert = JS_ConvertStub;
+    jsb_creator_FilterTexture_class->finalize = js_creator_FilterTexture_finalize;
+    jsb_creator_FilterTexture_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
+
+    static JSPropertySpec properties[] = {
+        JS_PSG("__nativeObj", js_is_native_obj, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+        JS_PS_END
+    };
+
+    static JSFunctionSpec funcs[] = {
+        JS_FS_END
+    };
+
+    JSFunctionSpec *st_funcs = NULL;
+
+    jsb_creator_FilterTexture_prototype = JS_InitClass(
+        cx, global,
+        JS::NullPtr(),
+        jsb_creator_FilterTexture_class,
+        js_creator_FilterTexture_constructor, 0, // constructor
+        properties,
+        funcs,
+        NULL, // no static properties
+        st_funcs);
+
+    // add the proto and JSClass to the type->js info hash table
+    JS::RootedObject proto(cx, jsb_creator_FilterTexture_prototype);
+    jsb_register_class<creator::FilterTexture>(cx, jsb_creator_FilterTexture_class, proto, JS::NullPtr());
+}
 JSClass  *jsb_creator_FilterNode_class;
 JSObject *jsb_creator_FilterNode_prototype;
 
@@ -1730,29 +1810,21 @@ bool js_creator_FilterNode_setBeginDrawCallback(JSContext *cx, uint32_t argc, js
     creator::FilterNode* cobj = (creator::FilterNode *)(proxy ? proxy->ptr : NULL);
     JSB_PRECONDITION2( cobj, cx, false, "js_creator_FilterNode_setBeginDrawCallback : Invalid Native Object");
     if (argc == 1) {
-        std::function<creator::FilterTexture *()> arg0;
+        std::function<bool ()> arg0;
         do {
 		    if(JS_TypeOfValue(cx, args.get(0)) == JSTYPE_FUNCTION)
 		    {
 		        JS::RootedObject jstarget(cx, args.thisv().toObjectOrNull());
 		        std::shared_ptr<JSFunctionWrapper> func(new JSFunctionWrapper(cx, jstarget, args.get(0)));
-		        auto lambda = [=]() -> FilterTexture {
+		        auto lambda = [=]() -> bool {
 		            JSB_AUTOCOMPARTMENT_WITH_GLOBAL_OBJCET
 		            JS::RootedValue rval(cx);
 		            bool succeed = func->invoke(0, nullptr, &rval);
 		            if (!succeed && JS_IsExceptionPending(cx)) {
 		                JS_ReportPendingException(cx);
 		            }
-		            creator::FilterTexture ret;
-		            do {
-		            if (rval.isNull()) { ret = nullptr; break; }
-		            if (!rval.isObject()) { ok = false; break; }
-		            js_proxy_t *jsProxy;
-		            JS::RootedObject tmpObj(cx, rval.toObjectOrNull());
-		            jsProxy = jsb_get_js_proxy(tmpObj);
-		            ret = (creator::FilterTexture)(jsProxy ? jsProxy->ptr : NULL);
-		            JSB_PRECONDITION2( ret, cx, false, "Invalid Native Object");
-		        } while (0);
+		            bool ret;
+		            ret = JS::ToBoolean(rval);
 		            return ret;
 		        };
 		        arg0 = lambda;
@@ -1863,6 +1935,31 @@ bool js_creator_FilterNode_returnTexture(JSContext *cx, uint32_t argc, jsval *vp
     }
 
     JS_ReportError(cx, "js_creator_FilterNode_returnTexture : wrong number of arguments: %d, was expecting %d", argc, 1);
+    return false;
+}
+bool js_creator_FilterNode_getSourceTexture(JSContext *cx, uint32_t argc, jsval *vp)
+{
+    JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+    JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+    js_proxy_t *proxy = jsb_get_js_proxy(obj);
+    creator::FilterNode* cobj = (creator::FilterNode *)(proxy ? proxy->ptr : NULL);
+    JSB_PRECONDITION2( cobj, cx, false, "js_creator_FilterNode_getSourceTexture : Invalid Native Object");
+    if (argc == 0) {
+        creator::FilterTexture* ret = cobj->getSourceTexture();
+        jsval jsret = JSVAL_NULL;
+        do {
+            if (ret) {
+                js_proxy_t *jsProxy = js_get_or_create_proxy<creator::FilterTexture>(cx, (creator::FilterTexture*)ret);
+                jsret = OBJECT_TO_JSVAL(jsProxy->obj);
+            } else {
+                jsret = JSVAL_NULL;
+            }
+        } while (0);
+        args.rval().set(jsret);
+        return true;
+    }
+
+    JS_ReportError(cx, "js_creator_FilterNode_getSourceTexture : wrong number of arguments: %d, was expecting %d", argc, 0);
     return false;
 }
 bool js_creator_FilterNode_drawFilter(JSContext *cx, uint32_t argc, jsval *vp)
@@ -1978,6 +2075,7 @@ void js_register_creator_FilterNode(JSContext *cx, JS::HandleObject global) {
         JS_FN("setEndDrawCallback", js_creator_FilterNode_setEndDrawCallback, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_FN("getTexture", js_creator_FilterNode_getTexture, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_FN("returnTexture", js_creator_FilterNode_returnTexture, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+        JS_FN("getSourceTexture", js_creator_FilterNode_getSourceTexture, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_FN("drawFilter", js_creator_FilterNode_drawFilter, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_FN("ctor", js_creator_FilterNode_ctor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
         JS_FS_END
@@ -2007,6 +2105,7 @@ void register_all_creator(JSContext* cx, JS::HandleObject obj) {
     get_or_create_js_obj(cx, obj, "cc", &ns);
 
     js_register_creator_FilterNode(cx, ns);
+    js_register_creator_FilterTexture(cx, ns);
     js_register_creator_GraphicsNode(cx, ns);
     js_register_creator_Scale9SpriteV2(cx, ns);
 }
