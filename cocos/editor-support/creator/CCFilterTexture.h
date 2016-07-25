@@ -11,6 +11,8 @@
 
 #include "2d/CCNode.h"
 
+namespace creator {
+    
 class FilterTexture {
 public:
     GLint frameBuffer;
@@ -21,4 +23,6 @@ CC_CONSTRUCTOR_ACCESS:
     virtual ~FilterTexture();
 };
 
+}
+    
 #endif /* __CREATOR_CCFILTERTEXTURE_H__ */

@@ -15,7 +15,7 @@
 #include "renderer/CCGroupCommand.h"
 #include "renderer/CCCustomCommand.h"
 
-//namespace creator {
+namespace creator {
 
 class CC_DLL FilterNode : public cocos2d::Node
 {
@@ -26,6 +26,9 @@ public:
     void returnTexture(FilterTexture* texture);
     
     void drawFilter(FilterTexture* input, FilterTexture* output);
+    
+    void setBeginDrawCallback(std::function<FilterTexture*()> callback);
+    void setEndDrawCallback(std::function<void()> callback);
     
 CC_CONSTRUCTOR_ACCESS:
     FilterNode();
@@ -51,6 +54,6 @@ protected:
     std::function<void()> _endDrawCallback;
 };
 
-//}
+}
 
 #endif /* __CREATOR_CCFILTERNODE_H__ */

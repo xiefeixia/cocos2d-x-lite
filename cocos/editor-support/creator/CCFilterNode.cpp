@@ -15,6 +15,8 @@
 
 USING_NS_CC;
 
+namespace creator {
+
 FilterNode::FilterNode()
 {
     glGenBuffers(1, &_quadBuffer);
@@ -24,9 +26,23 @@ FilterNode::~FilterNode()
 {
 }
 
+FilterTexture* FilterNode::getTexture()
+{
+    return nullptr;
+}
+    
+void FilterNode::returnTexture(FilterTexture*)
+{
+        
+}
+    
 void FilterNode::onBeginDraw()
 {
     _beginDraw = false;
+    
+    if (!_beginDrawCallback) {
+        return;
+    }
     
     FilterTexture* texture = _beginDrawCallback();
     if (!texture) {
@@ -54,7 +70,7 @@ void FilterNode::onBeginDraw()
 
 void FilterNode::onEndDraw()
 {
-    if (!_beginDraw) {
+    if (!_beginDraw || !_endDrawCallback) {
         return;
     }
     
@@ -150,4 +166,16 @@ void FilterNode::visit(cocos2d::Renderer *renderer, const cocos2d::Mat4 &parentT
     renderer->popGroup();
     
     _director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+}
+    
+void FilterNode::setBeginDrawCallback(std::function<FilterTexture*()> callback)
+{
+    _beginDrawCallback = callback;
+}
+    
+void FilterNode::setEndDrawCallback(std::function<void()> callback)
+{
+    _endDrawCallback = callback;
+}
+
 }

@@ -8,6 +8,8 @@
 
 #include "CCFilterTexture.h"
 
+namespace creator {
+
 FilterTexture::FilterTexture()
 {
     
@@ -16,4 +18,6 @@ FilterTexture::FilterTexture()
 FilterTexture::~FilterTexture()
 {
     
+}
+
 }
