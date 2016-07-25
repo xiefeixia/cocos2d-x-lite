@@ -45,11 +45,7 @@ void FilterNode::onBeginDraw()
 {
     _beginDraw = false;
     
-    if (!_beginDrawCallback) {
-        return;
-    }
-    
-    if (!_beginDrawCallback()) {
+    if (!_beginDrawCallback || !_beginDrawCallback()) {
         return;
     }
     
@@ -173,7 +169,7 @@ void FilterNode::visit(cocos2d::Renderer *renderer, const cocos2d::Mat4 &parentT
     _director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
 }
     
-void FilterNode::setBeginDrawCallback(std::function<FilterTexture*()> callback)
+void FilterNode::setBeginDrawCallback(std::function<bool()> callback)
 {
     _beginDrawCallback = callback;
 }
