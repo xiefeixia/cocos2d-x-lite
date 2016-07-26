@@ -16,29 +16,95 @@
 USING_NS_CC;
 
 namespace creator {
+    
+Rect getBoundingBoxToCurrentNode (Node* node, Mat4& parentTransform)
+{
+    Size size = node->getContentSize();
+    Rect rect(0, 0, size.width, size.height);
+    Mat4 trans = TransformConcat(node->getNodeToParentTransform(), parentTransform);
+    rect = RectApplyTransform(rect, trans);
+    
+    auto children = node->getChildren();
+    if (children.size() == 0)
+        return rect;
+    
+    for (int i = 0; i < children.size(); i++) {
+        Node* child = children.at(i);
+        if (child && child->isVisible()) {
+            Rect childRect = getBoundingBoxToCurrentNode(child, trans);
+            rect = rect.unionWithRect(childRect);
+        }
+    }
+    return rect;
+}
+    
+Rect getWorldBoundingBox(Node* node)
+{
+    Size size = node->getContentSize();
+    Rect rect(0, 0, size.width, size.height);
+    Mat4 trans = node->getNodeToWorldTransform();
+    
+    rect = RectApplyTransform(rect, trans);
+    
+    auto children = node->getChildren();
+    if (children.size() == 0)
+        return rect;
+    
+    for (int i = 0; i < children.size(); i++) {
+        Node* child = children.at(i);
+        if (child && child->isVisible()) {
+            Rect childRect = getBoundingBoxToCurrentNode(child, trans);
+            rect = rect.unionWithRect(childRect);
+        }
+    }
+    return rect;
+}
 
 FilterNode::FilterNode()
 {
     glGenBuffers(1, &_quadBuffer);
+    
+    _quad.bl.colors = Color4B::WHITE;
+    _quad.br.colors = Color4B::WHITE;
+    _quad.tl.colors = Color4B::WHITE;
+    _quad.tr.colors = Color4B::WHITE;
 }
 
 FilterNode::~FilterNode()
 {
+    std::vector<FilterTexture*> texturePool;
+    texturePool.erase(texturePool.end());
 }
 
 FilterTexture* FilterNode::getTexture()
 {
-    return nullptr;
+    auto size = Director::getInstance()->getWinSize();
+    float width = size.width;
+    float height = size.height;
+    
+    FilterTexture* texture;
+    
+    if (_texturePool.size() == 0) {
+        texture = new FilterTexture();
+    }
+    else {
+        texture = _texturePool.back();
+        _texturePool.popBack();
+    }
+    
+    texture->resize(width, height);
+    
+    return texture;
 }
 
 FilterTexture* FilterNode::getSourceTexture()
 {
-    return nullptr;
+    return _sourceTexture;
 }
     
-void FilterNode::returnTexture(FilterTexture*)
+void FilterNode::returnTexture(FilterTexture* texture)
 {
-        
+    _texturePool.pushBack(texture);
 }
     
 void FilterNode::onBeginDraw()
@@ -75,8 +141,11 @@ void FilterNode::onEndDraw()
         return;
     }
     
+    updateState();
+    
     _endDrawCallback();
 }
+
 
 void FilterNode::drawFilter(FilterTexture* input, FilterTexture* output)
 {
@@ -169,6 +238,39 @@ void FilterNode::visit(cocos2d::Renderer *renderer, const cocos2d::Mat4 &parentT
     _director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
 }
     
+void FilterNode::updateState()
+{
+    auto boundingBox = getWorldBoundingBox(this);
+    
+    float minx = boundingBox.getMinX();
+    float miny = boundingBox.getMinY();
+    float maxx = boundingBox.getMaxX();
+    float maxy = boundingBox.getMaxY();
+    
+    _quad.bl.vertices.set(minx, miny, 0);
+    _quad.br.vertices.set(maxx, miny, 0);
+    _quad.tl.vertices.set(minx, maxy, 0);
+    _quad.tr.vertices.set(maxx, maxy, 0);
+    
+    auto size = Director::getInstance()->getWinSize();
+    float width = size.width;
+    float height = size.height;
+    
+    float l = minx/width;
+    float r = maxx/width;
+    float b = miny/height;
+    float t = maxy/height;
+    
+    _quad.bl.texCoords.u = l;
+    _quad.bl.texCoords.v = b;
+    _quad.br.texCoords.u = r;
+    _quad.br.texCoords.v = b;
+    _quad.tl.texCoords.u = l;
+    _quad.tl.texCoords.v = t;
+    _quad.tr.texCoords.u = r;
+    _quad.tr.texCoords.v = t;
+}
+
 void FilterNode::setBeginDrawCallback(std::function<bool()> callback)
 {
     _beginDrawCallback = callback;

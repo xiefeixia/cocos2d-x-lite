@@ -13,10 +13,16 @@
 
 namespace creator {
     
-class FilterTexture {
+class FilterTexture : public cocos2d::Ref
+{
 public:
-    GLint frameBuffer;
+    GLuint frameBuffer;
     GLuint texture;
+    
+    float width;
+    float height;
+    
+    void resize(float width, float height);
     
 CC_CONSTRUCTOR_ACCESS:
     FilterTexture();

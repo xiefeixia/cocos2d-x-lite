@@ -36,6 +36,8 @@ CC_CONSTRUCTOR_ACCESS:
     virtual ~FilterNode();
     
 protected:
+    void updateState();
+    
     void onBeginDraw();
     void onEndDraw();
     
@@ -55,6 +57,7 @@ protected:
     std::function<void()> _endDrawCallback;
     
     FilterTexture* _sourceTexture;
+    cocos2d::Vector<FilterTexture*> _texturePool;
 };
 
 }
