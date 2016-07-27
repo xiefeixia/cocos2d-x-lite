@@ -78,9 +78,10 @@ FilterNode::~FilterNode()
 
 FilterTexture* FilterNode::getTexture()
 {
-    auto size = Director::getInstance()->getWinSize();
-    float width = size.width;
-    float height = size.height;
+    auto size = Director::getInstance()->getOpenGLView()->getFrameSize();
+    auto factor = Director::getInstance()->getOpenGLView()->getRetinaFactor();
+    float width = size.width * factor;
+    float height = size.height * factor;
     
     FilterTexture* texture;
     
