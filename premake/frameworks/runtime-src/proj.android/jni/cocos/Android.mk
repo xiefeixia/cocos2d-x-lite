@@ -39,6 +39,7 @@ LOCAL_SRC_FILES := ../../../../../../cocos/2d/CCAction.cpp \
  ../../../../../../cocos/2d/CCGrid.cpp \
  ../../../../../../cocos/2d/CCLabel.cpp \
  ../../../../../../cocos/2d/CCLabelAtlas.cpp \
+ ../../../../../../cocos/2d/CCLabelTTF.cpp \
  ../../../../../../cocos/2d/CCLabelTextFormatter.cpp \
  ../../../../../../cocos/2d/CCLayer.cpp \
  ../../../../../../cocos/2d/CCMenu.cpp \
@@ -59,7 +60,9 @@ LOCAL_SRC_FILES := ../../../../../../cocos/2d/CCAction.cpp \
  ../../../../../../cocos/2d/CCSpriteBatchNode.cpp \
  ../../../../../../cocos/2d/CCSpriteFrame.cpp \
  ../../../../../../cocos/2d/CCSpriteFrameCache.cpp \
+ ../../../../../../cocos/2d/CCTMXLayer.cpp \
  ../../../../../../cocos/2d/CCTMXObjectGroup.cpp \
+ ../../../../../../cocos/2d/CCTMXTiledMap.cpp \
  ../../../../../../cocos/2d/CCTMXXMLParser.cpp \
  ../../../../../../cocos/2d/CCTextFieldTTF.cpp \
  ../../../../../../cocos/2d/CCTileMapAtlas.cpp \
@@ -68,10 +71,6 @@ LOCAL_SRC_FILES := ../../../../../../cocos/2d/CCAction.cpp \
  ../../../../../../cocos/2d/CCTransitionProgress.cpp \
  ../../../../../../cocos/2d/CCTweenFunction.cpp \
  ../../../../../../cocos/audio/AudioEngine.cpp \
- ../../../../../../cocos/audio/android/AudioEngine-inl.cpp \
- ../../../../../../cocos/audio/android/ccdandroidUtils.cpp \
- ../../../../../../cocos/audio/android/cddSimpleAudioEngine.cpp \
- ../../../../../../cocos/audio/android/jni/cddandroidAndroidJavaEngine.cpp \
  ../../../../../../cocos/base/CCAsyncTaskPool.cpp \
  ../../../../../../cocos/base/CCAutoreleasePool.cpp \
  ../../../../../../cocos/base/CCConfiguration.cpp \
@@ -102,7 +101,6 @@ LOCAL_SRC_FILES := ../../../../../../cocos/2d/CCAction.cpp \
  ../../../../../../cocos/base/CCScheduler.cpp \
  ../../../../../../cocos/base/CCScriptSupport.cpp \
  ../../../../../../cocos/base/CCStencilStateManager.cpp \
- ../../../../../../cocos/base/CCString.cpp \
  ../../../../../../cocos/base/CCTouch.cpp \
  ../../../../../../cocos/base/CCUserDefault-android.cpp \
  ../../../../../../cocos/base/CCUserDefault.cpp \
@@ -149,40 +147,65 @@ LOCAL_SRC_FILES := ../../../../../../cocos/2d/CCAction.cpp \
  ../../../../../../cocos/editor-support/cocostudio/ActionTimeline/CCSkeletonNode.cpp \
  ../../../../../../cocos/editor-support/cocostudio/ActionTimeline/CCSkinNode.cpp \
  ../../../../../../cocos/editor-support/cocostudio/ActionTimeline/CCTimeLine.cpp \
- ../../../../../../cocos/editor-support/cocostudio/Armature/CCArmature.cpp \
- ../../../../../../cocos/editor-support/cocostudio/Armature/CCArmatureAnimation.cpp \
- ../../../../../../cocos/editor-support/cocostudio/Armature/CCArmatureDataManager.cpp \
- ../../../../../../cocos/editor-support/cocostudio/Armature/CCArmatureDefine.cpp \
- ../../../../../../cocos/editor-support/cocostudio/Armature/CCBatchNode.cpp \
- ../../../../../../cocos/editor-support/cocostudio/Armature/CCBone.cpp \
- ../../../../../../cocos/editor-support/cocostudio/Armature/CCColliderDetector.cpp \
- ../../../../../../cocos/editor-support/cocostudio/Armature/CCDataReaderHelper.cpp \
- ../../../../../../cocos/editor-support/cocostudio/Armature/CCDatas.cpp \
- ../../../../../../cocos/editor-support/cocostudio/Armature/CCDecorativeDisplay.cpp \
- ../../../../../../cocos/editor-support/cocostudio/Armature/CCDisplayFactory.cpp \
- ../../../../../../cocos/editor-support/cocostudio/Armature/CCDisplayManager.cpp \
- ../../../../../../cocos/editor-support/cocostudio/Armature/CCProcessBase.cpp \
- ../../../../../../cocos/editor-support/cocostudio/Armature/CCSkin.cpp \
- ../../../../../../cocos/editor-support/cocostudio/Armature/CCSpriteFrameCacheHelper.cpp \
- ../../../../../../cocos/editor-support/cocostudio/Armature/CCTransformHelp.cpp \
- ../../../../../../cocos/editor-support/cocostudio/Armature/CCTween.cpp \
- ../../../../../../cocos/editor-support/cocostudio/Armature/CCUtilMath.cpp \
  ../../../../../../cocos/editor-support/cocostudio/CCActionFrame.cpp \
  ../../../../../../cocos/editor-support/cocostudio/CCActionFrameEasing.cpp \
  ../../../../../../cocos/editor-support/cocostudio/CCActionManagerEx.cpp \
  ../../../../../../cocos/editor-support/cocostudio/CCActionNode.cpp \
  ../../../../../../cocos/editor-support/cocostudio/CCActionObject.cpp \
+ ../../../../../../cocos/editor-support/cocostudio/CCArmature.cpp \
+ ../../../../../../cocos/editor-support/cocostudio/CCArmatureAnimation.cpp \
+ ../../../../../../cocos/editor-support/cocostudio/CCArmatureDataManager.cpp \
+ ../../../../../../cocos/editor-support/cocostudio/CCArmatureDefine.cpp \
+ ../../../../../../cocos/editor-support/cocostudio/CCBatchNode.cpp \
+ ../../../../../../cocos/editor-support/cocostudio/CCBone.cpp \
+ ../../../../../../cocos/editor-support/cocostudio/CCColliderDetector.cpp \
  ../../../../../../cocos/editor-support/cocostudio/CCComAttribute.cpp \
  ../../../../../../cocos/editor-support/cocostudio/CCComAudio.cpp \
  ../../../../../../cocos/editor-support/cocostudio/CCComController.cpp \
  ../../../../../../cocos/editor-support/cocostudio/CCComExtensionData.cpp \
  ../../../../../../cocos/editor-support/cocostudio/CCComRender.cpp \
+ ../../../../../../cocos/editor-support/cocostudio/CCDataReaderHelper.cpp \
+ ../../../../../../cocos/editor-support/cocostudio/CCDatas.cpp \
+ ../../../../../../cocos/editor-support/cocostudio/CCDecorativeDisplay.cpp \
+ ../../../../../../cocos/editor-support/cocostudio/CCDisplayFactory.cpp \
+ ../../../../../../cocos/editor-support/cocostudio/CCDisplayManager.cpp \
  ../../../../../../cocos/editor-support/cocostudio/CCInputDelegate.cpp \
+ ../../../../../../cocos/editor-support/cocostudio/CCProcessBase.cpp \
+ ../../../../../../cocos/editor-support/cocostudio/CCSkin.cpp \
+ ../../../../../../cocos/editor-support/cocostudio/CCSpriteFrameCacheHelper.cpp \
+ ../../../../../../cocos/editor-support/cocostudio/CCTransformHelp.cpp \
+ ../../../../../../cocos/editor-support/cocostudio/CCTween.cpp \
+ ../../../../../../cocos/editor-support/cocostudio/CCUtilMath.cpp \
  ../../../../../../cocos/editor-support/cocostudio/CocoLoader.cpp \
  ../../../../../../cocos/editor-support/cocostudio/CocoStudio.cpp \
+ ../../../../../../cocos/editor-support/cocostudio/CocosStudioExtension.cpp \
  ../../../../../../cocos/editor-support/cocostudio/DictionaryHelper.cpp \
  ../../../../../../cocos/editor-support/cocostudio/WidgetCallBackHandlerProtocol.cpp \
+ ../../../../../../cocos/editor-support/creator/CCGraphicsNode.cpp \
  ../../../../../../cocos/editor-support/creator/CCScale9Sprite.cpp \
+ ../../../../../../cocos/editor-support/creator/Triangulate.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/animation/Animation.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/animation/AnimationState.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/animation/TimelineState.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/animation/WorldClock.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/armature/Armature.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/armature/Bone.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/armature/Slot.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/cocos2dx/CCArmatureDisplay.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/cocos2dx/CCFactory.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/cocos2dx/CCSlot.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/cocos2dx/CCTextureData.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/core/BaseObject.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/events/EventObject.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/factories/BaseFactory.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/model/AnimationData.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/model/ArmatureData.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/model/DragonBonesData.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/model/FrameData.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/model/TimelineData.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/parsers/DataParser.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/parsers/JSONDataParser.cpp \
+ ../../../../../../cocos/editor-support/dragonbones/textures/TextureData.cpp \
  ../../../../../../cocos/editor-support/spine/Animation.c \
  ../../../../../../cocos/editor-support/spine/AnimationState.c \
  ../../../../../../cocos/editor-support/spine/AnimationStateData.c \
@@ -190,27 +213,34 @@ LOCAL_SRC_FILES := ../../../../../../cocos/2d/CCAction.cpp \
  ../../../../../../cocos/editor-support/spine/AtlasAttachmentLoader.c \
  ../../../../../../cocos/editor-support/spine/Attachment.c \
  ../../../../../../cocos/editor-support/spine/AttachmentLoader.c \
+ ../../../../../../cocos/editor-support/spine/AttachmentVertices.cpp \
  ../../../../../../cocos/editor-support/spine/Bone.c \
  ../../../../../../cocos/editor-support/spine/BoneData.c \
  ../../../../../../cocos/editor-support/spine/BoundingBoxAttachment.c \
+ ../../../../../../cocos/editor-support/spine/Cocos2dAttachmentLoader.cpp \
  ../../../../../../cocos/editor-support/spine/Event.c \
  ../../../../../../cocos/editor-support/spine/EventData.c \
  ../../../../../../cocos/editor-support/spine/IkConstraint.c \
  ../../../../../../cocos/editor-support/spine/IkConstraintData.c \
  ../../../../../../cocos/editor-support/spine/Json.c \
  ../../../../../../cocos/editor-support/spine/MeshAttachment.c \
- ../../../../../../cocos/editor-support/spine/PolygonBatch.cpp \
+ ../../../../../../cocos/editor-support/spine/PathAttachment.c \
+ ../../../../../../cocos/editor-support/spine/PathConstraint.c \
+ ../../../../../../cocos/editor-support/spine/PathConstraintData.c \
  ../../../../../../cocos/editor-support/spine/RegionAttachment.c \
  ../../../../../../cocos/editor-support/spine/Skeleton.c \
  ../../../../../../cocos/editor-support/spine/SkeletonAnimation.cpp \
+ ../../../../../../cocos/editor-support/spine/SkeletonBatch.cpp \
  ../../../../../../cocos/editor-support/spine/SkeletonBounds.c \
  ../../../../../../cocos/editor-support/spine/SkeletonData.c \
  ../../../../../../cocos/editor-support/spine/SkeletonJson.c \
  ../../../../../../cocos/editor-support/spine/SkeletonRenderer.cpp \
  ../../../../../../cocos/editor-support/spine/Skin.c \
- ../../../../../../cocos/editor-support/spine/SkinnedMeshAttachment.c \
  ../../../../../../cocos/editor-support/spine/Slot.c \
  ../../../../../../cocos/editor-support/spine/SlotData.c \
+ ../../../../../../cocos/editor-support/spine/TransformConstraint.c \
+ ../../../../../../cocos/editor-support/spine/TransformConstraintData.c \
+ ../../../../../../cocos/editor-support/spine/VertexAttachment.c \
  ../../../../../../cocos/editor-support/spine/extension.c \
  ../../../../../../cocos/editor-support/spine/spine-cocos2dx.cpp \
  ../../../../../../cocos/math/CCAffineTransform.cpp \
@@ -222,9 +252,7 @@ LOCAL_SRC_FILES := ../../../../../../cocos/2d/CCAction.cpp \
  ../../../../../../cocos/math/Vec2.cpp \
  ../../../../../../cocos/math/Vec3.cpp \
  ../../../../../../cocos/math/Vec4.cpp \
- ../../../../../../cocos/network/CCDownloader-android.cpp \
  ../../../../../../cocos/network/CCDownloader.cpp \
- ../../../../../../cocos/network/HttpClient-android.cpp \
  ../../../../../../cocos/network/SocketIO.cpp \
  ../../../../../../cocos/network/WebSocket.cpp \
  ../../../../../../cocos/platform/CCFileUtils.cpp \
@@ -232,31 +260,24 @@ LOCAL_SRC_FILES := ../../../../../../cocos/2d/CCAction.cpp \
  ../../../../../../cocos/platform/CCImage.cpp \
  ../../../../../../cocos/platform/CCSAXParser.cpp \
  ../../../../../../cocos/platform/CCThread.cpp \
- ../../../../../../cocos/platform/android/CCApplication-android.cpp \
- ../../../../../../cocos/platform/android/CCCommon-android.cpp \
- ../../../../../../cocos/platform/android/CCDevice-android.cpp \
- ../../../../../../cocos/platform/android/CCFileUtils-android.cpp \
- ../../../../../../cocos/platform/android/CCGLViewImpl-android.cpp \
- ../../../../../../cocos/platform/android/javaactivity-android.cpp \
- ../../../../../../cocos/platform/android/jni/Java_org_cocos2dx_lib_Cocos2dxAccelerometer.cpp \
- ../../../../../../cocos/platform/android/jni/Java_org_cocos2dx_lib_Cocos2dxBitmap.cpp \
- ../../../../../../cocos/platform/android/jni/Java_org_cocos2dx_lib_Cocos2dxHelper.cpp \
- ../../../../../../cocos/platform/android/jni/Java_org_cocos2dx_lib_Cocos2dxRenderer.cpp \
- ../../../../../../cocos/platform/android/jni/JniHelper.cpp \
- ../../../../../../cocos/platform/android/jni/TouchesJni.cpp \
  ../../../../../../cocos/renderer/CCBatchCommand.cpp \
  ../../../../../../cocos/renderer/CCCustomCommand.cpp \
+ ../../../../../../cocos/renderer/CCFrameBuffer.cpp \
  ../../../../../../cocos/renderer/CCGLProgram.cpp \
  ../../../../../../cocos/renderer/CCGLProgramCache.cpp \
  ../../../../../../cocos/renderer/CCGLProgramState.cpp \
  ../../../../../../cocos/renderer/CCGLProgramStateCache.cpp \
  ../../../../../../cocos/renderer/CCGroupCommand.cpp \
+ ../../../../../../cocos/renderer/CCMaterial.cpp \
+ ../../../../../../cocos/renderer/CCMeshCommand.cpp \
+ ../../../../../../cocos/renderer/CCPass.cpp \
  ../../../../../../cocos/renderer/CCPrimitive.cpp \
  ../../../../../../cocos/renderer/CCPrimitiveCommand.cpp \
  ../../../../../../cocos/renderer/CCQuadCommand.cpp \
  ../../../../../../cocos/renderer/CCRenderCommand.cpp \
  ../../../../../../cocos/renderer/CCRenderState.cpp \
  ../../../../../../cocos/renderer/CCRenderer.cpp \
+ ../../../../../../cocos/renderer/CCTechnique.cpp \
  ../../../../../../cocos/renderer/CCTexture2D.cpp \
  ../../../../../../cocos/renderer/CCTextureAtlas.cpp \
  ../../../../../../cocos/renderer/CCTextureCache.cpp \
@@ -294,6 +315,7 @@ LOCAL_SRC_FILES := ../../../../../../cocos/2d/CCAction.cpp \
  ../../../../../../cocos/ui/UIScrollView.cpp \
  ../../../../../../cocos/ui/UIScrollViewBar.cpp \
  ../../../../../../cocos/ui/UISlider.cpp \
+ ../../../../../../cocos/ui/UITabControl.cpp \
  ../../../../../../cocos/ui/UIText.cpp \
  ../../../../../../cocos/ui/UITextAtlas.cpp \
  ../../../../../../cocos/ui/UITextBMFont.cpp \
@@ -317,11 +339,21 @@ LOCAL_SRC_FILES := ../../../../../../cocos/2d/CCAction.cpp \
  ../../../../../../extensions/GUI/CCScrollView/CCScrollView.cpp \
  ../../../../../../extensions/GUI/CCScrollView/CCTableView.cpp \
  ../../../../../../extensions/GUI/CCScrollView/CCTableViewCell.cpp \
+ ../../../../../../extensions/assets-manager/AssetsManagerEx.cpp \
+ ../../../../../../extensions/assets-manager/CCEventAssetsManagerEx.cpp \
+ ../../../../../../extensions/assets-manager/CCEventListenerAssetsManagerEx.cpp \
+ ../../../../../../extensions/assets-manager/Manifest.cpp \
  ../../../../../../extensions/physics-nodes/CCPhysicsDebugNode.cpp \
  ../../../../../../extensions/physics-nodes/CCPhysicsSprite.cpp \
  ../../../../../../external/sources/ConvertUTF/ConvertUTF.c \
  ../../../../../../external/sources/ConvertUTF/ConvertUTFWrapper.cpp \
+ ../../../../../../external/sources/clipper/clipper.cpp \
  ../../../../../../external/sources/edtaa3func/edtaa3func.cpp \
+ ../../../../../../external/sources/poly2tri/common/shapes.cc \
+ ../../../../../../external/sources/poly2tri/sweep/advancing_front.cc \
+ ../../../../../../external/sources/poly2tri/sweep/cdt.cc \
+ ../../../../../../external/sources/poly2tri/sweep/sweep.cc \
+ ../../../../../../external/sources/poly2tri/sweep/sweep_context.cc \
  ../../../../../../external/sources/tinyxml2/tinyxml2.cpp \
  ../../../../../../external/sources/unzip/ioapi.cpp \
  ../../../../../../external/sources/unzip/ioapi_mem.cpp \
@@ -336,6 +368,10 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../../../../.. \
  $(LOCAL_PATH)/../../../../../../external \
  $(LOCAL_PATH)/../../../../../../external/sources \
  $(LOCAL_PATH)/../../../../../../cocos/audio/include \
+ $(LOCAL_PATH)/../../../../../../external/mac/include \
+ $(LOCAL_PATH)/../../../../../../external/mac/include/spidermonkey \
+ $(LOCAL_PATH)/../../../../../../external/mac/include/chipmunk \
+ $(LOCAL_PATH)/../../../../../../external/mac/include/freetype \
  $(LOCAL_PATH)/../../../../../../external/android/$(TARGET_ARCH_ABI)/include \
  $(LOCAL_PATH)/../../../../../../external/android/$(TARGET_ARCH_ABI)/include/spidermonkey \
  $(LOCAL_PATH)/../../../../../../external/android/$(TARGET_ARCH_ABI)/include/chipmunk \
@@ -343,6 +379,42 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../../../../.. \
  $(LOCAL_PATH)/../../../../../../cocos/platform \
  $(LOCAL_PATH)/../../../../../../cocos/platform/android \
  $(LOCAL_PATH)/../../../../../../cocos/audio/android \
+
+  LOCAL_SRC_FILES += ../../../../../../cocos/audio/apple/AudioCache.mm \
+ ../../../../../../cocos/audio/apple/AudioDecoder.mm \
+ ../../../../../../cocos/audio/apple/AudioEngine-inl.mm \
+ ../../../../../../cocos/audio/apple/AudioPlayer.mm \
+ ../../../../../../cocos/audio/mac/CDAudioManager.m \
+ ../../../../../../cocos/audio/mac/CDOpenALSupport.m \
+ ../../../../../../cocos/audio/mac/CDXMacOSXSupport.mm \
+ ../../../../../../cocos/audio/mac/CocosDenshion.m \
+ ../../../../../../cocos/audio/mac/SimpleAudioEngine.mm \
+ ../../../../../../cocos/audio/mac/SimpleAudioEngine_objc.m \
+ ../../../../../../cocos/base/CCUserDefault-apple.mm \
+ ../../../../../../cocos/network/CCDownloader-apple.mm \
+ ../../../../../../cocos/network/HttpAsynConnection-apple.m \
+ ../../../../../../cocos/network/HttpClient-apple.mm \
+ ../../../../../../cocos/platform/ios/CCApplication-ios.mm \
+ ../../../../../../cocos/platform/ios/CCCommon-ios.mm \
+ ../../../../../../cocos/platform/ios/CCDevice-ios.mm \
+ ../../../../../../cocos/platform/ios/CCDirectorCaller-ios.mm \
+ ../../../../../../cocos/platform/ios/CCEAGLView-ios.mm \
+ ../../../../../../cocos/platform/ios/CCES2Renderer-ios.m \
+ ../../../../../../cocos/platform/ios/CCGLViewImpl-ios.mm \
+ ../../../../../../cocos/platform/ios/CCImage-ios.mm \
+ ../../../../../../cocos/platform/mac/CCApplication-mac.mm \
+ ../../../../../../cocos/platform/mac/CCCommon-mac.mm \
+ ../../../../../../cocos/platform/mac/CCDevice-mac.mm \
+ ../../../../../../cocos/ui/UIEditBox/Mac/CCUIEditBoxMac.mm \
+ ../../../../../../cocos/ui/UIEditBox/Mac/CCUIMultilineTextField.m \
+ ../../../../../../cocos/ui/UIEditBox/Mac/CCUIPasswordTextField.m \
+ ../../../../../../cocos/ui/UIEditBox/Mac/CCUISingleLineTextField.m \
+ ../../../../../../cocos/ui/UIEditBox/Mac/CCUITextFieldFormatter.m \
+ ../../../../../../cocos/ui/UIEditBox/UIEditBoxImpl-ios.mm \
+ ../../../../../../cocos/ui/UIEditBox/UIEditBoxImpl-mac.mm \
+ ../../../../../../cocos/ui/UIVideoPlayer-ios.mm \
+ ../../../../../../cocos/ui/UIWebView.mm \
+ ../../../../../../cocos/ui/UIWebViewImpl-ios.mm \
 
 
 LOCAL_STATIC_LIBRARIES := cocos_freetype2_static \
@@ -356,10 +428,15 @@ LOCAL_STATIC_LIBRARIES := cocos_freetype2_static \
 LOCAL_WHOLE_STATIC_LIBRARIES := cpufeatures \
  cocos_chipmunk_static \
 
-LOCAL_LDLIBS := -lGLESv1_CM -lGLESv2 -lEGL -llog -landroid -lOpenSLES
+LOCAL_LDLIBS := -L../../../../../../external/mac/libs -lQuartzCore -lCocoa -lApplicationServices -lOpenGL -lAudioToolbox -lIOKit -lFoundation -lAVFoundation -lglfw3 -lssl -lcrypto -lcurl -lchipmunk -lwebsockets -ljpeg -lpng -ltiff -lfreetype -lGLESv1_CM -lGLESv2 -lEGL -llog -landroid -lOpenSLES
 LOCAL_EXPORT_LDLIBS := -lGLESv1_CM -lGLESv2 -lEGL -llog -landroid -lOpenSLES
 
-LOCAL_CFLAGS := -DUSE_FILE32API -DCC_ENABLE_CHIPMUNK_INTEGRATION=1 -Wno-deprecated-declarations
+LOCAL_CFLAGS := -DUSE_FILE32API -DCC_ENABLE_CHIPMUNK_INTEGRATION=1 -DCOCOS2D_DEBUG=1 -Wno-deprecated-declarations
+
+LOCAL_CFLAGS := -DUSE_FILE32API -fexceptions
+LOCAL_CPPFLAGS := -Wno-deprecated-declarations
+LOCAL_EXPORT_CFLAGS   := -DUSE_FILE32API
+LOCAL_EXPORT_CPPFLAGS := -Wno-deprecated-declarations
 
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
 MATHNEONFILE := ../../../../../../cocos/math/MathUtil.cpp.neon

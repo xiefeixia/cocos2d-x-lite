@@ -1,7 +1,7 @@
 {
     "ndk_module_path" :[
         "jni",
-        "${COCOS_X_ROOT}/cocos2d-x/external"
+        "${COCOS_X_ROOT}/external"
     ],
     "copy_resources": [
         {
