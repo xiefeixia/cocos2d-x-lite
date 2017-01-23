@@ -51,9 +51,10 @@ THE SOFTWARE.
 #include "base/base64.h"
 #include "base/ZipUtils.h"
 #include "base/CCDirector.h"
+#include "base/CCProfiling.h"
+#include "base/ccUTF8.h"
 #include "renderer/CCTextureCache.h"
 #include "platform/CCFileUtils.h"
-#include "base/CCString.h"
 
 using namespace std;
 
@@ -218,6 +219,7 @@ ParticleSystem::ParticleSystem()
 , _opacityModifyRGB(false)
 , _yCoordFlipped(1)
 , _positionType(PositionType::FREE)
+, _paused(false)
 {
     modeA.gravity.setZero();
     modeA.speed = 0;
@@ -271,7 +273,6 @@ bool ParticleSystem::initWithFile(const std::string& plistFile)
     _plistFile = FileUtils::getInstance()->fullPathForFilename(plistFile);
     ValueMap dict = FileUtils::getInstance()->getValueMapFromFile(_plistFile);
 
-    CCASSERT( !dict.empty(), "Particles: file not found");
     if (dict.empty()) {
         log("ParticleSystem::initWithFile error:%s not exist!", plistFile.c_str());
         return false;
@@ -481,7 +482,7 @@ bool ParticleSystem::initWithDictionary(ValueMap& dictionary, const std::string&
                     // set not pop-up message box when load image failed
                     bool notify = FileUtils::getInstance()->isPopupNotify();
                     FileUtils::getInstance()->setPopupNotify(false);
-                    tex = _director->getTextureCache()->addImage(textureName);
+                    tex = Director::getInstance()->getTextureCache()->addImage(textureName);
                     // reset the value of UIImage notify
                     FileUtils::getInstance()->setPopupNotify(notify);
                 }
@@ -512,8 +513,8 @@ bool ParticleSystem::initWithDictionary(ValueMap& dictionary, const std::string&
                         bool isOK = image->initWithImageData(deflated, deflatedLen);
                         CCASSERT(isOK, "CCParticleSystem: error init image with Data");
                         CC_BREAK_IF(!isOK);
-
-                        setTexture(_director->getTextureCache()->addImage(image, _plistFile + textureName));
+                        
+                        setTexture(Director::getInstance()->getTextureCache()->addImage(image, _plistFile + textureName));
 
                         image->release();
                     }
@@ -591,6 +592,8 @@ ParticleSystem::~ParticleSystem()
 
 void ParticleSystem::addParticles(int count)
 {
+    if (_paused)
+        return;
     uint32_t RANDSEED = rand();
 
     int start = _particleCount;
@@ -711,7 +714,7 @@ dc[i] = (dc[i] - c[i]) / _particleData.timeToLive[i];\
         {
             _particleData.modeA.tangentialAccel[i] = modeA.tangentialAccel + modeA.tangentialAccelVar * RANDOM_M11(&RANDSEED);
         }
-
+        
         // rotation is dir
         if( modeA.rotationIsDir )
         {
@@ -936,6 +939,12 @@ void ParticleSystem::update(float dt)
         }
         else
         {
+            //Why use so many for-loop separately instead of putting them together?
+            //When the processor needs to read from or write to a location in memory,
+            //it first checks whether a copy of that data is in the cache.
+            //And every property's memory of the particle system is continuous,
+            //for the purpose of improving cache hit rate, we should process only one property in one for-loop AFAP.
+            //It was proved to be effective especially for low-end machine. 
             for (int i = 0; i < _particleCount; ++i)
             {
                 _particleData.modeB.angle[i] += _particleData.modeB.degreesPerSecond[i] * dt;
@@ -1001,7 +1010,7 @@ void ParticleSystem::update(float dt)
     CC_PROFILER_STOP_CATEGORY(kProfilerCategoryParticles , "CCParticleSystem - update");
 }
 
-void ParticleSystem::updateWithNoTime()
+void ParticleSystem::updateWithNoTime(void)
 {
     this->update(0.0f);
 }
@@ -1290,7 +1299,7 @@ void ParticleSystem::setAutoRemoveOnFinish(bool var)
 
 // ParticleSystem - methods for batchNode rendering
 
-ParticleBatchNode* ParticleSystem::getBatchNode() const
+ParticleBatchNode* ParticleSystem::getBatchNode(void) const
 {
     return _batchNode;
 }
@@ -1335,6 +1344,32 @@ void ParticleSystem::setScaleY(float newScaleY)
     _transformSystemDirty = true;
     Node::setScaleY(newScaleY);
 }
+
+void ParticleSystem::start()
+{
+    resetSystem();
+}
+
+void ParticleSystem::stop()
+{
+    stopSystem();
+}
+
+bool ParticleSystem::isPaused() const
+{
+    return _paused;
+}
+
+void ParticleSystem::pauseEmissions()
+{
+    _paused = true;
+}
+
+void ParticleSystem::resumeEmissions()
+{
+    _paused = false;
+}
+
 
 
 NS_CC_END

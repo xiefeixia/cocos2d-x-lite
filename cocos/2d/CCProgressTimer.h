@@ -178,11 +178,11 @@ protected:
     void onDraw(const Mat4 &transform, uint32_t flags);
 
     Tex2F textureCoordFromAlphaPoint(Vec2 alpha);
-    Vec2 vertexFromAlphaPoint(Vec2 alpha);
-    void updateProgress();
-    void updateBar();
-    void updateRadial();
-    virtual void updateColor() override;
+    Vec2 vertexFromAlphaPoint(const Vec2& alpha);
+    void updateProgress(void);
+    void updateBar(void);
+    void updateRadial(void);
+    virtual void updateColor(void) override;
     Vec2 boundaryTexCoord(char index);
 
     Type _type;

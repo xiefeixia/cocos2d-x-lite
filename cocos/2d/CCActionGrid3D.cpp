@@ -31,15 +31,15 @@ NS_CC_BEGIN
 
 Waves3D* Waves3D::create(float duration, const Size& gridSize, unsigned int waves, float amplitude)
 {
-    Waves3D *pAction = new (std::nothrow) Waves3D();
+    Waves3D *action = new (std::nothrow) Waves3D();
 
-    if (pAction && pAction->initWithDuration(duration, gridSize, waves, amplitude))
+    if (action && action->initWithDuration(duration, gridSize, waves, amplitude))
     {
-        pAction->autorelease();
-        return pAction;
+        action->autorelease();
+        return action;
     }
 
-    delete pAction;
+    delete action;
     return nullptr;
 }
 
@@ -114,7 +114,6 @@ bool FlipX3D::initWithSize(const Size& gridSize, float duration)
 
 FlipX3D* FlipX3D::clone() const
 {
-    // no copy constructor
     auto a = new (std::nothrow) FlipX3D();
     a->initWithSize(_gridSize, _duration);
     a->autorelease();
@@ -653,7 +652,7 @@ void Waves::update(float time)
 
 // implementation of Twirl
 
-Twirl* Twirl::create(float duration, const Size& gridSize, Vec2 position, unsigned int twirls, float amplitude)
+Twirl* Twirl::create(float duration, const Size& gridSize, const Vec2& position, unsigned int twirls, float amplitude)
 {
     Twirl *action = new (std::nothrow) Twirl();
 
@@ -672,7 +671,7 @@ Twirl* Twirl::create(float duration, const Size& gridSize, Vec2 position, unsign
     return action;
 }
 
-bool Twirl::initWithDuration(float duration, const Size& gridSize, Vec2 position, unsigned int twirls, float amplitude)
+bool Twirl::initWithDuration(float duration, const Size& gridSize, const Vec2& position, unsigned int twirls, float amplitude)
 {
     if (Grid3DAction::initWithDuration(duration, gridSize))
     {

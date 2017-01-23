@@ -1,10 +1,14 @@
-#include "cocos2d.h"
-
-#include "CCNodeLoader.h"
-#include "CCBSelectorResolver.h"
-#include "CCBMemberVariableAssigner.h"
-#include "CCBAnimationManager.h"
-#include "CCNode+CCBRelativePositioning.h"
+#include "editor-support/cocosbuilder/CCNodeLoader.h"
+#include "editor-support/cocosbuilder/CCBSelectorResolver.h"
+#include "editor-support/cocosbuilder/CCBMemberVariableAssigner.h"
+#include "editor-support/cocosbuilder/CCBAnimationManager.h"
+#include "editor-support/cocosbuilder/CCNode+CCBRelativePositioning.h"
+#include "base/CCRef.h"
+#include "base/CCDirector.h"
+#include "renderer/CCTextureCache.h"
+#include "2d/CCSpriteFrameCache.h"
+#include "2d/CCAnimationCache.h"
+#include "platform/CCFileUtils.h"
 
 
 using namespace std;
@@ -585,7 +589,7 @@ SpriteFrame * NodeLoader::parsePropTypeSpriteFrame(Node * pNode, Node * pParent,
         if (spriteSheet.empty())
         {
             spriteFile = ccbReader->getCCBRootPath() + spriteFile;
-            Texture2D * texture = Director::DirectorInstance->getTextureCache()->addImage(spriteFile);
+            Texture2D * texture = Director::getInstance()->getTextureCache()->addImage(spriteFile);
             if(texture != nullptr) {
                 Rect bounds = Rect(0, 0, texture->getContentSize().width, texture->getContentSize().height);
                 spriteFrame = SpriteFrame::createWithTexture(texture, bounds);
@@ -631,9 +635,9 @@ Animation * NodeLoader::parsePropTypeAnimation(Node * pNode, Node * pParent, CCB
     if (!animation.empty())
     {
         AnimationCache * animationCache = AnimationCache::getInstance();
-        animationCache->addAnimationsWithFile(animationFile.c_str());
+        animationCache->addAnimationsWithFile(animationFile);
 
-        ccAnimation = animationCache->getAnimation(animation.c_str());
+        ccAnimation = animationCache->getAnimation(animation);
     }
     return ccAnimation;
 }
@@ -643,7 +647,7 @@ Texture2D* NodeLoader::parsePropTypeTexture(Node * pNode, Node * pParent, CCBRea
 
     if (!spriteFile.empty())
     {
-        return Director::DirectorInstance->getTextureCache()->addImage(spriteFile);
+        return Director::getInstance()->getTextureCache()->addImage(spriteFile);
     }
     else
     {
@@ -998,7 +1002,7 @@ Node * NodeLoader::parsePropTypeCCBFile(Node * pNode, Node * pParent, CCBReader 
 
 
 
-void NodeLoader::onHandlePropTypePosition(Node * pNode, Node * pParent, const char* pPropertyName, Vec2 pPosition, CCBReader * ccbReader) {
+void NodeLoader::onHandlePropTypePosition(Node * pNode, Node * pParent, const char* pPropertyName, const Vec2& pPosition, CCBReader * ccbReader) {
     if(strcmp(pPropertyName, PROPERTY_POSITION) == 0) {
         pNode->setPosition(pPosition);
     } else {
@@ -1006,7 +1010,7 @@ void NodeLoader::onHandlePropTypePosition(Node * pNode, Node * pParent, const ch
     }
 }
 
-void NodeLoader::onHandlePropTypePoint(Node * pNode, Node * pParent, const char* pPropertyName, Vec2 pPoint, CCBReader * ccbReader) {
+void NodeLoader::onHandlePropTypePoint(Node * pNode, Node * pParent, const char* pPropertyName, const Vec2& pPoint, CCBReader * ccbReader) {
     if(strcmp(pPropertyName, PROPERTY_ANCHORPOINT) == 0) {
         pNode->setAnchorPoint(pPoint);
     } else {
@@ -1014,11 +1018,11 @@ void NodeLoader::onHandlePropTypePoint(Node * pNode, Node * pParent, const char*
     }
 }
 
-void NodeLoader::onHandlePropTypePointLock(Node * pNode, Node * pParent, const char* pPropertyName, Vec2 pPointLock, CCBReader * ccbReader) {
+void NodeLoader::onHandlePropTypePointLock(Node * pNode, Node * pParent, const char* pPropertyName, const Vec2& pPointLock, CCBReader * ccbReader) {
     ASSERT_FAIL_UNEXPECTED_PROPERTY(pPropertyName);
 }
 
-void NodeLoader::onHandlePropTypeSize(Node * pNode, Node * pParent, const char* pPropertyName, Size pSize, CCBReader * ccbReader) {
+void NodeLoader::onHandlePropTypeSize(Node * pNode, Node * pParent, const char* pPropertyName, const Size& pSize, CCBReader * ccbReader) {
     if(strcmp(pPropertyName, PROPERTY_CONTENTSIZE) == 0) {
         pNode->setContentSize(pSize);
     } else {
@@ -1091,7 +1095,7 @@ void NodeLoader::onHandlePropTypeCheck(Node * pNode, Node * pParent, const char*
     if(strcmp(pPropertyName, PROPERTY_VISIBLE) == 0) {
         pNode->setVisible(pCheck);
     } else if(strcmp(pPropertyName, PROPERTY_IGNOREANCHORPOINTFORPOSITION) == 0) {
-        pNode->ignoreAnchorPointForPosition(pCheck);
+        pNode->setIgnoreAnchorPointForPosition(pCheck);
     } else {
         //ASSERT_FAIL_UNEXPECTED_PROPERTY(pPropertyName);
         // It may be a custom property, add it to custom property dictionary.
@@ -1115,7 +1119,7 @@ void NodeLoader::onHandlePropTypeByte(Node * pNode, Node * pParent, const char* 
     ASSERT_FAIL_UNEXPECTED_PROPERTY(pPropertyName);
 }
 
-void NodeLoader::onHandlePropTypeColor3(Node * pNode, Node * pParent, const char* pPropertyName, Color3B pColor3B, CCBReader * ccbReader) {
+void NodeLoader::onHandlePropTypeColor3(Node * pNode, Node * pParent, const char* pPropertyName, const Color3B& pColor3B, CCBReader * ccbReader) {
     ASSERT_FAIL_UNEXPECTED_PROPERTY(pPropertyName);
 }
 
@@ -1127,7 +1131,7 @@ void NodeLoader::onHandlePropTypeFlip(Node * pNode, Node * pParent, const char* 
     ASSERT_FAIL_UNEXPECTED_PROPERTY(pPropertyName);
 }
 
-void NodeLoader::onHandlePropTypeBlendFunc(Node * pNode, Node * pParent, const char* pPropertyName, BlendFunc pBlendFunc, CCBReader * ccbReader) {
+void NodeLoader::onHandlePropTypeBlendFunc(Node * pNode, Node * pParent, const char* pPropertyName, const BlendFunc& pBlendFunc, CCBReader * ccbReader) {
     ASSERT_FAIL_UNEXPECTED_PROPERTY(pPropertyName);
 }
 
@@ -1162,4 +1166,3 @@ void NodeLoader::onHandlePropTypeCCBFile(Node * pNode, Node * pParent, const cha
 }
 
 }
-

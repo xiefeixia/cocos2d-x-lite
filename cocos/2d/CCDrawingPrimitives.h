@@ -101,7 +101,7 @@ namespace DrawPrimitives
 
     /** Draws an array of points.
      *
-     * @param point A point coordinates.
+     * @param points A point coordinates.
      * @param numberOfPoints The number of points.
      * @since v0.7.2
      */
@@ -120,7 +120,7 @@ namespace DrawPrimitives
      * @param origin The rectangle origin.
      * @param destination The rectangle destination.
      */
-    CC_DEPRECATED_ATTRIBUTE void CC_DLL drawRect(Vec2 origin, Vec2 destination);
+    CC_DEPRECATED_ATTRIBUTE void CC_DLL drawRect(const Vec2& origin, const Vec2& destination);
 
     /** Draws a solid rectangle given the origin and destination point measured in points.
      * The origin and the destination can not have the same x and y coordinate.
@@ -130,7 +130,7 @@ namespace DrawPrimitives
      * @param color The rectangle color.
      * @since 1.1
      */
-    CC_DEPRECATED_ATTRIBUTE void CC_DLL drawSolidRect(Vec2 origin, Vec2 destination, Color4F color);
+    CC_DEPRECATED_ATTRIBUTE void CC_DLL drawSolidRect(const Vec2& origin, const Vec2& destination, const Color4F& color);
 
     /** Draws a polygon given a pointer to point coordinates and the number of vertices measured in points.
      * The polygon can be closed or open.
@@ -196,7 +196,7 @@ namespace DrawPrimitives
      * @param origin The origin of the bezier path.
      * @param control The control of the bezier path.
      * @param destination The destination of the bezier path.
-     * @param segments The The number of segments.
+     * @param segments The number of segments.
      * @warning This function could be pretty slow. Use it only for debugging purposes.
      * @since v0.8
      */
@@ -208,7 +208,7 @@ namespace DrawPrimitives
      * @param control1 The first control of the bezier path.
      * @param control2 The second control of the bezier path.
      * @param destination The destination of the bezier path.
-     * @param segments The The number of segments.
+     * @param segments The number of segments.
      * @warning This function could be pretty slow. Use it only for debugging purposes.
      * @since v0.8
      */
@@ -217,7 +217,7 @@ namespace DrawPrimitives
     /** Draws a Catmull Rom path.
      *
      * @param arrayOfControlPoints A point array  of control point.
-     * @param segments The The number of segments.
+     * @param segments The number of segments.
      * @warning This function could be pretty slow. Use it only for debugging purposes.
      * @since v2.0
      */
@@ -227,7 +227,7 @@ namespace DrawPrimitives
      *
      * @param config A array point.
      * @param tension The tension of the spline.
-     * @param segments The The number of segments.
+     * @param segments The number of segments.
      * @warning This function could be pretty slow. Use it only for debugging purposes.
      * @since v2.0
      */

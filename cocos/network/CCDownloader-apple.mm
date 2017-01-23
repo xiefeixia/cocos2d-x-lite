@@ -25,8 +25,8 @@
 #include "network/CCDownloader-apple.h"
 
 #include "network/CCDownloader.h"
+#include "base/ccUTF8.h"
 #include <queue>
-#include "base/CCString.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 //  OC Classes Declaration

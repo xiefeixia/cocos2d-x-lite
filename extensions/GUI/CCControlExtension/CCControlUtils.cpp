@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 NS_CC_EXT_BEGIN
 
-Sprite* ControlUtils::addSpriteToTargetWithPosAndAnchor(const char* spriteName, Node * target, Vec2 pos, Vec2 anchor)
+Sprite* ControlUtils::addSpriteToTargetWithPosAndAnchor(const char* spriteName, Node * target, const Vec2& pos, const Vec2& anchor)
 {
     Sprite *sprite =Sprite::createWithSpriteFrameName(spriteName);
 
@@ -91,9 +91,9 @@ RGBA ControlUtils::RGBfromHSV(HSV value)
     out.a        = 1;
 
     if (value.s <= 0.0) // < is bogus, just shuts up warnings
-    {
-        if (isnan(value.h)) // value.h == NAN
-        {
+    {       
+        if (std::isnan(value.h)) // value.h == NAN
+        {   
             out.r = value.v;
             out.g = value.v;
             out.b = value.v;

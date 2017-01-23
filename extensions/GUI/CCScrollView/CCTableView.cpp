@@ -50,12 +50,12 @@ TableView* TableView::create(TableViewDataSource* dataSource, Size size, Node *c
     return table;
 }
 
-bool TableView::initWithViewSize(Size size, Node* container/* = nullptr*/)
+bool TableView::initWithViewSize(const Size& size, Node* container/* = nullptr*/)
 {
     if (ScrollView::initWithViewSize(size,container))
     {
         CC_SAFE_DELETE(_indices);
-        _indices        = new std::set<ssize_t>();
+        _indices        = new (std::nothrow) std::set<ssize_t>();
         _vordering      = VerticalFillOrder::BOTTOM_UP;
         this->setDirection(Direction::VERTICAL);
 

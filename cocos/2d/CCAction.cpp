@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include "2d/CCActionInterval.h"
 #include "2d/CCNode.h"
 #include "base/CCDirector.h"
-#include "base/CCString.h"
+#include "base/ccUTF8.h"
 
 NS_CC_BEGIN
 //
@@ -43,13 +43,18 @@ Action::Action()
 ,_flags(0)
 {
 #if CC_ENABLE_SCRIPT_BINDING
-    if (ScriptEngineManager::ShareInstance)
-    {
-        auto engine = ScriptEngineManager::ShareInstance->getScriptEngine();
-        _scriptType = engine != nullptr ? engine->getScriptType() : kScriptTypeNone;
-    }
-    else
-        _scriptType = kScriptTypeNone;
+    ScriptEngineProtocol* engine = ScriptEngineManager::getInstance()->getScriptEngine();
+    _scriptType = engine != nullptr ? engine->getScriptType() : kScriptTypeNone;
+#endif
+}
+
+void Action::sendUpdateEventToScript(float dt, Action *actionObject)
+{
+#if CC_ENABLE_SCRIPT_BINDING
+	if (_scriptType == kScriptTypeJavascript)
+	{
+		ScriptEngineManager::sendActionEventToJS(actionObject, kActionUpdate, (void *)&dt);
+	}
 #endif
 }
 
@@ -197,8 +202,16 @@ Follow::~Follow()
 
 Follow* Follow::create(Node *followedNode, const Rect& rect/* = Rect::ZERO*/)
 {
+    return createWithOffset(followedNode, 0.0, 0.0,rect);
+}
+
+Follow* Follow::createWithOffset(Node* followedNode,float xOffset,float yOffset,const Rect& rect/*= Rect::ZERO*/){
     Follow *follow = new (std::nothrow) Follow();
-    if (follow && follow->initWithTarget(followedNode, rect))
+
+    bool valid;
+    valid = follow->initWithTargetAndOffset(followedNode, xOffset, yOffset,rect);
+
+    if (follow && valid)
     {
         follow->autorelease();
         return follow;
@@ -211,7 +224,7 @@ Follow* Follow::create(Node *followedNode, const Rect& rect/* = Rect::ZERO*/)
 Follow* Follow::clone() const
 {
     // no copy constructor
-    return Follow::create(_followedNode, _worldRect);
+    return Follow::createWithOffset(_followedNode, _offsetX,_offsetY,_worldRect);
 }
 
 Follow* Follow::reverse() const
@@ -219,7 +232,7 @@ Follow* Follow::reverse() const
     return clone();
 }
 
-bool Follow::initWithTarget(Node *followedNode, const Rect& rect/* = Rect::ZERO*/)
+bool Follow::initWithTargetAndOffset(Node *followedNode, float xOffset,float yOffset,const Rect& rect)
 {
     CCASSERT(followedNode != nullptr, "FollowedNode can't be NULL");
     if(followedNode == nullptr)
@@ -234,9 +247,13 @@ bool Follow::initWithTarget(Node *followedNode, const Rect& rect/* = Rect::ZERO*
     _boundarySet = !rect.equals(Rect::ZERO);
     _boundaryFullyCovered = false;
 
-    Size winSize = Director::DirectorInstance->getWinSize();
+    Size winSize = Director::getInstance()->getWinSize();
     _fullScreenSize.set(winSize.width, winSize.height);
     _halfScreenSize = _fullScreenSize * 0.5f;
+    _offsetX=xOffset;
+    _offsetY=yOffset;
+    _halfScreenSize.x += _offsetX;
+    _halfScreenSize.y += _offsetY;
 
     if (_boundarySet)
     {
@@ -267,9 +284,20 @@ bool Follow::initWithTarget(Node *followedNode, const Rect& rect/* = Rect::ZERO*
     return true;
 }
 
+bool Follow::initWithTarget(Node *followedNode, const Rect& rect /*= Rect::ZERO*/){
+    
+    return initWithTargetAndOffset(followedNode, 0.0, 0.0,rect);
+    
+}
 void Follow::step(float dt)
 {
     CC_UNUSED_PARAM(dt);
+
+    Vec2 targetWorldPos = _target->convertToWorldSpaceAR(Vec2::ZERO);
+    Vec2 followedWorldPos = _followedNode->convertToWorldSpaceAR(Vec2::ZERO);
+    // compute the offset between followed and target node
+    Vec2 delta = targetWorldPos - followedWorldPos;
+    Vec2 tempPos = _target->getParent()->convertToNodeSpaceAR(delta + _halfScreenSize);
 
     if(_boundarySet)
     {
@@ -279,15 +307,15 @@ void Follow::step(float dt)
             return;
         }
 
-        Vec2 tempPos = _halfScreenSize - _followedNode->getPosition();
-
         _target->setPosition(clampf(tempPos.x, _leftBoundary, _rightBoundary),
                                    clampf(tempPos.y, _bottomBoundary, _topBoundary));
     }
     else
     {
-        _target->setPosition(_halfScreenSize - _followedNode->getPosition());
+        _target->setPosition(tempPos);
     }
+
+    sendUpdateEventToScript(dt, this);
 }
 
 bool Follow::isDone() const

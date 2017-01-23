@@ -57,6 +57,9 @@ PointArray* PointArray::create(ssize_t capacity)
 bool PointArray::initWithCapacity(ssize_t capacity)
 {
     _controlPoints = new (std::nothrow) vector<Vec2*>();
+    if (capacity > 0) {
+        _controlPoints->reserve(capacity);
+    }
 
     return true;
 }
@@ -112,12 +115,12 @@ void PointArray::setControlPoints(vector<Vec2*> *controlPoints)
     _controlPoints = controlPoints;
 }
 
-void PointArray::addControlPoint(Vec2 controlPoint)
+void PointArray::addControlPoint(const Vec2& controlPoint)
 {
     _controlPoints->push_back(new Vec2(controlPoint.x, controlPoint.y));
 }
 
-void PointArray::insertControlPoint(Vec2 &controlPoint, ssize_t index)
+void PointArray::insertControlPoint(const Vec2& controlPoint, ssize_t index)
 {
     Vec2 *temp = new (std::nothrow) Vec2(controlPoint.x, controlPoint.y);
     _controlPoints->insert(_controlPoints->begin() + index, temp);
@@ -129,7 +132,7 @@ Vec2 PointArray::getControlPointAtIndex(ssize_t index)
     return *(_controlPoints->at(index));
 }
 
-void PointArray::replaceControlPoint(cocos2d::Vec2 &controlPoint, ssize_t index)
+void PointArray::replaceControlPoint(const Vec2& controlPoint, ssize_t index)
 {
     Vec2 *temp = _controlPoints->at(index);
     temp->x = controlPoint.x;
@@ -321,7 +324,7 @@ void CardinalSplineTo::update(float time)
     this->updatePosition(newPos);
 }
 
-void CardinalSplineTo::updatePosition(cocos2d::Vec2 &newPos)
+void CardinalSplineTo::updatePosition(const cocos2d::Vec2& newPos)
 {
     _target->setPosition(newPos);
     _previousPosition = newPos;
@@ -359,7 +362,7 @@ CardinalSplineBy::CardinalSplineBy() : _startPosition(0,0)
 {
 }
 
-void CardinalSplineBy::updatePosition(cocos2d::Vec2 &newPos)
+void CardinalSplineBy::updatePosition(const cocos2d::Vec2& newPos)
 {
     Vec2 p = newPos + _startPosition;
     _target->setPosition(p);

@@ -7,11 +7,11 @@ var Ftp = require('ftp');
 var ExecSync = require('child_process').execSync;
 var spawn = require('child_process').spawn;
 var Path = require('path');
-var fs = require('fs');
+var fs = require('fs-extra');
 
 gulp.task('make-cocos2d-x', gulpSequence('gen-cocos2d-x', 'upload-cocos2d-x'));
 gulp.task('make-prebuilt', gulpSequence('gen-libs', 'collect-prebuilt-mk', 'archive-prebuilt-mk', 'archive-prebuilt', 'upload-prebuilt', 'upload-prebuilt-mk'));
-gulp.task('make-simulator', gulpSequence('update-simulator-config', 'update-simulator-script', 'archive-simulator', 'upload-simulator'));
+gulp.task('make-simulator', gulpSequence('update-simulator-config', 'update-simulator-dll', 'archive-simulator', 'upload-simulator'));
 
 function execSync(cmd, workPath) {
   var execOptions = {
@@ -66,7 +66,11 @@ function upload2Ftp(localPath, ftpPath, config, cb) {
 }
 
 function uploadZipFile (zipFileName, path, cb) {
-  var remotePath = Path.join('TestBuilds','Fireball', 'cocos2d-x', zipFileName);
+  var branch = getCurrentBranch();
+  if (branch === 'develop') {
+    branch = 'dev';
+  }
+  var remotePath = Path.join('TestBuilds','Fireball', 'cocos2d-x', branch, zipFileName);
   var zipFilePath = Path.join(path, zipFileName);
   upload2Ftp(zipFilePath, remotePath, {
     host: '192.168.52.109',
@@ -80,6 +84,13 @@ function uploadZipFile (zipFileName, path, cb) {
   });
 }
 
+function getCurrentBranch() {
+    var spawnSync = require('child_process').spawnSync;
+    var output = spawnSync('git', ['symbolic-ref', '--short', '-q', 'HEAD']);
+    // console.log(output);
+    return output.stdout.toString().trim();
+}
+
 gulp.task('init', function(cb) {
   execSync('python download-deps.py', '.');
   execSync('git submodule update --init', '.');
@@ -87,7 +98,15 @@ gulp.task('init', function(cb) {
 });
 
 gulp.task('gen-libs', function(cb) {
-  execSync('./tools/cocos2d-console/bin/cocos gen-libs -m release', '.');
+  var cocosConsoleRoot = './tools/cocos2d-console/bin';
+  var cocosConsoleBin;
+  if (process.platform === 'darwin') {
+    cocosConsoleBin = Path.join(cocosConsoleRoot, 'cocos');
+  }
+  else {
+    cocosConsoleBin = Path.join(cocosConsoleRoot, 'cocos.bat');
+  }
+  execSync(cocosConsoleBin + ' gen-libs -m release --app-abi armeabi:arm64-v8a:armeabi-v7a:x86', '.');
   cb();
 });
 
@@ -140,37 +159,47 @@ gulp.task('gen-simulator', function (cb) {
 });
 
 gulp.task('collect-prebuilt-mk', function () {
+  fs.removeSync('./prebuilt_mk');
   return gulp.src([
     '**/prebuilt-mk/Android.mk',
     ], {
-    base: './',
-    ignore: 'prebuilt_mk/**/*'
+    base: './'
   }).pipe(gulp.dest('prebuilt_mk'));
 });
 
-gulp.task('update-simulator-config', function () {
-  var destPath = process.platform === 'win32' ? './simulator/win32' : './simulator/mac/Simulator.app/Contents/Resources';
-  return gulp.src('./tools/simulator/config.json')
-          .pipe(gulp.dest(destPath));
+gulp.task('update-simulator-config', ['update-simulator-script'], function (cb) {
+  var destPath = process.platform === 'win32' ? './simulator/win32/config.json' : './simulator/mac/Simulator.app/Contents/Resources/config.json';
+  fs.copy('./tools/simulator/config.json', destPath, cb);
 });
 
-gulp.task('update-simulator-script', function () {
-    var destPath = process.platform === 'win32' ? './simulator/win32' : './simulator/mac/Simulator.app/Contents/Resources';
-    var updateScript = function () {
-      // scripts
-      return gulp.src(['./cocos/scripting/js-bindings/script/**/*', '!**/.DS_Store'], {
-        base: './cocos/scripting/js-bindings'
-      }).pipe(gulp.dest(destPath)); 
+gulp.task('update-simulator-dll', function (cb) {
+  if (process.platform === 'win32') {
+    downloadSimulatorDLL(cb);
+  } else {
+    cb();
+  }
+});
+
+gulp.task('update-simulator-script', function (cb) {
+    var simulatorPath =  process.platform === 'win32' ? './simulator/win32' : './simulator/mac/Simulator.app/Contents/Resources';
+    var destPath = simulatorPath + '/script';
+    var updateScript = function (callback) {
+      fs.copy('./cocos/scripting/js-bindings/script', destPath, {
+        clobber: true,
+        filter: function(name) {
+          if (name.startsWith('.DS_Store')) {
+            return false;
+          } else {
+            return true;
+          }
+        }
+      }, callback);
     };
 
-    if (!fs.existsSync(destPath)) {
-        console.error(`Cant\'t find simulator dir [${destPath}]`);
+    if (!fs.existsSync(simulatorPath)) {
+        console.error(`Cant\'t find simulator dir [${simulatorPath}]`);
     } else {
-      if (process.platform === 'win32') {
-        downloadSimulatorDLL(updateScript);  
-      } else {
-        updateScript();
-      }
+      updateScript(cb);
     }
 });
 
