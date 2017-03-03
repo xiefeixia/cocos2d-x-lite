@@ -1,4 +1,4 @@
 include ':libcocos2dx'
-project(':libcocos2dx').projectDir = new File(settingsDir, '../../cocos2d-x/cocos/platform/android/libcocos2dx')
-include ':example_cases'
-project(':example_cases').projectDir = new File(settingsDir, 'app')
+project(':libcocos2dx').projectDir = new File('/Users/youyou/Desktop/workspace/fireball/cc-dev/cocos2d-x/cocos/platform/android/libcocos2dx')
+include ':physics_example'
+project(':physics_example').projectDir = new File(settingsDir, 'app')

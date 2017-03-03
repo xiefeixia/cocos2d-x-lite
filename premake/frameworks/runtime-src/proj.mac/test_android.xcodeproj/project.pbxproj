@@ -1,0 +1,225 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C20EF1CDEF95A00095E8E9CB822368006BAA9CFFEAFC1000 /* AppDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 98A1FE98FFC548001B549D85C3310D00A761366D01D4B000 /* AppDelegate.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		66380639C54874009406242BED833000773557F8D51EBC00 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = ../Classes/AppDelegate.h; sourceTree = "<group>"; };
+		8B07DBE7CDE0E80048FE7AAD70CF0C00C2102B43FFF4F000 /* .DS_Store */ = {isa = PBXFileReference; lastKnownFileType = text; name = .DS_Store; path = ../Classes/.DS_Store; sourceTree = "<group>"; };
+		98A1FE98FFC548001B549D85C3310D00A761366D01D4B000 /* AppDelegate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AppDelegate.cpp; path = ../Classes/AppDelegate.cpp; sourceTree = "<group>"; };
+		C0AE802D0ABD680047C314DF5A98A40BB4F99AE3D8F5000 /* test_android.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = test_android.app; path = test_android.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		822B8F4864FAF000FEF606C265ADE8009A3DCA2AD98FC000 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6E7CB81FAEE6C400D0CFED355B4988008F3AE41219D20000 /* test_android */ = {
+			isa = PBXGroup;
+			children = (
+				8B07DBE7CDE0E80048FE7AAD70CF0C00C2102B43FFF4F000 /* .DS_Store */,
+				98A1FE98FFC548001B549D85C3310D00A761366D01D4B000 /* AppDelegate.cpp */,
+				66380639C54874009406242BED833000773557F8D51EBC00 /* AppDelegate.h */,
+				DE2FD571A6C938008E134D4D9B3FB000BA17F9BDEA135000 /* Products */,
+			);
+			name = test_android;
+			sourceTree = "<group>";
+		};
+		DE2FD571A6C938008E134D4D9B3FB000BA17F9BDEA135000 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C0AE802D0ABD680047C314DF5A98A40BB4F99AE3D8F5000 /* test_android.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		24DF133938BE120026ED10D55EE440003BFB3AC8C5EB3800 /* test_android */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 822B8F4753363800FEF606C153E930009A3DCA29C7CB0800 /* Build configuration list for PBXNativeTarget "test_android" */;
+			buildPhases = (
+				822B8F4BD4E27000FEF606C5D59568009A3DCA2E49774000 /* Resources */,
+				822B8F4C3E8F8800FEF606C63F4288009A3DCA2EB3245800 /* Sources */,
+				822B8F4864FAF000FEF606C265ADE8009A3DCA2AD98FC000 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = test_android;
+			productInstallPath = "$(HOME)/Applications";
+			productName = test_android;
+			productReference = C0AE802D0ABD680047C314DF5A98A40BB4F99AE3D8F5000 /* test_android.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "test_android" */;
+			compatibilityVersion = "Xcode 3.2";
+			hasScannedForEncodings = 1;
+			mainGroup = 6E7CB81FAEE6C400D0CFED355B4988008F3AE41219D20000 /* test_android */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				24DF133938BE120026ED10D55EE440003BFB3AC8C5EB3800 /* test_android.app */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		822B8F4BD4E27000FEF606C5D59568009A3DCA2E49774000 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		822B8F4C3E8F8800FEF606C63F4288009A3DCA2EB3245800 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C20EF1CDEF95A00095E8E9CB822368006BAA9CFFEAFC1000 /* AppDelegate.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		37D2D7863A9DE8006C6A8A1B345FA40060CEEFFB6E5EA400 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = bin/x32/Release;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				INSTALL_PATH = "\"$(HOME)/Applications\"";
+				PRODUCT_NAME = test_android;
+			};
+			name = Release;
+		};
+		5375AFC4B25EB0001B27D39C23E9C700E885741CD2EAF000 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 1;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = obj/x32/Debug/test_android;
+				ONLY_ACTIVE_ARCH = NO;
+				SYMROOT = bin/x32/Debug;
+				USER_HEADER_SEARCH_PATHS = (
+					../Classes,
+					../../../..,
+					../../../../cocos,
+					"../../../../cocos/editor-support",
+					../../../../extensions,
+					../../../../external,
+					../../../../external/sources,
+					../../../../cocos/audio/include,
+					"../../../../cocos/scripting/js-bindings/manual",
+					"../../../../cocos/scripting/js-bindings/auto",
+				);
+			};
+			name = Debug;
+		};
+		7ECED60B92B584084B764DAB9DE58001FFF28432DC02700 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = obj/x32/Release/test_android;
+				ONLY_ACTIVE_ARCH = NO;
+				SYMROOT = bin/x32/Release;
+				USER_HEADER_SEARCH_PATHS = (
+					../Classes,
+					../../../..,
+					../../../../cocos,
+					"../../../../cocos/editor-support",
+					../../../../extensions,
+					../../../../external,
+					../../../../external/sources,
+					../../../../cocos/audio/include,
+					"../../../../cocos/scripting/js-bindings/manual",
+					"../../../../cocos/scripting/js-bindings/auto",
+				);
+			};
+			name = Release;
+		};
+		DAA458C73F75C000B3AAD54C7059B800C14A8B1B8371E800 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = bin/x32/Debug;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				INSTALL_PATH = "\"$(HOME)/Applications\"";
+				PRODUCT_NAME = test_android;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "test_android" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5375AFC4B25EB0001B27D39C23E9C700E885741CD2EAF000 /* Debug */,
+				5375AFC4B25EB0001B27D39C23E9C700E885741CD2EAF000 /* Debug */,
+				5375AFC4B25EB0001B27D39C23E9C700E885741CD2EAF000 /* Debug */,
+				7ECED60B92B584084B764DAB9DE58001FFF28432DC02700 /* Release */,
+				7ECED60B92B584084B764DAB9DE58001FFF28432DC02700 /* Release */,
+				7ECED60B92B584084B764DAB9DE58001FFF28432DC02700 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		822B8F4753363800FEF606C153E930009A3DCA29C7CB0800 /* Build configuration list for PBXNativeTarget "test_android.app" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DAA458C73F75C000B3AAD54C7059B800C14A8B1B8371E800 /* Debug */,
+				DAA458C73F75C000B3AAD54C7059B800C14A8B1B8371E800 /* Debug */,
+				DAA458C73F75C000B3AAD54C7059B800C14A8B1B8371E800 /* Debug */,
+				37D2D7863A9DE8006C6A8A1B345FA40060CEEFFB6E5EA400 /* Release */,
+				37D2D7863A9DE8006C6A8A1B345FA40060CEEFFB6E5EA400 /* Release */,
+				37D2D7863A9DE8006C6A8A1B345FA40060CEEFFB6E5EA400 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+};
+rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}

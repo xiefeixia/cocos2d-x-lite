@@ -1,7 +1,8 @@
 {
     "ndk_module_path" :[
-        "jni",
-        "${COCOS_X_ROOT}/external"
+        "/Users/youyou/Desktop/workspace/fireball/cc-dev/cocos2d-x",
+        "/Users/youyou/Desktop/workspace/fireball/cc-dev/cocos2d-x/cocos",
+        "/Users/youyou/Desktop/workspace/fireball/cc-dev/cocos2d-x/external"
     ],
     "copy_resources": [
         {
@@ -17,7 +18,7 @@
             "to": ""
         },
         {
-            "from": "../../../../../../cc/cocos2d-x/cocos/scripting/js-bindings/script",
+            "from": "/Users/youyou/Desktop/workspace/fireball/cc-dev/cocos2d-x/cocos/scripting/js-bindings/script",
             "to": "script"
         },
         {

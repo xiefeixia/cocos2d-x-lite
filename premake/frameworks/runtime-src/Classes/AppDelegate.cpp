@@ -20,12 +20,6 @@
 
 #include "js_module_register.h"
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS) && PACKAGE_AS
-#include "SDKManager.h"
-#include "jsb_anysdk_protocols_auto.hpp"
-#include "manualanysdkbindings.hpp"
-using namespace anysdk::framework;
-#endif
 
 USING_NS_CC;
 
@@ -58,9 +52,9 @@ bool AppDelegate::applicationDidFinishLaunching()
     auto glview = director->getOpenGLView();
     if(!glview) {
 #if(CC_TARGET_PLATFORM == CC_PLATFORM_WP8) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-        glview = GLViewImpl::create("HelloJavascript");
+        glview = GLViewImpl::create("physics_example");
 #else
-        glview = GLViewImpl::createWithRect("HelloJavascript", Rect(0,0,900,640));
+        glview = GLViewImpl::createWithRect("physics_example", Rect(0,0,900,640));
 #endif
         director->setOpenGLView(glview);
     }
@@ -71,10 +65,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     js_module_register();
     
     ScriptingCore* sc = ScriptingCore::getInstance();
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS) && PACKAGE_AS    
-    sc->addRegisterCallback(register_all_anysdk_framework);
-    sc->addRegisterCallback(register_all_anysdk_manual);
-#endif 
+
     sc->start();
     sc->runScript("script/jsb_boot.js");
 #if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)

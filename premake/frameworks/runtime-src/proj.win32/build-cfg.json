@@ -17,7 +17,7 @@
             "to": ""
         },
         {
-            "from": "../../../../../../cc/cocos2d-x/cocos/scripting/js-bindings/script",
+            "from": "/Users/youyou/Desktop/workspace/fireball/cc-dev/cocos2d-x/cocos/scripting/js-bindings/script",
             "to": "script"
         }
     ]

@@ -59,7 +59,7 @@
       </dict>
     </dict>
     <key>CFBundleIdentifier</key>
-    <string>org.cocos2d.example_cases</string>
+    <string>org.cocos2d.helloworld</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
@@ -74,6 +74,11 @@
     <string>1.0</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+      <key>NSAllowsArbitraryLoads</key>
+      <true/>
+    </dict>
     <key>UIPrerenderedIcon</key>
     <true/>
     <key>UIRequiredDeviceCapabilities</key>
