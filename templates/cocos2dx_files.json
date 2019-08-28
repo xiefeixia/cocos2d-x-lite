@@ -3700,8 +3700,7 @@
         "external/win32/libs/v8_libplatform.dll.lib", 
         "external/win32/libs/websockets.dll", 
         "external/win32/libs/websockets.lib", 
-        "external/win32/libs/zlib1.dll", 
-        "update-external.py"
+        "external/win32/libs/zlib1.dll"
     ], 
     "js": [
         "cocos/scripting/js-bindings/auto/api/jsb_cocos2dx_audioengine_auto_api.js", 
