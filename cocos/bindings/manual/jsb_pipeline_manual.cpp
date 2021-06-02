@@ -32,6 +32,7 @@
 #include "renderer/pipeline/Define.h"
 #include "renderer/pipeline/PipelineStateManager.h"
 #include "renderer/pipeline/RenderPipeline.h"
+#include "renderer/gfx-base/GFXFramebuffer.h"
 
 static bool js_pipeline_RenderPipeline_getMacros(se::State &s) {
     cc::pipeline::RenderPipeline *cobj = (cc::pipeline::RenderPipeline *)s.nativeThisObject();
@@ -69,6 +70,143 @@ static bool JSB_getOrCreatePipelineState(se::State &s) {
 }
 SE_BIND_FUNC(JSB_getOrCreatePipelineState);
 
+
+bool JSB_register_global_descriptor_block(se::State &s) {
+    const auto &args = s.args();
+    size_t      argc = args.size();
+    if (argc == 4) {
+        bool ok = true;
+
+        // arg0
+        uint32_t binding = 0;
+        ok &= seval_to_uint32(args[0], &binding);
+        SE_PRECONDITION2(ok, false, "JSB_register_global_descriptor_block : Error getting block binding.");
+
+        // arg1
+        cc::gfx::DescriptorSetLayoutBinding descriptor;
+        ok &= sevalue_to_native(args[1], &descriptor, s.thisObject());
+        SE_PRECONDITION2(ok, false, "JSB_register_global_descriptor_block : Error getting descriptor.");
+
+        // arg2
+        std::string name = "";
+        ok &= seval_to_std_string(args[2], &name);
+        SE_PRECONDITION2(ok, false, "JSB_register_global_descriptor_block : Error getting block name.");
+
+        // arg3
+        cc::gfx::UniformBlock block;
+        ok &= sevalue_to_native(args[3], &block, s.thisObject());
+        SE_PRECONDITION2(ok, false, "JSB_register_global_descriptor_block : Error getting block.");
+
+        if (cc::pipeline::globalDescriptorSetLayout.bindings.size() < (binding + 1)) {
+            cc::pipeline::globalDescriptorSetLayout.bindings.resize((binding+1));
+        }
+
+        cc::pipeline::globalDescriptorSetLayout.bindings[binding] = descriptor;
+        cc::pipeline::globalDescriptorSetLayout.blocks[name]      = block;
+
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 4);
+    return false;
+}
+SE_BIND_FUNC(JSB_register_global_descriptor_block);
+
+bool JSB_register_global_descriptor_sampler(se::State &s) {
+    const auto &args = s.args();
+    size_t      argc = args.size();
+    if (argc == 4) {
+        bool ok = true;
+
+        // arg0
+        uint32_t binding = 0;
+        ok &= seval_to_uint32(args[0], &binding);
+        SE_PRECONDITION2(ok, false, "JSB_register_global_descriptor_sampler : Error getting block binding.");
+
+        // arg1
+        cc::gfx::DescriptorSetLayoutBinding descriptor;
+        ok &= sevalue_to_native(args[1], &descriptor, s.thisObject());
+        SE_PRECONDITION2(ok, false, "JSB_register_global_descriptor_block : Error getting descriptor.");
+
+        // arg2
+        std::string name = "";
+        ok &= seval_to_std_string(args[2], &name);
+        SE_PRECONDITION2(ok, false, "JSB_register_global_descriptor_sampler : Error getting block name.");
+
+        // arg3
+        cc::gfx::UniformSamplerTexture sampler;
+        ok &= sevalue_to_native(args[3], &sampler, s.thisObject());
+        SE_PRECONDITION2(ok, false, "JSB_register_global_descriptor_sampler : Error getting sampler.");
+
+        if (cc::pipeline::globalDescriptorSetLayout.bindings.size() < (binding + 1)) {
+            cc::pipeline::globalDescriptorSetLayout.bindings.resize((binding + 1));
+        }
+
+        cc::pipeline::globalDescriptorSetLayout.bindings[binding] = descriptor;
+        cc::pipeline::globalDescriptorSetLayout.samplers[name]    = sampler;
+
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 4);
+    return false;
+}
+SE_BIND_FUNC(JSB_register_global_descriptor_sampler);
+
+
+bool JSB_renderer_pipeline_blit(se::State &s) {
+    const auto &args = s.args();
+    size_t      argc = args.size();
+    if (argc == 4) {
+        bool ok = true;
+
+        cc::pipeline::RenderPipeline *pipeline = static_cast<cc::pipeline::RenderPipeline *>(s.nativeThisObject());
+        auto *cmdBuff  = pipeline->getCommandBuffers()[0];
+
+        // arg0
+        cc::gfx::Framebuffer *frameBuffer = static_cast<cc::gfx::Framebuffer *>(args[0].toObject()->getPrivateData());
+        auto                  renderPass  = frameBuffer->getRenderPass();
+
+        // arg1
+        cc::gfx::Rect renderArea;
+        sevalue_to_native(args[1], &renderArea, nullptr);
+
+        // arg2
+        cc::gfx::Color clearColor;
+        sevalue_to_native(args[2], &clearColor, nullptr);
+
+        // arg3
+        float clearDepth;
+        ok &= seval_to_float(args[3], &clearDepth);
+
+        // arg4
+        uint32_t clearStencil;
+        ok &= seval_to_uint32(args[4], &clearStencil);
+
+        // arg5
+        uint32_t SetIndex;
+        ok &= seval_to_uint32(args[5], &SetIndex);
+
+        // arg6
+        cc::gfx::PipelineState *state = static_cast<cc::gfx::PipelineState *>(args[6].toObject()->getPrivateData());
+
+        // arg7
+        cc::gfx::InputAssembler *inputAssembler = static_cast<cc::gfx::InputAssembler *>(args[7].toObject()->getPrivateData());
+
+        cmdBuff->beginRenderPass(renderPass, frameBuffer, renderArea, &clearColor, clearDepth, clearStencil);
+        cmdBuff->bindDescriptorSet(SetIndex, pipeline->getDescriptorSet());
+        cmdBuff->bindPipelineState(state);
+        cmdBuff->bindInputAssembler(inputAssembler);
+        cmdBuff->draw(inputAssembler);
+        cmdBuff->endRenderPass();
+
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 4);
+    return false;
+}
+SE_BIND_FUNC(JSB_renderer_pipeline_blit);
+
+
+
 bool register_all_pipeline_manual(se::Object *obj) {
     // Get the ns
     se::Value nrVal;
@@ -86,5 +224,10 @@ bool register_all_pipeline_manual(se::Object *obj) {
     psmVal.toObject()->defineFunction("getOrCreatePipelineState", _SE(JSB_getOrCreatePipelineState));
 
     __jsb_cc_pipeline_RenderPipeline_proto->defineProperty("macros", _SE(js_pipeline_RenderPipeline_getMacros), nullptr);
+
+    __jsb_cc_pipeline_RenderPipeline_proto->defineFunction("registerGlobalDescriptorBlock", _SE(JSB_register_global_descriptor_block));
+    __jsb_cc_pipeline_RenderPipeline_proto->defineFunction("registerGlobalDescriptorSampler", _SE(JSB_register_global_descriptor_sampler));
+    __jsb_cc_pipeline_RenderPipeline_proto->defineFunction("blit", _SE(JSB_renderer_pipeline_blit));
+
     return true;
 }
