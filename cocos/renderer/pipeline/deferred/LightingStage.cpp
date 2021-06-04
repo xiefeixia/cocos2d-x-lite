@@ -307,6 +307,8 @@ void LightingStage::render(Camera *camera) {
     PassView *   pass   = sceneData->getSharedData()->getDeferredLightPass();
     gfx::Shader *shader = sceneData->getSharedData()->getDeferredLightPassShader();
 
+    cmdBuff->bindDescriptorSet(static_cast<uint>(SetIndex::MATERIAL), pass->getDescriptorSet());
+
     gfx::InputAssembler *inputAssembler = pipeline->getQuadIAOffScreen();
     gfx::PipelineState * pState         = PipelineStateManager::getOrCreatePipelineState(
         pass, shader, inputAssembler, renderPass);

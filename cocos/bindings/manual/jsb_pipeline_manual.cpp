@@ -155,48 +155,56 @@ SE_BIND_FUNC(JSB_register_global_descriptor_sampler);
 bool JSB_renderer_pipeline_blit(se::State &s) {
     const auto &args = s.args();
     size_t      argc = args.size();
-    if (argc == 4) {
+    if (argc == 9) {
         bool ok = true;
 
         cc::pipeline::RenderPipeline *pipeline = static_cast<cc::pipeline::RenderPipeline *>(s.nativeThisObject());
         auto *cmdBuff  = pipeline->getCommandBuffers()[0];
 
+        int argIdx = 0;
+
         // arg0
-        cc::gfx::Framebuffer *frameBuffer = static_cast<cc::gfx::Framebuffer *>(args[0].toObject()->getPrivateData());
+        cc::gfx::Framebuffer *frameBuffer = static_cast<cc::gfx::Framebuffer *>(args[argIdx++].toObject()->getPrivateData());
         auto                  renderPass  = frameBuffer->getRenderPass();
 
         // arg1
         cc::gfx::Rect renderArea;
-        sevalue_to_native(args[1], &renderArea, nullptr);
+        sevalue_to_native(args[argIdx++], &renderArea, nullptr);
 
         // arg2
         cc::gfx::Color clearColor;
-        sevalue_to_native(args[2], &clearColor, nullptr);
+        sevalue_to_native(args[argIdx++], &clearColor, nullptr);
 
         // arg3
         float clearDepth;
-        ok &= seval_to_float(args[3], &clearDepth);
+        ok &= seval_to_float(args[argIdx++], &clearDepth);
 
         // arg4
         uint32_t clearStencil;
-        ok &= seval_to_uint32(args[4], &clearStencil);
+        ok &= seval_to_uint32(args[argIdx++], &clearStencil);
 
         // arg5
-        uint32_t SetIndex;
-        ok &= seval_to_uint32(args[5], &SetIndex);
+        cc::gfx::DescriptorSet *globalSet = static_cast<cc::gfx::DescriptorSet *>(args[argIdx++].toObject()->getPrivateData());
 
         // arg6
-        cc::gfx::PipelineState *state = static_cast<cc::gfx::PipelineState *>(args[6].toObject()->getPrivateData());
+        cc::gfx::DescriptorSet *materialSet = static_cast<cc::gfx::DescriptorSet *>(args[argIdx++].toObject()->getPrivateData());
 
         // arg7
-        cc::gfx::InputAssembler *inputAssembler = static_cast<cc::gfx::InputAssembler *>(args[7].toObject()->getPrivateData());
+        cc::gfx::PipelineState *state = static_cast<cc::gfx::PipelineState *>(args[argIdx++].toObject()->getPrivateData());
 
+        // arg8
+        cc::gfx::InputAssembler *inputAssembler = static_cast<cc::gfx::InputAssembler *>(args[argIdx++].toObject()->getPrivateData());
+
+
+        cmdBuff->begin();
         cmdBuff->beginRenderPass(renderPass, frameBuffer, renderArea, &clearColor, clearDepth, clearStencil);
-        cmdBuff->bindDescriptorSet(SetIndex, pipeline->getDescriptorSet());
+        cmdBuff->bindDescriptorSet((uint32_t)cc::pipeline::SetIndex::GLOBAL, globalSet);
+        cmdBuff->bindDescriptorSet((uint32_t)cc::pipeline::SetIndex::MATERIAL, materialSet);
         cmdBuff->bindPipelineState(state);
         cmdBuff->bindInputAssembler(inputAssembler);
         cmdBuff->draw(inputAssembler);
         cmdBuff->endRenderPass();
+        cmdBuff->end();
 
         return true;
     }

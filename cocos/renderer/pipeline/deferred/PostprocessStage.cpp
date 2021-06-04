@@ -112,6 +112,8 @@ void PostprocessStage::render(Camera *camera) {
     gfx::Shader *sd            = sceneData->getSharedData()->getDeferredPostPassShader();
     const auto & renderObjects = sceneData->getRenderObjects();
 
+    cmdBf->bindDescriptorSet(static_cast<uint>(SetIndex::MATERIAL), pv->getDescriptorSet());
+
     if (!renderObjects.empty()) {
         gfx::InputAssembler *ia  = pp->getQuadIAOffScreen();
         gfx::PipelineState * pso = PipelineStateManager::getOrCreatePipelineState(pv, sd, ia, rp);
