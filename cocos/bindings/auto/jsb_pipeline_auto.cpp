@@ -34,6 +34,7 @@
 #include "renderer/pipeline/RenderPipeline.h"
 #include "renderer/pipeline/RenderFlow.h"
 #include "renderer/pipeline/RenderStage.h"
+#include "renderer/pipeline/CommonStage.h"
 #include "renderer/pipeline/Define.h"
 #include "renderer/pipeline/helper/SharedMemory.h"
 #include "renderer/pipeline/InstancedBuffer.h"
@@ -3274,6 +3275,231 @@ bool js_register_pipeline_ShadowStage(se::Object* obj)
     se::ScriptEngine::getInstance()->clearException();
     return true;
 }
+se::Object* __jsb_cc_pipeline_CommonStage_proto = nullptr;
+se::Class* __jsb_cc_pipeline_CommonStage_class = nullptr;
+
+static bool js_pipeline_CommonStage_setClearColor(se::State& s)
+{
+    cc::pipeline::CommonStage* cobj = SE_THIS_OBJECT<cc::pipeline::CommonStage>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_CommonStage_setClearColor : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 1) {
+        HolderType<cc::gfx::Color, true> arg0 = {};
+        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
+        SE_PRECONDITION2(ok, false, "js_pipeline_CommonStage_setClearColor : Error processing arguments");
+        cobj->setClearColor(arg0.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_CommonStage_setClearColor)
+
+static bool js_pipeline_CommonStage_setClearDepth(se::State& s)
+{
+    cc::pipeline::CommonStage* cobj = SE_THIS_OBJECT<cc::pipeline::CommonStage>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_CommonStage_setClearDepth : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 1) {
+        HolderType<float, false> arg0 = {};
+        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
+        SE_PRECONDITION2(ok, false, "js_pipeline_CommonStage_setClearDepth : Error processing arguments");
+        cobj->setClearDepth(arg0.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_CommonStage_setClearDepth)
+
+static bool js_pipeline_CommonStage_setClearStencil(se::State& s)
+{
+    cc::pipeline::CommonStage* cobj = SE_THIS_OBJECT<cc::pipeline::CommonStage>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_CommonStage_setClearStencil : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 1) {
+        HolderType<unsigned int, false> arg0 = {};
+        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
+        SE_PRECONDITION2(ok, false, "js_pipeline_CommonStage_setClearStencil : Error processing arguments");
+        cobj->setClearStencil(arg0.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_CommonStage_setClearStencil)
+
+static bool js_pipeline_CommonStage_setDirty(se::State& s)
+{
+    cc::pipeline::CommonStage* cobj = SE_THIS_OBJECT<cc::pipeline::CommonStage>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_CommonStage_setDirty : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 1) {
+        HolderType<bool, false> arg0 = {};
+        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
+        SE_PRECONDITION2(ok, false, "js_pipeline_CommonStage_setDirty : Error processing arguments");
+        cobj->setDirty(arg0.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_CommonStage_setDirty)
+
+static bool js_pipeline_CommonStage_setFramebuffer(se::State& s)
+{
+    cc::pipeline::CommonStage* cobj = SE_THIS_OBJECT<cc::pipeline::CommonStage>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_CommonStage_setFramebuffer : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 1) {
+        HolderType<cc::gfx::Framebuffer*, false> arg0 = {};
+        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
+        SE_PRECONDITION2(ok, false, "js_pipeline_CommonStage_setFramebuffer : Error processing arguments");
+        cobj->setFramebuffer(arg0.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_CommonStage_setFramebuffer)
+
+static bool js_pipeline_CommonStage_setInputAssembler(se::State& s)
+{
+    cc::pipeline::CommonStage* cobj = SE_THIS_OBJECT<cc::pipeline::CommonStage>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_CommonStage_setInputAssembler : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 1) {
+        HolderType<cc::gfx::InputAssembler*, false> arg0 = {};
+        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
+        SE_PRECONDITION2(ok, false, "js_pipeline_CommonStage_setInputAssembler : Error processing arguments");
+        cobj->setInputAssembler(arg0.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_CommonStage_setInputAssembler)
+
+static bool js_pipeline_CommonStage_setPassHandle(se::State& s)
+{
+    cc::pipeline::CommonStage* cobj = SE_THIS_OBJECT<cc::pipeline::CommonStage>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_CommonStage_setPassHandle : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 1) {
+        HolderType<unsigned int, false> arg0 = {};
+        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
+        SE_PRECONDITION2(ok, false, "js_pipeline_CommonStage_setPassHandle : Error processing arguments");
+        cobj->setPassHandle(arg0.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_CommonStage_setPassHandle)
+
+static bool js_pipeline_CommonStage_setPipelineState(se::State& s)
+{
+    cc::pipeline::CommonStage* cobj = SE_THIS_OBJECT<cc::pipeline::CommonStage>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_CommonStage_setPipelineState : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 1) {
+        HolderType<cc::gfx::PipelineState*, false> arg0 = {};
+        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
+        SE_PRECONDITION2(ok, false, "js_pipeline_CommonStage_setPipelineState : Error processing arguments");
+        cobj->setPipelineState(arg0.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_CommonStage_setPipelineState)
+
+static bool js_pipeline_CommonStage_setRenderArea(se::State& s)
+{
+    cc::pipeline::CommonStage* cobj = SE_THIS_OBJECT<cc::pipeline::CommonStage>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_CommonStage_setRenderArea : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 1) {
+        HolderType<cc::gfx::Rect, true> arg0 = {};
+        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
+        SE_PRECONDITION2(ok, false, "js_pipeline_CommonStage_setRenderArea : Error processing arguments");
+        cobj->setRenderArea(arg0.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_CommonStage_setRenderArea)
+
+SE_DECLARE_FINALIZE_FUNC(js_cc_pipeline_CommonStage_finalize)
+
+static bool js_pipeline_CommonStage_constructor(se::State& s) // constructor.c
+{
+    cc::pipeline::CommonStage* cobj = JSB_ALLOC(cc::pipeline::CommonStage);
+    s.thisObject()->setPrivateData(cobj);
+    se::NonRefNativePtrCreatedByCtorMap::emplace(cobj);
+    return true;
+}
+SE_BIND_CTOR(js_pipeline_CommonStage_constructor, __jsb_cc_pipeline_CommonStage_class, js_cc_pipeline_CommonStage_finalize)
+
+
+
+extern se::Object* __jsb_cc_pipeline_RenderStage_proto;
+
+static bool js_cc_pipeline_CommonStage_finalize(se::State& s)
+{
+    auto iter = se::NonRefNativePtrCreatedByCtorMap::find(SE_THIS_OBJECT<cc::pipeline::CommonStage>(s));
+    if (iter != se::NonRefNativePtrCreatedByCtorMap::end())
+    {
+        se::NonRefNativePtrCreatedByCtorMap::erase(iter);
+        cc::pipeline::CommonStage* cobj = SE_THIS_OBJECT<cc::pipeline::CommonStage>(s);
+        JSB_FREE(cobj);
+    }
+    return true;
+}
+SE_BIND_FINALIZE_FUNC(js_cc_pipeline_CommonStage_finalize)
+
+bool js_register_pipeline_CommonStage(se::Object* obj)
+{
+    auto cls = se::Class::create("CommonStage", obj, __jsb_cc_pipeline_RenderStage_proto, _SE(js_pipeline_CommonStage_constructor));
+
+    cls->defineFunction("setClearColor", _SE(js_pipeline_CommonStage_setClearColor));
+    cls->defineFunction("setClearDepth", _SE(js_pipeline_CommonStage_setClearDepth));
+    cls->defineFunction("setClearStencil", _SE(js_pipeline_CommonStage_setClearStencil));
+    cls->defineFunction("setDirty", _SE(js_pipeline_CommonStage_setDirty));
+    cls->defineFunction("setFramebuffer", _SE(js_pipeline_CommonStage_setFramebuffer));
+    cls->defineFunction("setInputAssembler", _SE(js_pipeline_CommonStage_setInputAssembler));
+    cls->defineFunction("setPassHandle", _SE(js_pipeline_CommonStage_setPassHandle));
+    cls->defineFunction("setPipelineState", _SE(js_pipeline_CommonStage_setPipelineState));
+    cls->defineFunction("setRenderArea", _SE(js_pipeline_CommonStage_setRenderArea));
+    cls->defineFinalizeFunction(_SE(js_cc_pipeline_CommonStage_finalize));
+    cls->install();
+    JSBClassType::registerClass<cc::pipeline::CommonStage>(cls);
+
+    __jsb_cc_pipeline_CommonStage_proto = cls->getProto();
+    __jsb_cc_pipeline_CommonStage_class = cls;
+
+    se::ScriptEngine::getInstance()->clearException();
+    return true;
+}
 se::Object* __jsb_cc_pipeline_InstancedBuffer_proto = nullptr;
 se::Class* __jsb_cc_pipeline_InstancedBuffer_class = nullptr;
 
@@ -3758,6 +3984,7 @@ bool register_all_pipeline(se::Object* obj)
     js_register_pipeline_ForwardStage(ns);
     js_register_pipeline_GbufferStage(ns);
     js_register_pipeline_InstancedBuffer(ns);
+    js_register_pipeline_CommonStage(ns);
     js_register_pipeline_RenderStageInfo(ns);
     js_register_pipeline_LightingStage(ns);
     js_register_pipeline_ShadowStage(ns);

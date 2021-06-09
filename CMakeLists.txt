@@ -794,6 +794,8 @@ cocos_source_files(
                  cocos/renderer/pipeline/RenderQueue.h
                  cocos/renderer/pipeline/RenderStage.cpp
                  cocos/renderer/pipeline/RenderStage.h
+                 cocos/renderer/pipeline/CommonStage.cpp
+                 cocos/renderer/pipeline/CommonStage.h
                  cocos/renderer/pipeline/PlanarShadowQueue.cpp
                  cocos/renderer/pipeline/PlanarShadowQueue.h
                  cocos/renderer/pipeline/ShadowMapBatchedQueue.cpp

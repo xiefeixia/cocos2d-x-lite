@@ -37,6 +37,7 @@
 #include "cocos/renderer/pipeline/RenderPipeline.h"
 #include "cocos/renderer/pipeline/RenderFlow.h"
 #include "cocos/renderer/pipeline/RenderStage.h"
+#include "cocos/renderer/pipeline/CommonStage.h"
 #include "cocos/renderer/pipeline/Define.h"
 #include "cocos/renderer/pipeline/helper/SharedMemory.h"
 #include "cocos/renderer/pipeline/InstancedBuffer.h"
@@ -220,6 +221,24 @@ SE_DECLARE_FUNC(js_pipeline_ShadowStage_setFramebuffer);
 SE_DECLARE_FUNC(js_pipeline_ShadowStage_setUseData);
 SE_DECLARE_FUNC(js_pipeline_ShadowStage_getInitializeInfo);
 SE_DECLARE_FUNC(js_pipeline_ShadowStage_ShadowStage);
+
+extern se::Object* __jsb_cc_pipeline_CommonStage_proto;
+extern se::Class* __jsb_cc_pipeline_CommonStage_class;
+
+bool js_register_cc_pipeline_CommonStage(se::Object* obj);
+bool register_all_pipeline(se::Object* obj);
+
+JSB_REGISTER_OBJECT_TYPE(cc::pipeline::CommonStage);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setClearColor);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setClearDepth);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setClearStencil);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setDirty);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setFramebuffer);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setInputAssembler);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setPassHandle);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setPipelineState);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setRenderArea);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_CommonStage);
 
 extern se::Object* __jsb_cc_pipeline_InstancedBuffer_proto;
 extern se::Class* __jsb_cc_pipeline_InstancedBuffer_class;
