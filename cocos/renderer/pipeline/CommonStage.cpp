@@ -56,7 +56,7 @@ void CommonStage::render(scene::Camera *camera) {
         return;
     }
 
-    //_dirty = false;
+    _dirty = false;
 
     gfx::CommandBuffer *cmdBuff = _pipeline->getCommandBuffers()[0];
 
