@@ -38,6 +38,7 @@
 #include "cocos/renderer/pipeline/RenderFlow.h"
 #include "cocos/renderer/pipeline/RenderStage.h"
 #include "cocos/renderer/pipeline/CommonStage.h"
+#include "cocos/renderer/pipeline/deferred/InstanceObjectQueue.h"
 #include "cocos/renderer/pipeline/Define.h"
 #include "cocos/renderer/pipeline/helper/SharedMemory.h"
 #include "cocos/renderer/pipeline/InstancedBuffer.h"
@@ -240,6 +241,21 @@ SE_DECLARE_FUNC(js_pipeline_CommonStage_setPipelineState);
 SE_DECLARE_FUNC(js_pipeline_CommonStage_setRenderArea);
 SE_DECLARE_FUNC(js_pipeline_CommonStage_CommonStage);
 
+extern se::Object* __jsb_cc_pipeline_InstanceObjectQueue_proto;
+extern se::Class* __jsb_cc_pipeline_InstanceObjectQueue_class;
+
+bool js_register_cc_pipeline_InstanceObjectQueue(se::Object* obj);
+bool register_all_pipeline(se::Object* obj);
+
+JSB_REGISTER_OBJECT_TYPE(cc::pipeline::InstanceObjectQueue);
+SE_DECLARE_FUNC(js_pipeline_InstanceObjectQueue_add);
+SE_DECLARE_FUNC(js_pipeline_InstanceObjectQueue_clear);
+SE_DECLARE_FUNC(js_pipeline_InstanceObjectQueue_setLayer);
+SE_DECLARE_FUNC(js_pipeline_InstanceObjectQueue_uploadBuffers);
+SE_DECLARE_FUNC(js_pipeline_InstanceObjectQueue_mergeInstance);
+SE_DECLARE_FUNC(js_pipeline_InstanceObjectQueue_createInstanceBuffer);
+SE_DECLARE_FUNC(js_pipeline_InstanceObjectQueue_InstanceObjectQueue);
+
 extern se::Object* __jsb_cc_pipeline_InstancedBuffer_proto;
 extern se::Class* __jsb_cc_pipeline_InstancedBuffer_class;
 
@@ -278,6 +294,8 @@ bool js_register_cc_pipeline_GbufferStage(se::Object* obj);
 bool register_all_pipeline(se::Object* obj);
 
 JSB_REGISTER_OBJECT_TYPE(cc::pipeline::GbufferStage);
+SE_DECLARE_FUNC(js_pipeline_GbufferStage_getInstanceObjectQueue);
+SE_DECLARE_FUNC(js_pipeline_GbufferStage_setInstanceObjectQueue);
 SE_DECLARE_FUNC(js_pipeline_GbufferStage_getInitializeInfo);
 SE_DECLARE_FUNC(js_pipeline_GbufferStage_GbufferStage);
 

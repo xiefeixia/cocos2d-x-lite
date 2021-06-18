@@ -35,6 +35,7 @@
 #include "renderer/pipeline/RenderFlow.h"
 #include "renderer/pipeline/RenderStage.h"
 #include "renderer/pipeline/CommonStage.h"
+#include "renderer/pipeline/deferred/InstanceObjectQueue.h"
 #include "renderer/pipeline/Define.h"
 #include "renderer/pipeline/helper/SharedMemory.h"
 #include "renderer/pipeline/InstancedBuffer.h"
@@ -327,7 +328,7 @@ static bool js_pipeline_Light_getType(se::State& s)
     size_t argc = args.size();
     CC_UNUSED bool ok = true;
     if (argc == 0) {
-        int result = (int)cobj->getType();
+        auto result = static_cast<int>(cobj->getType());
         ok &= nativevalue_to_se(result, s.rval(), nullptr /*ctx*/);
         SE_PRECONDITION2(ok, false, "js_pipeline_Light_getType : Error processing arguments");
         SE_HOLD_RETURN_VALUE(result, s.thisObject(), s.rval());
@@ -941,7 +942,7 @@ static bool js_pipeline_PassView_getBatchingScheme(se::State& s)
     size_t argc = args.size();
     CC_UNUSED bool ok = true;
     if (argc == 0) {
-        int result = (int)cobj->getBatchingScheme();
+        auto result = static_cast<int>(cobj->getBatchingScheme());
         ok &= nativevalue_to_se(result, s.rval(), nullptr /*ctx*/);
         SE_PRECONDITION2(ok, false, "js_pipeline_PassView_getBatchingScheme : Error processing arguments");
         SE_HOLD_RETURN_VALUE(result, s.thisObject(), s.rval());
@@ -1017,7 +1018,7 @@ static bool js_pipeline_PassView_getDynamicState(se::State& s)
     size_t argc = args.size();
     CC_UNUSED bool ok = true;
     if (argc == 0) {
-        int result = (int)cobj->getDynamicState();
+        auto result = static_cast<int>(cobj->getDynamicState());
         ok &= nativevalue_to_se(result, s.rval(), nullptr /*ctx*/);
         SE_PRECONDITION2(ok, false, "js_pipeline_PassView_getDynamicState : Error processing arguments");
         SE_HOLD_RETURN_VALUE(result, s.thisObject(), s.rval());
@@ -1055,7 +1056,7 @@ static bool js_pipeline_PassView_getPrimitive(se::State& s)
     size_t argc = args.size();
     CC_UNUSED bool ok = true;
     if (argc == 0) {
-        int result = (int)cobj->getPrimitive();
+        auto result = static_cast<int>(cobj->getPrimitive());
         ok &= nativevalue_to_se(result, s.rval(), nullptr /*ctx*/);
         SE_PRECONDITION2(ok, false, "js_pipeline_PassView_getPrimitive : Error processing arguments");
         SE_HOLD_RETURN_VALUE(result, s.thisObject(), s.rval());
@@ -3500,6 +3501,167 @@ bool js_register_pipeline_CommonStage(se::Object* obj)
     se::ScriptEngine::getInstance()->clearException();
     return true;
 }
+se::Object* __jsb_cc_pipeline_InstanceObjectQueue_proto = nullptr;
+se::Class* __jsb_cc_pipeline_InstanceObjectQueue_class = nullptr;
+
+static bool js_pipeline_InstanceObjectQueue_add(se::State& s)
+{
+    cc::pipeline::InstanceObjectQueue* cobj = SE_THIS_OBJECT<cc::pipeline::InstanceObjectQueue>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_InstanceObjectQueue_add : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 1) {
+        HolderType<cc::pipeline::InstancedBuffer*, false> arg0 = {};
+        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
+        SE_PRECONDITION2(ok, false, "js_pipeline_InstanceObjectQueue_add : Error processing arguments");
+        cobj->add(arg0.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_InstanceObjectQueue_add)
+
+static bool js_pipeline_InstanceObjectQueue_clear(se::State& s)
+{
+    cc::pipeline::InstanceObjectQueue* cobj = SE_THIS_OBJECT<cc::pipeline::InstanceObjectQueue>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_InstanceObjectQueue_clear : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    if (argc == 0) {
+        cobj->clear();
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 0);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_InstanceObjectQueue_clear)
+
+static bool js_pipeline_InstanceObjectQueue_setLayer(se::State& s)
+{
+    cc::pipeline::InstanceObjectQueue* cobj = SE_THIS_OBJECT<cc::pipeline::InstanceObjectQueue>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_InstanceObjectQueue_setLayer : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 1) {
+        HolderType<unsigned int, false> arg0 = {};
+        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
+        SE_PRECONDITION2(ok, false, "js_pipeline_InstanceObjectQueue_setLayer : Error processing arguments");
+        cobj->setLayer(arg0.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_InstanceObjectQueue_setLayer)
+
+static bool js_pipeline_InstanceObjectQueue_uploadBuffers(se::State& s)
+{
+    cc::pipeline::InstanceObjectQueue* cobj = SE_THIS_OBJECT<cc::pipeline::InstanceObjectQueue>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_InstanceObjectQueue_uploadBuffers : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    if (argc == 0) {
+        cobj->uploadBuffers();
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 0);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_InstanceObjectQueue_uploadBuffers)
+
+static bool js_pipeline_InstanceObjectQueue_mergeInstance(se::State& s)
+{
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 4) {
+        HolderType<cc::pipeline::InstancedBuffer*, false> arg0 = {};
+        HolderType<unsigned int, false> arg1 = {};
+        HolderType<unsigned int, false> arg2 = {};
+        HolderType<unsigned int, false> arg3 = {};
+        ok &= sevalue_to_native(args[0], &arg0, nullptr);
+        ok &= sevalue_to_native(args[1], &arg1, nullptr);
+        ok &= sevalue_to_native(args[2], &arg2, nullptr);
+        ok &= sevalue_to_native(args[3], &arg3, nullptr);
+        SE_PRECONDITION2(ok, false, "js_pipeline_InstanceObjectQueue_mergeInstance : Error processing arguments");
+        cc::pipeline::InstanceObjectQueue::mergeInstance(arg0.value(), arg1.value(), arg2.value(), arg3.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 4);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_InstanceObjectQueue_mergeInstance)
+
+static bool js_pipeline_InstanceObjectQueue_createInstanceBuffer(se::State& s)
+{
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 1) {
+        HolderType<unsigned int, false> arg0 = {};
+        ok &= sevalue_to_native(args[0], &arg0, nullptr);
+        SE_PRECONDITION2(ok, false, "js_pipeline_InstanceObjectQueue_createInstanceBuffer : Error processing arguments");
+        cc::pipeline::InstancedBuffer* result = cc::pipeline::InstanceObjectQueue::createInstanceBuffer(arg0.value());
+        ok &= nativevalue_to_se(result, s.rval(), nullptr /*ctx*/);
+        SE_PRECONDITION2(ok, false, "js_pipeline_InstanceObjectQueue_createInstanceBuffer : Error processing arguments");
+        SE_HOLD_RETURN_VALUE(result, s.thisObject(), s.rval());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_InstanceObjectQueue_createInstanceBuffer)
+
+SE_DECLARE_FINALIZE_FUNC(js_cc_pipeline_InstanceObjectQueue_finalize)
+
+static bool js_pipeline_InstanceObjectQueue_constructor(se::State& s) // constructor.c
+{
+    cc::pipeline::InstanceObjectQueue* cobj = JSB_ALLOC(cc::pipeline::InstanceObjectQueue);
+    s.thisObject()->setPrivateData(cobj);
+    se::NonRefNativePtrCreatedByCtorMap::emplace(cobj);
+    return true;
+}
+SE_BIND_CTOR(js_pipeline_InstanceObjectQueue_constructor, __jsb_cc_pipeline_InstanceObjectQueue_class, js_cc_pipeline_InstanceObjectQueue_finalize)
+
+
+
+
+static bool js_cc_pipeline_InstanceObjectQueue_finalize(se::State& s)
+{
+    auto iter = se::NonRefNativePtrCreatedByCtorMap::find(SE_THIS_OBJECT<cc::pipeline::InstanceObjectQueue>(s));
+    if (iter != se::NonRefNativePtrCreatedByCtorMap::end())
+    {
+        se::NonRefNativePtrCreatedByCtorMap::erase(iter);
+        cc::pipeline::InstanceObjectQueue* cobj = SE_THIS_OBJECT<cc::pipeline::InstanceObjectQueue>(s);
+        JSB_FREE(cobj);
+    }
+    return true;
+}
+SE_BIND_FINALIZE_FUNC(js_cc_pipeline_InstanceObjectQueue_finalize)
+
+bool js_register_pipeline_InstanceObjectQueue(se::Object* obj)
+{
+    auto cls = se::Class::create("InstanceObjectQueue", obj, nullptr, _SE(js_pipeline_InstanceObjectQueue_constructor));
+
+    cls->defineFunction("add", _SE(js_pipeline_InstanceObjectQueue_add));
+    cls->defineFunction("clear", _SE(js_pipeline_InstanceObjectQueue_clear));
+    cls->defineFunction("setLayer", _SE(js_pipeline_InstanceObjectQueue_setLayer));
+    cls->defineFunction("uploadBuffers", _SE(js_pipeline_InstanceObjectQueue_uploadBuffers));
+    cls->defineStaticFunction("mergeInstance", _SE(js_pipeline_InstanceObjectQueue_mergeInstance));
+    cls->defineStaticFunction("createInstanceBuffer", _SE(js_pipeline_InstanceObjectQueue_createInstanceBuffer));
+    cls->defineFinalizeFunction(_SE(js_cc_pipeline_InstanceObjectQueue_finalize));
+    cls->install();
+    JSBClassType::registerClass<cc::pipeline::InstanceObjectQueue>(cls);
+
+    __jsb_cc_pipeline_InstanceObjectQueue_proto = cls->getProto();
+    __jsb_cc_pipeline_InstanceObjectQueue_class = cls;
+
+    se::ScriptEngine::getInstance()->clearException();
+    return true;
+}
 se::Object* __jsb_cc_pipeline_InstancedBuffer_proto = nullptr;
 se::Class* __jsb_cc_pipeline_InstancedBuffer_class = nullptr;
 
@@ -3736,6 +3898,44 @@ bool js_register_pipeline_GbufferFlow(se::Object* obj)
 se::Object* __jsb_cc_pipeline_GbufferStage_proto = nullptr;
 se::Class* __jsb_cc_pipeline_GbufferStage_class = nullptr;
 
+static bool js_pipeline_GbufferStage_getInstanceObjectQueue(se::State& s)
+{
+    cc::pipeline::GbufferStage* cobj = SE_THIS_OBJECT<cc::pipeline::GbufferStage>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_GbufferStage_getInstanceObjectQueue : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 0) {
+        cc::pipeline::InstanceObjectQueue* result = cobj->getInstanceObjectQueue();
+        ok &= nativevalue_to_se(result, s.rval(), nullptr /*ctx*/);
+        SE_PRECONDITION2(ok, false, "js_pipeline_GbufferStage_getInstanceObjectQueue : Error processing arguments");
+        SE_HOLD_RETURN_VALUE(result, s.thisObject(), s.rval());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 0);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_GbufferStage_getInstanceObjectQueue)
+
+static bool js_pipeline_GbufferStage_setInstanceObjectQueue(se::State& s)
+{
+    cc::pipeline::GbufferStage* cobj = SE_THIS_OBJECT<cc::pipeline::GbufferStage>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_GbufferStage_setInstanceObjectQueue : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 1) {
+        HolderType<cc::pipeline::InstanceObjectQueue*, false> arg0 = {};
+        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
+        SE_PRECONDITION2(ok, false, "js_pipeline_GbufferStage_setInstanceObjectQueue : Error processing arguments");
+        cobj->setInstanceObjectQueue(arg0.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_GbufferStage_setInstanceObjectQueue)
+
 static bool js_pipeline_GbufferStage_getInitializeInfo(se::State& s)
 {
     const auto& args = s.args();
@@ -3785,6 +3985,8 @@ bool js_register_pipeline_GbufferStage(se::Object* obj)
 {
     auto cls = se::Class::create("GbufferStage", obj, __jsb_cc_pipeline_RenderStage_proto, _SE(js_pipeline_GbufferStage_constructor));
 
+    cls->defineFunction("getInstanceObjectQueue", _SE(js_pipeline_GbufferStage_getInstanceObjectQueue));
+    cls->defineFunction("setInstanceObjectQueue", _SE(js_pipeline_GbufferStage_setInstanceObjectQueue));
     cls->defineStaticFunction("getInitializeInfo", _SE(js_pipeline_GbufferStage_getInitializeInfo));
     cls->defineFinalizeFunction(_SE(js_cc_pipeline_GbufferStage_finalize));
     cls->install();
@@ -3981,12 +4183,13 @@ bool register_all_pipeline(se::Object* obj)
 
     js_register_pipeline_RenderStage(ns);
     js_register_pipeline_PostprocessStage(ns);
-    js_register_pipeline_ForwardStage(ns);
+    js_register_pipeline_RenderWindow(ns);
     js_register_pipeline_GbufferStage(ns);
+    js_register_pipeline_InstanceObjectQueue(ns);
     js_register_pipeline_InstancedBuffer(ns);
     js_register_pipeline_CommonStage(ns);
     js_register_pipeline_RenderStageInfo(ns);
-    js_register_pipeline_LightingStage(ns);
+    js_register_pipeline_ForwardStage(ns);
     js_register_pipeline_ShadowStage(ns);
     js_register_pipeline_RenderFlow(ns);
     js_register_pipeline_ForwardFlow(ns);
@@ -3994,10 +4197,10 @@ bool register_all_pipeline(se::Object* obj)
     js_register_pipeline_DeferredPipeline(ns);
     js_register_pipeline_GbufferFlow(ns);
     js_register_pipeline_PassView(ns);
+    js_register_pipeline_LightingStage(ns);
     js_register_pipeline_ForwardPipeline(ns);
     js_register_pipeline_Light(ns);
     js_register_pipeline_RenderFlowInfo(ns);
-    js_register_pipeline_RenderWindow(ns);
     js_register_pipeline_RenderQueueDesc(ns);
     js_register_pipeline_RenderPipelineInfo(ns);
     js_register_pipeline_LightingFlow(ns);

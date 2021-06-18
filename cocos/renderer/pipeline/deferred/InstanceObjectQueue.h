@@ -1,5 +1,5 @@
 /****************************************************************************
- Copyright (c) 2020-2021 Huawei Technologies Co., Ltd.
+ Copyright (c) 2020-2021 Xiamen Yaji Software Co., Ltd.
 
  http://www.cocos.com
 
@@ -25,44 +25,38 @@
 
 #pragma once
 
-#include "pipeline/RenderStage.h"
-#include "gfx-base/GFXFramebuffer.h"
+#include "base/CoreStd.h"
 
 namespace cc {
+
+namespace gfx {
+class Device;
+class RenderPass;
+class CommandBuffer;
+} // namespace gfx
+
 namespace pipeline {
 
-class RenderFlow;
-class RenderBatchedQueue;
-class RenderInstancedQueue;
-class RenderAdditiveLightQueue;
-class PlanarShadowQueue;
+class InstancedBuffer;
 struct Camera;
-struct DeferredRenderData;
-class InstanceObjectQueue;
 
-class CC_DLL GbufferStage : public RenderStage {
+class CC_DLL InstanceObjectQueue : public Object {
 public:
-    static const RenderStageInfo &getInitializeInfo();
+    InstanceObjectQueue() = default;
+    ~InstanceObjectQueue() = default;
 
-    GbufferStage();
-    ~GbufferStage() override;
+    void setLayer (uint layer) { _layer = layer; }
+    void recordCommandBuffer(gfx::Device *device, gfx::RenderPass *renderPass, gfx::CommandBuffer *cmdBuffer, Camera *camera);
+    void add(InstancedBuffer *instancedBuffer);
+    void uploadBuffers();
+    void clear();
 
-    bool initialize(const RenderStageInfo &info) override;
-    void activate(RenderPipeline *pipeline, RenderFlow *flow) override;
-    void destroy() override;
-    void render(Camera *camera) override;
-
-    void setInstanceObjectQueue(InstanceObjectQueue* v) { _instanceObjectQueue = v; }
-    InstanceObjectQueue *getInstanceObjectQueue() { return _instanceObjectQueue; }
+    static void mergeInstance(InstancedBuffer *buffer, uint modelHandle, uint subModelHandle, uint passIdx);
+    static InstancedBuffer *createInstanceBuffer(uint passHandle);
 
 private:
-    static RenderStageInfo initInfo;
-    PlanarShadowQueue *_planarShadowQueue = nullptr;
-    RenderBatchedQueue *_batchedQueue = nullptr;
-    RenderInstancedQueue *_instancedQueue = nullptr;
-    InstanceObjectQueue *_instanceObjectQueue = nullptr;
-    gfx::Rect _renderArea;
-    uint _phaseID = 0;
+    uint                             _layer = 0;
+    unordered_set<InstancedBuffer *> _queues;
 };
 
 } // namespace pipeline

@@ -816,6 +816,8 @@ cocos_source_files(
                  cocos/renderer/pipeline/forward/UIPhase.h
                  cocos/renderer/pipeline/deferred/DeferredPipeline.cpp
                  cocos/renderer/pipeline/deferred/DeferredPipeline.h
+                 cocos/renderer/pipeline/deferred/InstanceObjectQueue.cpp
+                 cocos/renderer/pipeline/deferred/InstanceObjectQueue.h
                  cocos/renderer/pipeline/deferred/GbufferFlow.cpp
                  cocos/renderer/pipeline/deferred/GbufferFlow.h
                  cocos/renderer/pipeline/deferred/GbufferStage.cpp

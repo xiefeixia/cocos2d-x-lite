@@ -38,6 +38,8 @@
 #include "gfx-base/GFXFramebuffer.h"
 #include "gfx-base/GFXQueue.h"
 
+#include "./InstanceObjectQueue.h"
+
 namespace cc {
 namespace pipeline {
 namespace {
@@ -160,6 +162,10 @@ void GbufferStage::render(Camera *camera) {
     _instancedQueue->recordCommandBuffer(_device, renderPass, cmdBuff);
     _batchedQueue->recordCommandBuffer(_device, renderPass, cmdBuff);
     //_renderQueues[1]->recordCommandBuffer(_device, renderPass, cmdBuff);
+
+    if (_instanceObjectQueue != nullptr) {
+        _instanceObjectQueue->recordCommandBuffer(_device, renderPass, cmdBuff, camera);
+    }
 
     cmdBuff->endRenderPass();
 }
