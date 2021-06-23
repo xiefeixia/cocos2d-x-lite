@@ -32,6 +32,7 @@
 #include "renderer/pipeline/Define.h"
 #include "renderer/pipeline/PipelineStateManager.h"
 #include "renderer/pipeline/RenderPipeline.h"
+#include "renderer/pipeline/deferred/InstanceObjectQueue.h"
 #include "renderer/gfx-base/GFXFramebuffer.h"
 
 static bool js_pipeline_RenderPipeline_getMacros(se::State &s) {
@@ -213,6 +214,63 @@ bool JSB_renderer_pipeline_blit(se::State &s) {
 }
 SE_BIND_FUNC(JSB_renderer_pipeline_blit);
 
+static bool jsb_InstanceObjectQueue_setNativeDataArray(se::State &s) { // NOLINT
+    auto *cobj = SE_THIS_OBJECT<cc::pipeline::InstanceObjectQueue>(s);
+    SE_PRECONDITION2(cobj, false, "jsb_InstanceObjectQueue_setNativeDataArray : Invalid Native Object");
+    const auto &   args = s.args();
+    size_t         argc = args.size();
+    CC_UNUSED bool ok   = true;
+    if (argc == 1) {
+        if (!args[0].isObject()) {
+            SE_REPORT_ERROR("jsb_InstanceObjectQueue_setNativeDataArray: parameter 2 wants a Object");
+            return false;
+        }
+        se::Object *value = args[0].toObject();
+        cobj->setNativeDataArray(value);
+        return true;
+    }
+    SE_REPORT_ERROR("jsb_InstanceObjectQueue_setNativeDataArray: wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+}
+SE_BIND_FUNC(jsb_InstanceObjectQueue_setNativeDataArray)
+
+static bool jsb_InstanceObjectQueue_processNativeDataArray(se::State &s) { // NOLINT
+    auto *cobj = SE_THIS_OBJECT<cc::pipeline::InstanceObjectQueue>(s);
+    SE_PRECONDITION2(cobj, false, "jsb_InstanceObjectQueue_processNativeDataArray : Invalid Native Object");
+    const auto &   args = s.args();
+    size_t         argc = args.size();
+    CC_UNUSED bool ok   = true;
+    if (argc == 1) {
+        bool ok = true;
+        uint count = 0;
+        ok &= seval_to_uint(args[0], &count);
+        SE_PRECONDITION2(ok, false, "jsb_InstanceObjectQueue_processNativeDataArray : Error processing arguments");
+
+        cobj->processNativeDataArray(count);
+        return true;
+    }
+    SE_REPORT_ERROR("jsb_InstanceObjectQueue_processNativeDataArray: wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+}
+SE_BIND_FUNC(jsb_InstanceObjectQueue_processNativeDataArray)
+
+static bool jsb_InstanceObjectQueue_setPhase(se::State &s) { // NOLINT
+    auto *cobj = SE_THIS_OBJECT<cc::pipeline::InstanceObjectQueue>(s);
+    SE_PRECONDITION2(cobj, false, "jsb_InstanceObjectQueue_setPhase : Invalid Native Object");
+    const auto &   args = s.args();
+    size_t         argc = args.size();
+    CC_UNUSED bool ok   = true;
+    if (argc == 1) {
+        bool ok = true;
+        uint phase = 0;
+        ok &= seval_to_uint(args[0], &phase);
+        SE_PRECONDITION2(ok, false, "jsb_InstanceObjectQueue_setPhase : Error processing arguments");
+
+        cobj->setPhase(phase);
+        return true;
+    }
+    SE_REPORT_ERROR("jsb_InstanceObjectQueue_setPhase: wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+}
+SE_BIND_FUNC(jsb_InstanceObjectQueue_setPhase)
+
 
 
 bool register_all_pipeline_manual(se::Object *obj) {
@@ -236,6 +294,10 @@ bool register_all_pipeline_manual(se::Object *obj) {
     __jsb_cc_pipeline_RenderPipeline_proto->defineFunction("registerGlobalDescriptorBlock", _SE(JSB_register_global_descriptor_block));
     __jsb_cc_pipeline_RenderPipeline_proto->defineFunction("registerGlobalDescriptorSampler", _SE(JSB_register_global_descriptor_sampler));
     __jsb_cc_pipeline_RenderPipeline_proto->defineFunction("blit", _SE(JSB_renderer_pipeline_blit));
+
+    __jsb_cc_pipeline_InstanceObjectQueue_proto->defineFunction("setNativeDataArray", _SE(jsb_InstanceObjectQueue_setNativeDataArray));
+    __jsb_cc_pipeline_InstanceObjectQueue_proto->defineFunction("processNativeDataArray", _SE(jsb_InstanceObjectQueue_processNativeDataArray));
+    __jsb_cc_pipeline_InstanceObjectQueue_proto->defineFunction("setPhase", _SE(jsb_InstanceObjectQueue_setPhase));
 
     return true;
 }

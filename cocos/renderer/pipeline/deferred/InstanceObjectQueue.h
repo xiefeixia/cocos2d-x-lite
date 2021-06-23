@@ -26,6 +26,7 @@
 #pragma once
 
 #include "base/CoreStd.h"
+#include "cocos/bindings/jswrapper/Object.h"
 
 namespace cc {
 
@@ -46,17 +47,23 @@ public:
     ~InstanceObjectQueue() = default;
 
     void setLayer (uint layer) { _layer = layer; }
+    void setPhase(uint phase) { _phase = phase; }
     void recordCommandBuffer(gfx::Device *device, gfx::RenderPass *renderPass, gfx::CommandBuffer *cmdBuffer, Camera *camera);
     void add(InstancedBuffer *instancedBuffer);
     void uploadBuffers();
     void clear();
+
+    void setNativeDataArray(se::Object *dataArray);
+    void processNativeDataArray(uint count);
 
     static void mergeInstance(InstancedBuffer *buffer, uint modelHandle, uint subModelHandle, uint passIdx);
     static InstancedBuffer *createInstanceBuffer(uint passHandle);
 
 private:
     uint                             _layer = 0;
+    uint                             _phase = 0;
     unordered_set<InstancedBuffer *> _queues;
+    se::Object *                     _dataArray = nullptr;
 };
 
 } // namespace pipeline

@@ -83,10 +83,55 @@ void InstanceObjectQueue::add(InstancedBuffer *instancedBuffer) {
     _queues.emplace(instancedBuffer);
 }
 
+void InstanceObjectQueue::setNativeDataArray(se::Object *dataArray) {
+    if (_dataArray != nullptr) {
+        _dataArray->decRef();
+    }
+    if (dataArray != nullptr) {
+        dataArray->incRef();
+    }
+    _dataArray = dataArray;
+}
+void InstanceObjectQueue::processNativeDataArray(uint count) {
+    uint8_t *data = nullptr;
+    size_t   size = 0;
+    _dataArray->getTypedArrayData(&data, &size);
+
+    uint *originData = (uint *)data;
+    for (auto i = 0; i < count; i++) {
+        uint              modelHandle   = *(originData + i);
+        const auto *model = GET_MODEL(modelHandle);
+        const auto *const subModelID    = model->getSubModelID();
+        const auto        subModelCount = subModelID[0];
+        for (auto m = 1; m <= subModelCount; ++m) {
+            const auto *const subModel = cc::pipeline::ModelView::getSubModelView(subModelID[m]);
+            for (auto p = 0; p < subModel->passCount; ++p) {
+                const PassView *pass = subModel->getPassView(p);
+                if (pass->phase != _phase) continue;
+
+                auto *instancedBuffer = InstancedBuffer::get(subModel->passID[p]);
+                instancedBuffer->merge(model, subModel, p);
+                this->add(instancedBuffer);
+            }
+        }
+    }
+}
+
 void InstanceObjectQueue::mergeInstance(InstancedBuffer *buffer, uint modelHandle, uint subModelHandle, uint passIdx) {
-    auto *model = GET_MODEL(modelHandle);
-    auto *subModel = GET_SUBMODEL(subModelHandle);
-    buffer->merge(model, subModel, passIdx);
+    uint phase = 0;
+    
+    const auto *      model         = GET_MODEL(modelHandle);
+    const auto *const subModelID    = model->getSubModelID();
+    const auto        subModelCount = subModelID[0];
+    for (auto m = 1; m <= subModelCount; ++m) {
+        const auto *const subModel = cc::pipeline::ModelView::getSubModelView(subModelID[m]);
+        for (auto p = 0; p < subModel->passCount; ++p) {
+            const PassView *pass = subModel->getPassView(p);
+            if (pass->phase != phase) continue;
+
+            buffer->merge(model, subModel, p);
+        }
+    }
 }
 
 InstancedBuffer* InstanceObjectQueue::createInstanceBuffer(uint passHandle) {
