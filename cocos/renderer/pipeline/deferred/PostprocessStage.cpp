@@ -102,6 +102,12 @@ void PostprocessStage::render(scene::Camera *camera) {
     const auto &      colorTextures = fb->getColorTextures();
     gfx::RenderPass * rp            = !colorTextures.empty() && colorTextures[0] ? fb->getRenderPass() : pp->getOrCreateRenderPass(static_cast<gfx::ClearFlags>(camera->clearFlag));
 
+    // hack to reduce resolution size
+    #if (CC_PLATFORM == CC_PLATFORM_ANDROID)
+        renderArea.width  *= 2;
+        renderArea.height *= 2;
+    #endif
+
     cmdBf->beginRenderPass(rp, fb, renderArea, _clearColors, camera->clearDepth, camera->clearStencil);
     uint const globalOffsets[] = {_pipeline->getPipelineUBO()->getCurrentCameraUBOOffset()};
     cmdBf->bindDescriptorSet(static_cast<uint>(SetIndex::GLOBAL), pp->getDescriptorSet(), static_cast<uint>(std::size(globalOffsets)), globalOffsets);
