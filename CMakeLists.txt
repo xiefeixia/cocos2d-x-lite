@@ -838,6 +838,10 @@ cocos_source_files(
                  cocos/renderer/pipeline/helper/DefineMap.cpp
                  cocos/renderer/pipeline/helper/SharedMemory.h
                  cocos/renderer/pipeline/helper/SharedMemory.cpp
+                 cocos/renderer/pipeline/Octree/Octree.cpp
+                 cocos/renderer/pipeline/Octree/Octree.h
+                 cocos/renderer/pipeline/Octree/OctreeBlock.cpp
+                 cocos/renderer/pipeline/Octree/OctreeBlock.h
 )
 
 if(CC_USE_GLES2 OR CC_USE_GLES3)
