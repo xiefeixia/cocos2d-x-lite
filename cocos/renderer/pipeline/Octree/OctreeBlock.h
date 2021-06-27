@@ -27,7 +27,7 @@ public:
     void addEntries(const unordered_set<ModelView *>& entries);
     void removeEntry(ModelView *entry);
 
-    void intersectsFrustum(Frustum *frumstum, unordered_set<ModelView *> &selection);
+    void intersectsFrustum(const Frustum *frumstum, unordered_set<ModelView *> &selection);
 
     AABB aabb;
     unordered_set<OctreeBlock*> blocks;

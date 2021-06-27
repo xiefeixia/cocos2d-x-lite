@@ -4,6 +4,8 @@
 namespace cc {
 namespace pipeline {
 
+    unordered_map<const Scene*, Octree*>  Octree::octrees;
+
     void Octree::addEntry(uint modelHandle) {
         auto* model = GET_MODEL(modelHandle);
         if (_allEntries.find(model) != _allEntries.end()) {
@@ -64,7 +66,7 @@ namespace pipeline {
         }
     }
 
-    const unordered_set<ModelView*>& Octree::intersectsFrustum(Frustum* frustum) {
+    const unordered_set<ModelView*>& Octree::intersectsFrustum(const Frustum* frustum) {
         _selectionContent.clear();
 
         for (auto it = _blocks.begin(); it != _blocks.end(); it++) {

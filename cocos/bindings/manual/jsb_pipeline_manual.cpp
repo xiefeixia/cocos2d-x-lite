@@ -33,7 +33,10 @@
 #include "renderer/pipeline/PipelineStateManager.h"
 #include "renderer/pipeline/RenderPipeline.h"
 #include "renderer/pipeline/deferred/InstanceObjectQueue.h"
+#include "renderer/pipeline/Octree/Octree.h"
 #include "renderer/gfx-base/GFXFramebuffer.h"
+
+using namespace cc::pipeline;
 
 static bool js_pipeline_RenderPipeline_getMacros(se::State &s) {
     cc::pipeline::RenderPipeline *cobj = (cc::pipeline::RenderPipeline *)s.nativeThisObject();
@@ -272,6 +275,65 @@ static bool jsb_InstanceObjectQueue_setPhase(se::State &s) { // NOLINT
 SE_BIND_FUNC(jsb_InstanceObjectQueue_setPhase)
 
 
+static bool js_pipeline_RenderPipeline_Octree_addModel(se::State &s) {
+    cc::pipeline::RenderPipeline *cobj = (cc::pipeline::RenderPipeline *)s.nativeThisObject();
+    SE_PRECONDITION2(cobj, false, "js_pipeline_RenderPipeline_Octree_addModel : Invalid Native Object.");
+    const auto &   args = s.args();
+    size_t         argc = args.size();
+    CC_UNUSED bool ok   = true;
+    if (argc == 2) {
+        bool ok    = true;
+
+        uint sceneHandle = 0;
+        ok &= seval_to_uint(args[0], &sceneHandle);
+        SE_PRECONDITION2(ok, false, "js_pipeline_RenderPipeline_Octree_addModel : Error processing arguments");
+
+        uint modelHandle = 0;
+        ok &= seval_to_uint(args[1], &modelHandle);
+        SE_PRECONDITION2(ok, false, "js_pipeline_RenderPipeline_Octree_addModel : Error processing arguments");
+
+        auto octree = cc::pipeline::Octree::getOctree(sceneHandle, true);
+        if (octree) {
+            octree->addEntry(modelHandle);
+        }
+
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 0);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_RenderPipeline_Octree_addModel)
+
+static bool js_pipeline_RenderPipeline_Octree_removeModel(se::State &s) {
+    cc::pipeline::RenderPipeline *cobj = (cc::pipeline::RenderPipeline *)s.nativeThisObject();
+    SE_PRECONDITION2(cobj, false, "js_pipeline_RenderPipeline_Octree_removeModel : Invalid Native Object.");
+    const auto &   args = s.args();
+    size_t         argc = args.size();
+    CC_UNUSED bool ok   = true;
+    if (argc == 2) {
+        bool ok = true;
+
+        uint sceneHandle = 0;
+        ok &= seval_to_uint(args[0], &sceneHandle);
+        SE_PRECONDITION2(ok, false, "js_pipeline_RenderPipeline_Octree_removeModel : Error processing arguments");
+
+        uint modelHandle = 0;
+        ok &= seval_to_uint(args[1], &modelHandle);
+        SE_PRECONDITION2(ok, false, "js_pipeline_RenderPipeline_Octree_removeModel : Error processing arguments");
+
+        auto octree = cc::pipeline::Octree::getOctree(sceneHandle);
+        if (octree) {
+            octree->removeEntry(modelHandle);
+        }
+
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 0);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_RenderPipeline_Octree_removeModel)
+
+
 
 bool register_all_pipeline_manual(se::Object *obj) {
     // Get the ns
@@ -290,6 +352,9 @@ bool register_all_pipeline_manual(se::Object *obj) {
     psmVal.toObject()->defineFunction("getOrCreatePipelineState", _SE(JSB_getOrCreatePipelineState));
 
     __jsb_cc_pipeline_RenderPipeline_proto->defineProperty("macros", _SE(js_pipeline_RenderPipeline_getMacros), nullptr);
+
+    __jsb_cc_pipeline_RenderPipeline_proto->defineFunction("Octree_addModel", _SE(js_pipeline_RenderPipeline_Octree_addModel));
+    __jsb_cc_pipeline_RenderPipeline_proto->defineFunction("Octree_removeModel", _SE(js_pipeline_RenderPipeline_Octree_removeModel));
 
     __jsb_cc_pipeline_RenderPipeline_proto->defineFunction("registerGlobalDescriptorBlock", _SE(JSB_register_global_descriptor_block));
     __jsb_cc_pipeline_RenderPipeline_proto->defineFunction("registerGlobalDescriptorSampler", _SE(JSB_register_global_descriptor_sampler));

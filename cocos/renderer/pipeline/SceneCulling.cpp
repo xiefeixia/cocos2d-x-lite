@@ -34,6 +34,7 @@
 #include "helper/SharedMemory.h"
 #include "math/Quaternion.h"
 #include "platform/Application.h"
+#include "Octree/Octree.h"
 
 namespace cc {
 namespace pipeline {
@@ -185,35 +186,65 @@ void sceneCulling(RenderPipeline *pipeline, Camera *camera) {
         renderObjects.emplace_back(genRenderObject(skyBox->getModel(), camera));
     }
 
-    const auto *const models     = scene->getModels();
-    const auto        modelCount = models[0];
-    for (size_t i = 1; i <= modelCount; i++) {
-        const auto *const model = cc::pipeline::Scene::getModelView(models[i]);
+    auto octree = Octree::getOctree(scene);
+    if (octree) {
+        octree->update();
+        auto& models = octree->intersectsFrustum(camera->getFrustum());
+        for (auto it = models.begin(); it != models.end(); it++) {
+            const auto model = (*it);
 
-        // filter model by view visibility
-        if (model->enabled) {
-            const auto        visibility = camera->visibility;
-            const auto *const node       = model->getNode();
-            if ((model->nodeID && ((visibility & node->layer) == node->layer)) ||
-                (visibility & model->visFlags)) {
-                // shadow render Object
-                if (isShadowMap && model->castShadow && model->getWorldBounds()) {
-                    if (!castBoundsInitialized) {
-                        castWorldBounds = *model->getWorldBounds();
-                        castBoundsInitialized = true;
+            // filter model by view visibility
+            if (model->enabled) {
+                const auto        visibility = camera->visibility;
+                const auto *const node       = model->getNode();
+                if ((model->nodeID && ((visibility & node->layer) == node->layer)) ||
+                    (visibility & model->visFlags)) {
+                    // shadow render Object
+                    if (isShadowMap && model->castShadow && model->getWorldBounds()) {
+                        if (!castBoundsInitialized) {
+                            castWorldBounds       = *model->getWorldBounds();
+                            castBoundsInitialized = true;
+                        }
+                        castWorldBounds.merge(*model->getWorldBounds());
+                        shadowObjects.emplace_back(genRenderObject(model, camera));
                     }
-                    castWorldBounds.merge(*model->getWorldBounds());
-                    shadowObjects.emplace_back(genRenderObject(model, camera));
-                }
-                // frustum culling
-                if ((model->worldBoundsID) && !aabbFrustum(model->getWorldBounds(), camera->getFrustum())) {
-                    continue;
-                }
 
-                renderObjects.emplace_back(genRenderObject(model, camera));
+                    renderObjects.emplace_back(genRenderObject(model, camera));
+                }
+            }
+        }
+    } else {
+        const auto *const models     = scene->getModels();
+        const auto        modelCount = models[0];
+        for (size_t i = 1; i <= modelCount; i++) {
+            const auto *const model = cc::pipeline::Scene::getModelView(models[i]);
+
+            // filter model by view visibility
+            if (model->enabled) {
+                const auto        visibility = camera->visibility;
+                const auto *const node       = model->getNode();
+                if ((model->nodeID && ((visibility & node->layer) == node->layer)) ||
+                    (visibility & model->visFlags)) {
+                    // shadow render Object
+                    if (isShadowMap && model->castShadow && model->getWorldBounds()) {
+                        if (!castBoundsInitialized) {
+                            castWorldBounds       = *model->getWorldBounds();
+                            castBoundsInitialized = true;
+                        }
+                        castWorldBounds.merge(*model->getWorldBounds());
+                        shadowObjects.emplace_back(genRenderObject(model, camera));
+                    }
+                    // frustum culling
+                    if ((model->worldBoundsID) && !aabbFrustum(model->getWorldBounds(), camera->getFrustum())) {
+                        continue;
+                    }
+
+                    renderObjects.emplace_back(genRenderObject(model, camera));
+                }
             }
         }
     }
+    
 
     if(isShadowMap) {
         sceneData->getSphere()->define(castWorldBounds);

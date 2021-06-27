@@ -33,7 +33,7 @@ namespace pipeline {
             return;
         }
 
-        if (!entry->getSubModelID() || intersectsMinMax(*entry->getWorldBounds(), _minPoint, _maxPoint)) {
+        if (!entry->worldBoundsID || intersectsMinMax(*entry->getWorldBounds(), _minPoint, _maxPoint)) {
             entries.emplace(entry);
         }
 
@@ -58,7 +58,7 @@ namespace pipeline {
         }
     }
 
-    void OctreeBlock::intersectsFrustum(Frustum* frustum, unordered_set<ModelView*>& selection) {
+    void OctreeBlock::intersectsFrustum(const Frustum* frustum, unordered_set<ModelView*>& selection) {
         if (aabbFrustum(&aabb, frustum)) {
             if (blocks.size()) {
                 for (auto it = blocks.begin(); it != blocks.end(); it++) {

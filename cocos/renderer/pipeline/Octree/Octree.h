@@ -23,7 +23,28 @@ public:
     void removeEntry(uint modelHandle);
     void update();
 
-    const unordered_set<ModelView *> &intersectsFrustum(Frustum *frustum);
+    static Octree *getOctree(const uint sceneHandle, bool autoCreate = false) {
+        const auto *scene = GET_SCENE(sceneHandle);
+        return getOctree(scene, autoCreate);
+    }
+    static Octree* getOctree(const Scene* scene, bool autoCreate = false) {
+        auto it = octrees.find(scene);
+        Octree *octree = nullptr;
+        if (it == octrees.end()) {
+            if (autoCreate) {
+                octree = new Octree(32, 8);
+                octrees.emplace(scene, octree);
+            }
+        } else {
+            octree = it->second;
+        }
+
+        return octree;
+    }
+
+    const unordered_set<ModelView *> &intersectsFrustum(const Frustum *frustum);
+
+    static unordered_map<const Scene*, Octree *> octrees;
 
 protected:
     unordered_set<ModelView *> _dynamicContent;
