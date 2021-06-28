@@ -32,7 +32,7 @@ public:
         Octree *octree = nullptr;
         if (it == octrees.end()) {
             if (autoCreate) {
-                octree = new Octree(32, 8);
+                octree = new Octree(64, 2);
                 octrees.emplace(scene, octree);
             }
         } else {
@@ -42,15 +42,15 @@ public:
         return octree;
     }
 
-    const unordered_set<ModelView *> &intersectsFrustum(const Frustum *frustum);
+    const vector<ModelView *> &intersectsFrustum(const Frustum *frustum);
 
     static unordered_map<const Scene*, Octree *> octrees;
 
 protected:
-    unordered_set<ModelView *> _dynamicContent;
-    unordered_set<ModelView *> _allEntries;
-    unordered_set<ModelView *> _selectionContent;
-    unordered_set<OctreeBlock* > _blocks;
+    unordered_set<ModelView *>   _allEntries;
+    unordered_set<ModelView *>   _dynamicContent;
+    vector<OctreeBlock *>        _blocks;
+    vector<ModelView *>          _selectionContent;
 
     uint _maxBlockCapacity = 64;
     uint _maxDepth         = 2;

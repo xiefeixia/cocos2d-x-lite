@@ -12,12 +12,12 @@ namespace pipeline {
             return;
         }
 
-        //if (!model->worldBoundsID) {
-        //    _dynamicContent.emplace(model);
-        //    return;
-        //}
+        if (!model->worldBoundsID) {
+            _dynamicContent.emplace(model);
+        } else {
+            _allEntries.emplace(model);
+        }
 
-        _allEntries.emplace(model);
         _dirty = true;
     }
 
@@ -27,12 +27,12 @@ namespace pipeline {
             return;
         }
 
-      /*  if (!model->worldBoundsID) {
+        if (!model->worldBoundsID) {
             _dynamicContent.erase(model);
-            return;
-        }*/
+        } else {
+            _allEntries.erase(model);
+        }
 
-        _allEntries.erase(model);
         _dirty = true;
     }
 
@@ -45,7 +45,7 @@ namespace pipeline {
             _tempAABB.halfExtents = Vec3::ZERO;
 
             bool inited     = false;
-            for (auto it = _allEntries.begin(); it != _allEntries.end(); it++) {
+            for (auto it = _allEntries.begin(), end = _allEntries.end(); it != end; it++) {
                 auto entry = *it;
                 if (!entry->worldBoundsID) {
                     continue;
@@ -66,11 +66,17 @@ namespace pipeline {
         }
     }
 
-    const unordered_set<ModelView*>& Octree::intersectsFrustum(const Frustum* frustum) {
+    const vector<ModelView*>& Octree::intersectsFrustum(const Frustum* frustum) {
         _selectionContent.clear();
 
-        for (auto it = _blocks.begin(); it != _blocks.end(); it++) {
-            (*it)->intersectsFrustum(frustum, _selectionContent);
+        if (frustum->planes->distance != -1) {
+            for (auto it = _blocks.begin(), end = _blocks.end(); it != end; it++) {
+                (*it)->intersectsFrustum(frustum, _selectionContent);
+            }
+        }
+        
+        for (auto it = _dynamicContent.begin(), end = _dynamicContent.end(); it != end; it++) {
+            _selectionContent.emplace_back((*it));
         }
 
         return _selectionContent;

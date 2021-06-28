@@ -27,7 +27,7 @@ namespace pipeline {
 
     void OctreeBlock::addEntry(ModelView* entry) {
         if (blocks.size()) {
-            for (auto it = blocks.begin(); it != blocks.end(); it++) {
+            for (auto it = blocks.begin(), end = blocks.end(); it != end; it++) {
                 (*it)->addEntry(entry);
             }
             return;
@@ -42,13 +42,13 @@ namespace pipeline {
         }
     }
     void OctreeBlock::addEntries(const unordered_set<ModelView*>& entries) {
-        for (auto it = entries.begin(); it != entries.end(); it++) {
+        for (auto it = entries.begin(), end = entries.end(); it != end; it++) {
             addEntry(*it);
         }
     }
     void OctreeBlock::removeEntry(ModelView* entry) {
         if (blocks.size()) {
-            for (auto it = blocks.begin(); it != blocks.end(); it++) {
+            for (auto it = blocks.begin(), end = blocks.end(); it != end; it++) {
                 (*it)->removeEntry(entry);
             }
         }
@@ -58,19 +58,19 @@ namespace pipeline {
         }
     }
 
-    void OctreeBlock::intersectsFrustum(const Frustum* frustum, unordered_set<ModelView*>& selection) {
+    void OctreeBlock::intersectsFrustum(const Frustum* frustum, vector<ModelView*>& selection) {
         if (aabbFrustum(&aabb, frustum)) {
             if (blocks.size()) {
-                for (auto it = blocks.begin(); it != blocks.end(); it++) {
+                for (auto it = blocks.begin(), end = blocks.end(); it != end; it++) {
                     (*it)->intersectsFrustum(frustum, selection);
                 }
                 return;
             }
 
-            for (auto it = entries.begin(); it != entries.end(); it++) {
+            for (auto it = entries.begin(), end = entries.end(); it != end; it++) {
                 auto entry = *it;
                 if (!entry->worldBoundsID || aabbFrustum(entry->getWorldBounds(), frustum)) {
-                    selection.emplace(entry);
+                    selection.emplace_back(entry);
                 }
             }
         }

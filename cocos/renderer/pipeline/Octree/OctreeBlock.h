@@ -18,7 +18,7 @@ public:
       _depth(depth),
       _maxDepth(maxDepth)
     {
-        aabb.halfExtents = (maxPoint - minPoint / 2);
+        aabb.halfExtents = (maxPoint - minPoint) / 2;
         aabb.center      = minPoint + aabb.halfExtents;
     }
     ~OctreeBlock() = default;
@@ -27,14 +27,16 @@ public:
     void addEntries(const unordered_set<ModelView *>& entries);
     void removeEntry(ModelView *entry);
 
-    void intersectsFrustum(const Frustum *frumstum, unordered_set<ModelView *> &selection);
+    void intersectsFrustum(const Frustum *frumstum, vector<ModelView *> &selection);
 
     AABB aabb;
-    unordered_set<OctreeBlock*> blocks;
+    vector<OctreeBlock *>      blocks;
     unordered_set<ModelView *>   entries;
 
-    static void createInnerBlocks(unordered_set<OctreeBlock*>& blocks, const unordered_set<ModelView *> &entries, const Vec3 &minPoint, const Vec3 &maxPoint, float capacity, float depth, float maxDepth) {
+    static void createInnerBlocks(vector<OctreeBlock*>& blocks, const unordered_set<ModelView *> &entries, const Vec3 &minPoint, const Vec3 &maxPoint, float capacity, float depth, float maxDepth) {
         Vec3 blockSize((maxPoint.x - minPoint.x) / 2, (maxPoint.y - minPoint.y) / 2, (maxPoint.z - minPoint.z) / 2);
+        
+        uint blockIndex = 0;
         for (uint x = 0; x < 2; x++) {
             for (uint y = 0; y < 2; y++) {
                 for (uint z = 0; z < 2; z++) {
@@ -43,7 +45,16 @@ public:
 
                     OctreeBlock *block = new OctreeBlock(localMin, localMax, capacity, depth + 1, maxDepth);
                     block->addEntries(entries);
-                    blocks.emplace(block);
+
+                    if (blocks.size() <= blockIndex) {
+                        blocks.emplace_back(block);
+                    } else {
+                        OctreeBlock *oldBlock = blocks[blockIndex];
+                        blocks[blockIndex]    = block;
+                        delete oldBlock;
+                    }
+
+                    blockIndex++;
                 }
             }
         }

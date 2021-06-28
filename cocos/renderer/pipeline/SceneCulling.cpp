@@ -189,6 +189,7 @@ void sceneCulling(RenderPipeline *pipeline, Camera *camera) {
     auto octree = Octree::getOctree(scene);
     if (octree) {
         octree->update();
+
         auto& models = octree->intersectsFrustum(camera->getFrustum());
         for (auto it = models.begin(); it != models.end(); it++) {
             const auto model = (*it);
