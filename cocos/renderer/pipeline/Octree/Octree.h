@@ -42,7 +42,7 @@ public:
         return octree;
     }
 
-    const vector<ModelView *> &intersectsFrustum(const Frustum *frustum);
+    vector<ModelView *> &intersectsFrustum(const Frustum *frustum);
 
     static unordered_map<const Scene*, Octree *> octrees;
 

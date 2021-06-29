@@ -191,6 +191,14 @@ void sceneCulling(RenderPipeline *pipeline, Camera *camera) {
         octree->update();
 
         auto& models = octree->intersectsFrustum(camera->getFrustum());
+
+        std::sort(models.begin(), models.end(), [camera](ModelView *a, ModelView *b) {
+            float adist = a->getWorldBounds()->center.distance(camera->getNode()->worldPosition);
+            float bdist = b->getWorldBounds()->center.distance(camera->getNode()->worldPosition);
+
+            return adist < bdist;
+        });
+
         for (auto it = models.begin(); it != models.end(); it++) {
             const auto model = (*it);
 

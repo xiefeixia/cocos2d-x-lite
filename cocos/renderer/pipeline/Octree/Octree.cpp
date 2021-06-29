@@ -66,7 +66,7 @@ namespace pipeline {
         }
     }
 
-    const vector<ModelView*>& Octree::intersectsFrustum(const Frustum* frustum) {
+    vector<ModelView*>& Octree::intersectsFrustum(const Frustum* frustum) {
         _selectionContent.clear();
 
         if (frustum->planes->distance != -1) {
