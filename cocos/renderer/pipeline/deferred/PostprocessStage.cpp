@@ -130,6 +130,14 @@ void PostprocessStage::render(Camera *camera) {
         cmdBf->draw(ia);
     }
 
+    #if (CC_PLATFORM == CC_PLATFORM_ANDROID)
+        cmdBf->endRenderPass();
+        renderArea.width /= 2;
+        renderArea.height /= 2;
+        rp = pp->getOrCreateRenderPass(static_cast<gfx::ClearFlags>(0));
+        cmdBf->beginRenderPass(rp, fb, renderArea, _clearColors, camera->clearDepth, camera->clearStencil);
+    #endif
+
     _uiPhase->render(camera, rp);
     cmdBf->endRenderPass();
 }
