@@ -25,7 +25,6 @@
 
 #include "CommonStage.h"
 #include "./PipelineStateManager.h"
-#include "./helper/SharedMemory.h"
 #include "RenderPipeline.h"
 #include "RenderFlow.h"
 #include "gfx-base/GFXCommandBuffer.h"
@@ -33,6 +32,7 @@
 #include "gfx-base/GFXDevice.h"
 #include "gfx-base/GFXFramebuffer.h"
 #include "gfx-base/GFXQueue.h"
+#include "scene/SubModel.h"
 
 #include "./deferred/DeferredPipeline.h"
 
@@ -46,14 +46,13 @@ CommonStage::~CommonStage() {
 }
 
 
-void CommonStage::render(Camera *camera) {
+void CommonStage::render(scene::Camera *camera) {
 
     if (_framebuffer == nullptr || _inputAssembler == nullptr || _pipelineState == nullptr || !_dirty) {
         return;
     }
 
-    PassView *pass = GET_PASS(_passHandle);
-    if (pass == nullptr) {
+    if (_pass == nullptr) {
         return;
     }
 
@@ -65,7 +64,7 @@ void CommonStage::render(Camera *camera) {
 
     cmdBuff->beginRenderPass(renderPass, _framebuffer, _renderArea, &_clearColor, _clearDepth, _clearStencil);
     cmdBuff->bindDescriptorSet((uint32_t)cc::pipeline::SetIndex::GLOBAL, _pipeline->getDescriptorSet());
-    cmdBuff->bindDescriptorSet((uint32_t)cc::pipeline::SetIndex::MATERIAL, pass->getDescriptorSet());
+    cmdBuff->bindDescriptorSet((uint32_t)cc::pipeline::SetIndex::MATERIAL, _pass->getDescriptorSet());
     cmdBuff->bindPipelineState(_pipelineState);
     cmdBuff->bindInputAssembler(_inputAssembler);
     cmdBuff->draw(_inputAssembler);

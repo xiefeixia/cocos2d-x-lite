@@ -26,12 +26,12 @@
 #pragma once
 
 #include "./RenderStage.h"
+#include "scene/Pass.h"
 
 namespace cc {
 namespace pipeline {
 
 class RenderFlow;
-struct Camera;
 
 class CC_DLL CommonStage : public RenderStage {
 public:
@@ -39,7 +39,7 @@ public:
     CommonStage();
     ~CommonStage() override;
 
-    void render(Camera *camera) override;
+    void render(scene::Camera *camera) override;
 
     void setDirty(bool dirty) { _dirty = dirty; }
     void setRenderArea(const gfx::Rect &renderArea) { _renderArea = renderArea; }
@@ -49,7 +49,7 @@ public:
     void setFramebuffer(gfx::Framebuffer *framebuffer) { _framebuffer = framebuffer; }
     void setInputAssembler(gfx::InputAssembler *inputAssembler) { _inputAssembler = inputAssembler; }
     void setPipelineState(gfx::PipelineState *pipelineState) { _pipelineState = pipelineState; }
-    void setPassHandle(uint32_t pass) { _passHandle = pass; }
+    void setPassHandle(scene::Pass* pass) { _pass = pass; }
 
 private:
     bool _dirty = true;
@@ -59,10 +59,10 @@ private:
     float                  _clearDepth = 1;
     uint32_t               _clearStencil = 1;
 
-    uint32_t                _passHandle = 0;
-    gfx::Framebuffer        *_framebuffer = nullptr;
-    gfx::InputAssembler     *_inputAssembler = nullptr;
-    gfx::PipelineState      *_pipelineState  = nullptr;
+    scene::Pass *            _pass           = nullptr;
+    gfx::Framebuffer *       _framebuffer    = nullptr;
+    gfx::InputAssembler *    _inputAssembler = nullptr;
+    gfx::PipelineState *     _pipelineState  = nullptr;
 };
 
 } // namespace pipeline
