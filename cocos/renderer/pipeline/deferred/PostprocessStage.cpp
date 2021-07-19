@@ -118,6 +118,8 @@ void PostprocessStage::render(scene::Camera *camera) {
     gfx::Shader *sd            = sceneData->getSharedData()->deferredPostPassShader;
     const auto & renderObjects = sceneData->getRenderObjects();
 
+    cmdBf->bindDescriptorSet(static_cast<uint>(SetIndex::MATERIAL), pv->getDescriptorSet());
+
     if (!renderObjects.empty()) {
         gfx::InputAssembler *ia  = pp->getQuadIAOffScreen();
         gfx::PipelineState * pso = PipelineStateManager::getOrCreatePipelineState(pv, sd, ia, rp);
@@ -154,6 +156,14 @@ void PostprocessStage::render(scene::Camera *camera) {
         queue->sort();
         queue->recordCommandBuffer(_device, rp, cmdBf);
     }
+
+    #if (CC_PLATFORM == CC_PLATFORM_ANDROID)
+        cmdBf->endRenderPass();
+        renderArea.width /= 2;
+        renderArea.height /= 2;
+        rp = pp->getOrCreateRenderPass(static_cast<gfx::ClearFlags>(0));
+        cmdBf->beginRenderPass(rp, fb, renderArea, _clearColors, camera->clearDepth, camera->clearStencil);
+    #endif
 
     _uiPhase->render(camera, rp);
     cmdBf->endRenderPass();
