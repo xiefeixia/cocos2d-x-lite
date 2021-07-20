@@ -1375,7 +1375,7 @@ void cmdFuncGLES2CreateFramebuffer(GLES2Device *device, GLES2GPUFramebuffer *gpu
         for (uint i = 0U; i < gpuFBO->gpuColorTextures.size(); ++i) {
             const auto *gpuTexture = gpuFBO->gpuColorTextures[i];
             if (!gpuTexture || gpuTexture->memoryless) continue;
-            if (GFX_FORMAT_INFOS[static_cast<uint>(gpuTexture->format)].hasDepth) continue;
+            if (GFX_FORMAT_INFOS[toNumber(gpuTexture->format)].hasDepth) continue;
             gpuFBO->uberColorAttachmentIndices.push_back(i);
         }
         doCreateFramebufferInstance(device, gpuFBO, gpuFBO->uberColorAttachmentIndices, gpuFBO->gpuColorTextures.size(), &gpuFBO->uberInstance);
@@ -2320,7 +2320,7 @@ void cmdFuncGLES2BindState(GLES2Device *device, GLES2GPUPipelineState *gpuPipeli
                     if ((cache->dss.stencilRefFront != front.reference) ||
                         (cache->dss.stencilReadMaskFront != front.compareMask)) {
                         GL_CHECK(glStencilFuncSeparate(GL_FRONT,
-                                                       GLES2_CMP_FUNCS[static_cast<uint>(cache->dss.stencilFuncFront)],
+                                                       GLES2_CMP_FUNCS[toNumber(cache->dss.stencilFuncFront)],
                                                        front.reference,
                                                        front.compareMask));
                         cache->dss.stencilRefFront      = front.reference;
@@ -2329,7 +2329,7 @@ void cmdFuncGLES2BindState(GLES2Device *device, GLES2GPUPipelineState *gpuPipeli
                     if ((cache->dss.stencilRefBack != back.reference) ||
                         (cache->dss.stencilReadMaskBack != back.compareMask)) {
                         GL_CHECK(glStencilFuncSeparate(GL_BACK,
-                                                       GLES2_CMP_FUNCS[static_cast<uint>(cache->dss.stencilFuncBack)],
+                                                       GLES2_CMP_FUNCS[toNumber(cache->dss.stencilFuncBack)],
                                                        back.reference,
                                                        back.compareMask));
                         cache->dss.stencilRefBack      = back.reference;
@@ -2606,6 +2606,25 @@ void cmdFuncGLES2CopyBuffersToTexture(GLES2Device *device, const uint8_t *const 
     if (!isCompressed && hasFlag(gpuTexture->flags, TextureFlagBit::GEN_MIPMAP)) {
         GL_CHECK(glBindTexture(gpuTexture->glTarget, gpuTexture->glTexture));
         GL_CHECK(glGenerateMipmap(gpuTexture->glTarget));
+    }
+}
+
+CC_GLES2_API void cmdFuncGLES2CopyTextureToBuffers(GLES2Device *device, GLES2GPUTexture *gpuTexture, uint8_t *const *buffers, const BufferTextureCopy *regions, uint count) {
+    GLuint framebuffer = device->framebufferCacheMap()->getFramebufferFromTexture(gpuTexture);
+    auto    glFormat    = mapGLFormat(gpuTexture->format);
+    auto    glType      = formatToGLType(gpuTexture->format);
+
+    if (device->stateCache()->glFramebuffer != framebuffer) {
+        GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, framebuffer));
+        device->stateCache()->glFramebuffer = framebuffer;
+    }
+    for(uint32_t i = 0; i < count; ++i) {
+        auto region = regions[i];
+        auto w          = region.texExtent.width;
+        auto h          = region.texExtent.height;
+        auto memSize    = static_cast<GLsizei>(formatSize(gpuTexture->format, w, h, 1));
+        uint8_t* copyDst = buffers[i];
+        GL_CHECK(glReadPixels(region.texOffset.x, region.texOffset.y, region.texExtent.width, region.texExtent.height, glFormat, glType, copyDst));
     }
 }
 

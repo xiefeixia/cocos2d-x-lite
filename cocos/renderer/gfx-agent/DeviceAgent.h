@@ -40,7 +40,9 @@ class CommandBufferAgent;
 
 class CC_DLL DeviceAgent final : public Agent<Device> {
 public:
-    static DeviceAgent *getInstance();
+    static DeviceAgent *  getInstance();
+    static constexpr uint MAX_CPU_FRAME_AHEAD = 1;
+    static constexpr uint MAX_FRAME_INDEX     = MAX_CPU_FRAME_AHEAD + 1;
 
     ~DeviceAgent() override;
 
@@ -81,7 +83,7 @@ public:
     GlobalBarrier *      createGlobalBarrier() override;
     TextureBarrier *     createTextureBarrier() override;
     void                 copyBuffersToTexture(const uint8_t *const *buffers, Texture *dst, const BufferTextureCopy *regions, uint count) override;
-
+    void                 copyTextureToBuffers(Texture *src, uint8_t *const *buffers, const BufferTextureCopy *region, uint count) override;
     void             flushCommands(CommandBuffer *const *cmdBuffs, uint count) override;
     SurfaceTransform getSurfaceTransform() const override { return _actor->getSurfaceTransform(); }
     uint             getWidth() const override { return _actor->getWidth(); }
@@ -91,10 +93,10 @@ public:
     uint             getNumInstances() const override { return _actor->getNumInstances(); }
     uint             getNumTris() const override { return _actor->getNumTris(); }
 
-    uint             getCurrentIndex() const { return _currentIndex; }
+    uint getCurrentIndex() const { return _currentIndex; }
     void setMultithreaded(bool multithreaded);
 
-    inline MessageQueue *       getMessageQueue() const { return _mainMessageQueue; }
+    inline MessageQueue *getMessageQueue() const { return _mainMessageQueue; }
 
 protected:
     static DeviceAgent *instance;
@@ -113,8 +115,8 @@ protected:
     bool          _multithreaded{false};
     MessageQueue *_mainMessageQueue{nullptr};
 
-    uint                          _currentIndex = 0U;
-    Semaphore                     _frameBoundarySemaphore{MAX_CPU_FRAME_AHEAD};
+    uint      _currentIndex = 0U;
+    Semaphore _frameBoundarySemaphore{MAX_CPU_FRAME_AHEAD};
 
     unordered_set<CommandBufferAgent *> _cmdBuffRefs;
 };
