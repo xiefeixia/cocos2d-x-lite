@@ -178,9 +178,9 @@ void sceneCulling(RenderPipeline *pipeline, scene::Camera *camera) {
 
     RenderObjectList               renderObjects;
 
-    if (skyBox->enabled && skyBox->model && (camera->clearFlag & skyboxFlag)) {
-        renderObjects.emplace_back(genRenderObject(skyBox->model, camera));
-    }
+    //if (skyBox->enabled && skyBox->model && (camera->clearFlag & skyboxFlag)) {
+    //    renderObjects.emplace_back(genRenderObject(skyBox->model, camera));
+    //}
 
     for (auto *model : scene->getModels()) {
         // filter model by view visibility
