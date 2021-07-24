@@ -69,6 +69,12 @@ public:
     void                          updateQuadVertexData(const gfx::Rect &renderArea);
     void                          genQuadVertexData(gfx::SurfaceTransform surfaceTransform, const gfx::Rect &renderArea, float *data);
 
+    void setLightingFrameBuffer(gfx::Framebuffer *buffer) { _deferredRenderData->lightingFrameBuff = buffer; }
+    gfx::Framebuffer *getLightingFrameBuffer() { return _deferredRenderData->lightingFrameBuff; }
+
+    gfx::RenderPass *getLightingRenderPass() { return _lightingRenderPass; }
+    gfx::Texture    *getLightingDepthTex() { return _deferredRenderData->depthTex; }
+
 private:
     bool activeRenderer();
     bool createQuadInputAssembler(gfx::Buffer **quadIB, gfx::Buffer **quadVB, gfx::InputAssembler **quadIA);

@@ -194,6 +194,10 @@ bool js_register_cc_pipeline_DeferredPipeline(se::Object* obj);
 bool register_all_pipeline(se::Object* obj);
 
 JSB_REGISTER_OBJECT_TYPE(cc::pipeline::DeferredPipeline);
+SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_getLightingDepthTex);
+SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_getLightingFrameBuffer);
+SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_getLightingRenderPass);
+SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_setLightingFrameBuffer);
 SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_DeferredPipeline);
 
 extern se::Object* __jsb_cc_pipeline_GbufferFlow_proto;

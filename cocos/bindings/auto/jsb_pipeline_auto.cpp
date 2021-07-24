@@ -2048,6 +2048,82 @@ bool js_register_pipeline_InstancedBuffer(se::Object* obj) // NOLINT(readability
 se::Object* __jsb_cc_pipeline_DeferredPipeline_proto = nullptr;
 se::Class* __jsb_cc_pipeline_DeferredPipeline_class = nullptr;
 
+static bool js_pipeline_DeferredPipeline_getLightingDepthTex(se::State& s) // NOLINT(readability-identifier-naming)
+{
+    auto* cobj = SE_THIS_OBJECT<cc::pipeline::DeferredPipeline>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_DeferredPipeline_getLightingDepthTex : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 0) {
+        cc::gfx::Texture* result = cobj->getLightingDepthTex();
+        ok &= nativevalue_to_se(result, s.rval(), nullptr /*ctx*/);
+        SE_PRECONDITION2(ok, false, "js_pipeline_DeferredPipeline_getLightingDepthTex : Error processing arguments");
+        SE_HOLD_RETURN_VALUE(result, s.thisObject(), s.rval());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 0);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_DeferredPipeline_getLightingDepthTex)
+
+static bool js_pipeline_DeferredPipeline_getLightingFrameBuffer(se::State& s) // NOLINT(readability-identifier-naming)
+{
+    auto* cobj = SE_THIS_OBJECT<cc::pipeline::DeferredPipeline>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_DeferredPipeline_getLightingFrameBuffer : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 0) {
+        cc::gfx::Framebuffer* result = cobj->getLightingFrameBuffer();
+        ok &= nativevalue_to_se(result, s.rval(), nullptr /*ctx*/);
+        SE_PRECONDITION2(ok, false, "js_pipeline_DeferredPipeline_getLightingFrameBuffer : Error processing arguments");
+        SE_HOLD_RETURN_VALUE(result, s.thisObject(), s.rval());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 0);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_DeferredPipeline_getLightingFrameBuffer)
+
+static bool js_pipeline_DeferredPipeline_getLightingRenderPass(se::State& s) // NOLINT(readability-identifier-naming)
+{
+    auto* cobj = SE_THIS_OBJECT<cc::pipeline::DeferredPipeline>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_DeferredPipeline_getLightingRenderPass : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 0) {
+        cc::gfx::RenderPass* result = cobj->getLightingRenderPass();
+        ok &= nativevalue_to_se(result, s.rval(), nullptr /*ctx*/);
+        SE_PRECONDITION2(ok, false, "js_pipeline_DeferredPipeline_getLightingRenderPass : Error processing arguments");
+        SE_HOLD_RETURN_VALUE(result, s.thisObject(), s.rval());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 0);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_DeferredPipeline_getLightingRenderPass)
+
+static bool js_pipeline_DeferredPipeline_setLightingFrameBuffer(se::State& s) // NOLINT(readability-identifier-naming)
+{
+    auto* cobj = SE_THIS_OBJECT<cc::pipeline::DeferredPipeline>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_DeferredPipeline_setLightingFrameBuffer : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 1) {
+        HolderType<cc::gfx::Framebuffer*, false> arg0 = {};
+        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
+        SE_PRECONDITION2(ok, false, "js_pipeline_DeferredPipeline_setLightingFrameBuffer : Error processing arguments");
+        cobj->setLightingFrameBuffer(arg0.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_DeferredPipeline_setLightingFrameBuffer)
+
 SE_DECLARE_FINALIZE_FUNC(js_cc_pipeline_DeferredPipeline_finalize)
 
 static bool js_pipeline_DeferredPipeline_constructor(se::State& s) // NOLINT(readability-identifier-naming) constructor.c
@@ -2078,6 +2154,10 @@ bool js_register_pipeline_DeferredPipeline(se::Object* obj) // NOLINT(readabilit
 {
     auto* cls = se::Class::create("DeferredPipeline", obj, __jsb_cc_pipeline_RenderPipeline_proto, _SE(js_pipeline_DeferredPipeline_constructor));
 
+    cls->defineFunction("getLightingDepthTex", _SE(js_pipeline_DeferredPipeline_getLightingDepthTex));
+    cls->defineFunction("getLightingFrameBuffer", _SE(js_pipeline_DeferredPipeline_getLightingFrameBuffer));
+    cls->defineFunction("getLightingRenderPass", _SE(js_pipeline_DeferredPipeline_getLightingRenderPass));
+    cls->defineFunction("setLightingFrameBuffer", _SE(js_pipeline_DeferredPipeline_setLightingFrameBuffer));
     cls->defineFinalizeFunction(_SE(js_cc_pipeline_DeferredPipeline_finalize));
     cls->install();
     JSBClassType::registerClass<cc::pipeline::DeferredPipeline>(cls);
