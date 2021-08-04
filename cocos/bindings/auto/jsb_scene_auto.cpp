@@ -2,6 +2,8 @@
 #include "cocos/bindings/manual/jsb_conversions.h"
 #include "cocos/bindings/manual/jsb_global.h"
 #include "scene/Node.h"
+#include "scene/BaseNode.h"
+#include "scene/Scene.h"
 #include "scene/Light.h"
 #include "scene/DirectionalLight.h"
 #include "scene/SpotLight.h"
@@ -23,27 +25,157 @@
 #ifndef JSB_FREE
 #define JSB_FREE(ptr) delete ptr
 #endif
-se::Object* __jsb_cc_scene_Node_proto = nullptr;
-se::Class* __jsb_cc_scene_Node_class = nullptr;
+se::Object* __jsb_cc_scene_BaseNode_proto = nullptr;
+se::Class* __jsb_cc_scene_BaseNode_class = nullptr;
 
-static bool js_scene_Node_setParent(se::State& s) // NOLINT(readability-identifier-naming)
+static bool js_scene_BaseNode_getChilds(se::State& s) // NOLINT(readability-identifier-naming)
 {
-    auto* cobj = SE_THIS_OBJECT<cc::scene::Node>(s);
-    SE_PRECONDITION2(cobj, false, "js_scene_Node_setParent : Invalid Native Object");
+    auto* cobj = SE_THIS_OBJECT<cc::scene::BaseNode>(s);
+    SE_PRECONDITION2(cobj, false, "js_scene_BaseNode_getChilds : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 0) {
+        const std::vector<cc::scene::BaseNode *>& result = cobj->getChilds();
+        ok &= nativevalue_to_se(result, s.rval(), nullptr /*ctx*/);
+        SE_PRECONDITION2(ok, false, "js_scene_BaseNode_getChilds : Error processing arguments");
+        SE_HOLD_RETURN_VALUE(result, s.thisObject(), s.rval());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 0);
+    return false;
+}
+SE_BIND_FUNC(js_scene_BaseNode_getChilds)
+
+static bool js_scene_BaseNode_setParent(se::State& s) // NOLINT(readability-identifier-naming)
+{
+    auto* cobj = SE_THIS_OBJECT<cc::scene::BaseNode>(s);
+    SE_PRECONDITION2(cobj, false, "js_scene_BaseNode_setParent : Invalid Native Object");
     const auto& args = s.args();
     size_t argc = args.size();
     CC_UNUSED bool ok = true;
     if (argc == 1) {
-        HolderType<cc::scene::Node*, false> arg0 = {};
+        HolderType<cc::scene::BaseNode*, false> arg0 = {};
         ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
-        SE_PRECONDITION2(ok, false, "js_scene_Node_setParent : Error processing arguments");
+        SE_PRECONDITION2(ok, false, "js_scene_BaseNode_setParent : Error processing arguments");
         cobj->setParent(arg0.value());
         return true;
     }
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
     return false;
 }
-SE_BIND_FUNC(js_scene_Node_setParent)
+SE_BIND_FUNC(js_scene_BaseNode_setParent)
+
+SE_DECLARE_FINALIZE_FUNC(js_cc_scene_BaseNode_finalize)
+
+static bool js_scene_BaseNode_constructor(se::State& s) // NOLINT(readability-identifier-naming) constructor.c
+{
+    cc::scene::BaseNode* cobj = JSB_ALLOC(cc::scene::BaseNode);
+    s.thisObject()->setPrivateData(cobj);
+    se::NonRefNativePtrCreatedByCtorMap::emplace(cobj);
+    return true;
+}
+SE_BIND_CTOR(js_scene_BaseNode_constructor, __jsb_cc_scene_BaseNode_class, js_cc_scene_BaseNode_finalize)
+
+
+
+static bool js_cc_scene_BaseNode_finalize(se::State& s) // NOLINT(readability-identifier-naming)
+{
+    auto iter = se::NonRefNativePtrCreatedByCtorMap::find(SE_THIS_OBJECT<cc::scene::BaseNode>(s));
+    if (iter != se::NonRefNativePtrCreatedByCtorMap::end())
+    {
+        se::NonRefNativePtrCreatedByCtorMap::erase(iter);
+        auto* cobj = SE_THIS_OBJECT<cc::scene::BaseNode>(s);
+        JSB_FREE(cobj);
+    }
+    return true;
+}
+SE_BIND_FINALIZE_FUNC(js_cc_scene_BaseNode_finalize)
+
+bool js_register_scene_BaseNode(se::Object* obj) // NOLINT(readability-identifier-naming)
+{
+    auto* cls = se::Class::create("BaseNode", obj, nullptr, _SE(js_scene_BaseNode_constructor));
+
+    cls->defineFunction("getChilds", _SE(js_scene_BaseNode_getChilds));
+    cls->defineFunction("setParent", _SE(js_scene_BaseNode_setParent));
+    cls->defineFinalizeFunction(_SE(js_cc_scene_BaseNode_finalize));
+    cls->install();
+    JSBClassType::registerClass<cc::scene::BaseNode>(cls);
+
+    __jsb_cc_scene_BaseNode_proto = cls->getProto();
+    __jsb_cc_scene_BaseNode_class = cls;
+
+    se::ScriptEngine::getInstance()->clearException();
+    return true;
+}
+se::Object* __jsb_cc_scene_Scene_proto = nullptr;
+se::Class* __jsb_cc_scene_Scene_class = nullptr;
+
+SE_DECLARE_FINALIZE_FUNC(js_cc_scene_Scene_finalize)
+
+static bool js_scene_Scene_constructor(se::State& s) // NOLINT(readability-identifier-naming) constructor.c
+{
+    cc::scene::Scene* cobj = JSB_ALLOC(cc::scene::Scene);
+    s.thisObject()->setPrivateData(cobj);
+    se::NonRefNativePtrCreatedByCtorMap::emplace(cobj);
+    return true;
+}
+SE_BIND_CTOR(js_scene_Scene_constructor, __jsb_cc_scene_Scene_class, js_cc_scene_Scene_finalize)
+
+
+
+static bool js_cc_scene_Scene_finalize(se::State& s) // NOLINT(readability-identifier-naming)
+{
+    auto iter = se::NonRefNativePtrCreatedByCtorMap::find(SE_THIS_OBJECT<cc::scene::Scene>(s));
+    if (iter != se::NonRefNativePtrCreatedByCtorMap::end())
+    {
+        se::NonRefNativePtrCreatedByCtorMap::erase(iter);
+        auto* cobj = SE_THIS_OBJECT<cc::scene::Scene>(s);
+        JSB_FREE(cobj);
+    }
+    return true;
+}
+SE_BIND_FINALIZE_FUNC(js_cc_scene_Scene_finalize)
+
+bool js_register_scene_Scene(se::Object* obj) // NOLINT(readability-identifier-naming)
+{
+    auto* cls = se::Class::create("Scene", obj, __jsb_cc_scene_BaseNode_proto, _SE(js_scene_Scene_constructor));
+
+    cls->defineFinalizeFunction(_SE(js_cc_scene_Scene_finalize));
+    cls->install();
+    JSBClassType::registerClass<cc::scene::Scene>(cls);
+
+    __jsb_cc_scene_Scene_proto = cls->getProto();
+    __jsb_cc_scene_Scene_class = cls;
+
+    se::ScriptEngine::getInstance()->clearException();
+    return true;
+}
+se::Object* __jsb_cc_scene_Node_proto = nullptr;
+se::Class* __jsb_cc_scene_Node_class = nullptr;
+
+static bool js_scene_Node_initWithData(se::State& s) // NOLINT(readability-identifier-naming)
+{
+    auto* cobj = SE_THIS_OBJECT<cc::scene::Node>(s);
+    SE_PRECONDITION2(cobj, false, "js_scene_Node_initWithData : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 3) {
+        HolderType<unsigned char*, false> arg0 = {};
+        HolderType<unsigned char*, false> arg1 = {};
+        HolderType<se::Value, true> arg2 = {};
+        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
+        ok &= sevalue_to_native(args[1], &arg1, s.thisObject());
+        ok &= sevalue_to_native(args[2], &arg2, s.thisObject());
+        SE_PRECONDITION2(ok, false, "js_scene_Node_initWithData : Error processing arguments");
+        cobj->initWithData(arg0.value(), arg1.value(), arg2.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 3);
+    return false;
+}
+SE_BIND_FUNC(js_scene_Node_initWithData)
 
 SE_DECLARE_FINALIZE_FUNC(js_cc_scene_Node_finalize)
 
@@ -73,9 +205,9 @@ SE_BIND_FINALIZE_FUNC(js_cc_scene_Node_finalize)
 
 bool js_register_scene_Node(se::Object* obj) // NOLINT(readability-identifier-naming)
 {
-    auto* cls = se::Class::create("Node", obj, nullptr, _SE(js_scene_Node_constructor));
+    auto* cls = se::Class::create("Node", obj, __jsb_cc_scene_BaseNode_proto, _SE(js_scene_Node_constructor));
 
-    cls->defineFunction("setParent", _SE(js_scene_Node_setParent));
+    cls->defineFunction("initWithData", _SE(js_scene_Node_initWithData));
     cls->defineFinalizeFunction(_SE(js_cc_scene_Node_finalize));
     cls->install();
     JSBClassType::registerClass<cc::scene::Node>(cls);
@@ -4543,6 +4675,25 @@ static bool js_scene_Pass_getStage(se::State& s) // NOLINT(readability-identifie
 }
 SE_BIND_FUNC(js_scene_Pass_getStage)
 
+static bool js_scene_Pass_initWithData(se::State& s) // NOLINT(readability-identifier-naming)
+{
+    auto* cobj = SE_THIS_OBJECT<cc::scene::Pass>(s);
+    SE_PRECONDITION2(cobj, false, "js_scene_Pass_initWithData : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 1) {
+        HolderType<unsigned char*, false> arg0 = {};
+        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
+        SE_PRECONDITION2(ok, false, "js_scene_Pass_initWithData : Error processing arguments");
+        cobj->initWithData(arg0.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+    return false;
+}
+SE_BIND_FUNC(js_scene_Pass_initWithData)
+
 static bool js_scene_Pass_setBatchingScheme(se::State& s) // NOLINT(readability-identifier-naming)
 {
     auto* cobj = SE_THIS_OBJECT<cc::scene::Pass>(s);
@@ -4790,31 +4941,6 @@ static bool js_scene_Pass_setStage(se::State& s) // NOLINT(readability-identifie
 }
 SE_BIND_FUNC(js_scene_Pass_setStage)
 
-static bool js_scene_Pass_setState(se::State& s) // NOLINT(readability-identifier-naming)
-{
-    auto* cobj = SE_THIS_OBJECT<cc::scene::Pass>(s);
-    SE_PRECONDITION2(cobj, false, "js_scene_Pass_setState : Invalid Native Object");
-    const auto& args = s.args();
-    size_t argc = args.size();
-    CC_UNUSED bool ok = true;
-    if (argc == 4) {
-        HolderType<cc::gfx::BlendState*, false> arg0 = {};
-        HolderType<cc::gfx::DepthStencilState*, false> arg1 = {};
-        HolderType<cc::gfx::RasterizerState*, false> arg2 = {};
-        HolderType<cc::gfx::DescriptorSet*, false> arg3 = {};
-        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
-        ok &= sevalue_to_native(args[1], &arg1, s.thisObject());
-        ok &= sevalue_to_native(args[2], &arg2, s.thisObject());
-        ok &= sevalue_to_native(args[3], &arg3, s.thisObject());
-        SE_PRECONDITION2(ok, false, "js_scene_Pass_setState : Error processing arguments");
-        cobj->setState(arg0.value(), arg1.value(), arg2.value(), arg3.value());
-        return true;
-    }
-    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 4);
-    return false;
-}
-SE_BIND_FUNC(js_scene_Pass_setState)
-
 static bool js_scene_Pass_update(se::State& s) // NOLINT(readability-identifier-naming)
 {
     auto* cobj = SE_THIS_OBJECT<cc::scene::Pass>(s);
@@ -4872,6 +4998,7 @@ bool js_register_scene_Pass(se::Object* obj) // NOLINT(readability-identifier-na
     cls->defineFunction("getPriority", _SE(js_scene_Pass_getPriority));
     cls->defineFunction("getRasterizerState", _SE(js_scene_Pass_getRasterizerState));
     cls->defineFunction("getStage", _SE(js_scene_Pass_getStage));
+    cls->defineFunction("initWithData", _SE(js_scene_Pass_initWithData));
     cls->defineFunction("setBatchingScheme", _SE(js_scene_Pass_setBatchingScheme));
     cls->defineFunction("setBlendState", _SE(js_scene_Pass_setBlendState));
     cls->defineFunction("setDepthStencilState", _SE(js_scene_Pass_setDepthStencilState));
@@ -4885,7 +5012,6 @@ bool js_register_scene_Pass(se::Object* obj) // NOLINT(readability-identifier-na
     cls->defineFunction("setRasterizerState", _SE(js_scene_Pass_setRasterizerState));
     cls->defineFunction("setRootBufferDirty", _SE(js_scene_Pass_setRootBufferDirty));
     cls->defineFunction("setStage", _SE(js_scene_Pass_setStage));
-    cls->defineFunction("setState", _SE(js_scene_Pass_setState));
     cls->defineFunction("update", _SE(js_scene_Pass_update));
     cls->defineFinalizeFunction(_SE(js_cc_scene_Pass_finalize));
     cls->install();
@@ -5201,6 +5327,25 @@ static bool js_scene_BakedSkinningModel_setJointMedium(se::State& s) // NOLINT(r
 }
 SE_BIND_FUNC(js_scene_BakedSkinningModel_setJointMedium)
 
+static bool js_scene_BakedSkinningModel_updateModelBounds(se::State& s) // NOLINT(readability-identifier-naming)
+{
+    auto* cobj = SE_THIS_OBJECT<cc::scene::BakedSkinningModel>(s);
+    SE_PRECONDITION2(cobj, false, "js_scene_BakedSkinningModel_updateModelBounds : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 1) {
+        HolderType<cc::scene::AABB*, false> arg0 = {};
+        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
+        SE_PRECONDITION2(ok, false, "js_scene_BakedSkinningModel_updateModelBounds : Error processing arguments");
+        cobj->updateModelBounds(arg0.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+    return false;
+}
+SE_BIND_FUNC(js_scene_BakedSkinningModel_updateModelBounds)
+
 SE_DECLARE_FINALIZE_FUNC(js_cc_scene_BakedSkinningModel_finalize)
 
 static bool js_scene_BakedSkinningModel_constructor(se::State& s) // NOLINT(readability-identifier-naming) constructor.c
@@ -5233,6 +5378,7 @@ bool js_register_scene_BakedSkinningModel(se::Object* obj) // NOLINT(readability
 
     cls->defineFunction("setAnimInfoIdx", _SE(js_scene_BakedSkinningModel_setAnimInfoIdx));
     cls->defineFunction("setJointMedium", _SE(js_scene_BakedSkinningModel_setJointMedium));
+    cls->defineFunction("updateModelBounds", _SE(js_scene_BakedSkinningModel_updateModelBounds));
     cls->defineFinalizeFunction(_SE(js_cc_scene_BakedSkinningModel_finalize));
     cls->install();
     JSBClassType::registerClass<cc::scene::BakedSkinningModel>(cls);
@@ -7384,6 +7530,7 @@ bool register_all_scene(se::Object* obj)
     js_register_scene_RenderScene(ns);
     js_register_scene_Camera(ns);
     js_register_scene_Fog(ns);
+    js_register_scene_BaseNode(ns);
     js_register_scene_Node(ns);
     js_register_scene_Frustum(ns);
     js_register_scene_DrawBatch2D(ns);
@@ -7403,6 +7550,7 @@ bool register_all_scene(se::Object* obj)
     js_register_scene_DirectionalLight(ns);
     js_register_scene_JointInfo(ns);
     js_register_scene_Root(ns);
+    js_register_scene_Scene(ns);
     js_register_scene_BakedAnimInfo(ns);
     js_register_scene_Pass(ns);
     js_register_scene_Skybox(ns);

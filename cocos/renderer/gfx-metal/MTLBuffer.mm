@@ -41,6 +41,10 @@ CCMTLBuffer::CCMTLBuffer() : Buffer() {
     _typedID = generateObjectID<decltype(this)>();
 }
 
+CCMTLBuffer::~CCMTLBuffer() {
+    destroy();
+}
+
 void CCMTLBuffer::doInit(const BufferInfo &info) {
     _isIndirectDrawSupported = CCMTLDevice::getInstance()->isIndirectDrawSupported();
     if (hasFlag(_usage, BufferUsage::INDEX)) {
@@ -70,7 +74,15 @@ void CCMTLBuffer::doInit(const BufferInfo &info) {
 }
 
 void CCMTLBuffer::doInit(const BufferViewInfo &info) {
-    *this = *static_cast<CCMTLBuffer *>(info.buffer);
+    auto* ccBuffer = static_cast<CCMTLBuffer *>(info.buffer);
+    _mtlBuffer = ccBuffer->getMTLBuffer();
+    _indexType = ccBuffer->getIndexType();
+    _mtlResourceOptions = ccBuffer->_mtlResourceOptions;
+    _isIndirectDrawSupported = ccBuffer->_isIndirectDrawSupported;
+    _isDrawIndirectByIndex = ccBuffer->_isDrawIndirectByIndex;
+    _indexedPrimitivesIndirectArguments = ccBuffer->_indexedPrimitivesIndirectArguments;
+    _primitiveIndirectArguments = ccBuffer->_primitiveIndirectArguments;
+    _drawInfos = ccBuffer->_drawInfos;
     _bufferViewOffset = info.offset;
     _isBufferView = true;
 }
@@ -83,6 +95,7 @@ bool CCMTLBuffer::createMTLBuffer(uint size, MemoryUsage usage) {
 
         std::function<void(void)> destroyFunc = [=]() {
             if (mtlBuffer) {
+                [mtlBuffer setPurgeableState:MTLPurgeableStateEmpty];
                 [mtlBuffer release];
             }
         };
@@ -122,6 +135,7 @@ void CCMTLBuffer::doDestroy() {
 
     std::function<void(void)> destroyFunc = [=]() {
         if (mtlBuffer) {
+            [mtlBuffer setPurgeableState:MTLPurgeableStateEmpty];
             [mtlBuffer release];
         }
     };

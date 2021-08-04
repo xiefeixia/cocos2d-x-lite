@@ -5,6 +5,8 @@
 #include "cocos/bindings/manual/jsb_conversions.h"
 #include "cocos/bindings/auto/jsb_gfx_auto.h"
 #include "cocos/scene/Node.h"
+#include "cocos/scene/BaseNode.h"
+#include "cocos/scene/Scene.h"
 #include "cocos/scene/Light.h"
 #include "cocos/scene/DirectionalLight.h"
 #include "cocos/scene/SpotLight.h"
@@ -19,6 +21,26 @@
 #include "cocos/scene/Camera.h"
 #include "cocos/scene/Define.h"
 
+extern se::Object* __jsb_cc_scene_BaseNode_proto;
+extern se::Class* __jsb_cc_scene_BaseNode_class;
+
+bool js_register_cc_scene_BaseNode(se::Object* obj);
+bool register_all_scene(se::Object* obj);
+
+JSB_REGISTER_OBJECT_TYPE(cc::scene::BaseNode);
+SE_DECLARE_FUNC(js_scene_BaseNode_getChilds);
+SE_DECLARE_FUNC(js_scene_BaseNode_setParent);
+SE_DECLARE_FUNC(js_scene_BaseNode_BaseNode);
+
+extern se::Object* __jsb_cc_scene_Scene_proto;
+extern se::Class* __jsb_cc_scene_Scene_class;
+
+bool js_register_cc_scene_Scene(se::Object* obj);
+bool register_all_scene(se::Object* obj);
+
+JSB_REGISTER_OBJECT_TYPE(cc::scene::Scene);
+SE_DECLARE_FUNC(js_scene_Scene_Scene);
+
 extern se::Object* __jsb_cc_scene_Node_proto;
 extern se::Class* __jsb_cc_scene_Node_class;
 
@@ -26,7 +48,7 @@ bool js_register_cc_scene_Node(se::Object* obj);
 bool register_all_scene(se::Object* obj);
 
 JSB_REGISTER_OBJECT_TYPE(cc::scene::Node);
-SE_DECLARE_FUNC(js_scene_Node_setParent);
+SE_DECLARE_FUNC(js_scene_Node_initWithData);
 SE_DECLARE_FUNC(js_scene_Node_Node);
 
 extern se::Object* __jsb_cc_scene_Light_proto;
@@ -256,6 +278,7 @@ SE_DECLARE_FUNC(js_scene_Pass_getPrimitive);
 SE_DECLARE_FUNC(js_scene_Pass_getPriority);
 SE_DECLARE_FUNC(js_scene_Pass_getRasterizerState);
 SE_DECLARE_FUNC(js_scene_Pass_getStage);
+SE_DECLARE_FUNC(js_scene_Pass_initWithData);
 SE_DECLARE_FUNC(js_scene_Pass_setBatchingScheme);
 SE_DECLARE_FUNC(js_scene_Pass_setBlendState);
 SE_DECLARE_FUNC(js_scene_Pass_setDepthStencilState);
@@ -269,7 +292,6 @@ SE_DECLARE_FUNC(js_scene_Pass_setPriority);
 SE_DECLARE_FUNC(js_scene_Pass_setRasterizerState);
 SE_DECLARE_FUNC(js_scene_Pass_setRootBufferDirty);
 SE_DECLARE_FUNC(js_scene_Pass_setStage);
-SE_DECLARE_FUNC(js_scene_Pass_setState);
 SE_DECLARE_FUNC(js_scene_Pass_update);
 SE_DECLARE_FUNC(js_scene_Pass_Pass);
 
@@ -303,6 +325,7 @@ bool register_all_scene(se::Object* obj);
 JSB_REGISTER_OBJECT_TYPE(cc::scene::BakedSkinningModel);
 SE_DECLARE_FUNC(js_scene_BakedSkinningModel_setAnimInfoIdx);
 SE_DECLARE_FUNC(js_scene_BakedSkinningModel_setJointMedium);
+SE_DECLARE_FUNC(js_scene_BakedSkinningModel_updateModelBounds);
 SE_DECLARE_FUNC(js_scene_BakedSkinningModel_BakedSkinningModel);
 
 extern se::Object* __jsb_cc_scene_DrawBatch2D_proto;
