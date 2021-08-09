@@ -396,75 +396,75 @@ void LightingStage::render(scene::Camera *camera) {
     }
 
     // planerQueue
-    _planarShadowQueue->recordCommandBuffer(_device, renderPass, cmdBuff);
+    //_planarShadowQueue->recordCommandBuffer(_device, renderPass, cmdBuff);
 
     cmdBuff->endRenderPass();
 
-    if (_device->hasFeature(gfx::Feature::COMPUTE_SHADER)) {
-        uint   m = 0;
-        uint   p = 0;
-        size_t k = 0;
-        for (const auto &ro : renderObjects) {
-            const auto *model = ro.model;
-            for (auto *subModel : model->getSubModels()) {
-                for (auto *pass : subModel->getPasses()) {
-                    if (pass->getPhase() != _reflectionPhaseID) continue;
-                    // dispatch for reflection
-                    gfx::Texture *denoiseTex = subModel->getDescriptorSet()->getTexture(uint(ModelLocalBindings::STORAGE_REFLECTION));
-                    if (!_reflectionComp->isInitialized()) {
-                        _reflectionComp->init(_pipeline->getDevice(),
-                                              pipeline->getDeferredRenderData()->lightingRenderTarget,
-                                              pipeline->getDeferredRenderData()->gbufferFrameBuffer->getColorTextures()[1],
-                                              denoiseTex,
-                                              camera->matViewProj, 8, 8);
-                    }
-                    gfx::Rect clearRenderArea = {0, 0, _reflectionComp->getReflectionTex()->getWidth(), _reflectionComp->getReflectionTex()->getHeight()};
-                    cmdBuff->beginRenderPass(const_cast<gfx::RenderPass *>(_reflectionComp->getClearPass()), const_cast<gfx::Framebuffer *>(_reflectionComp->getClearFramebuffer()), clearRenderArea, &clearColor, 0, 0);
-                    cmdBuff->endRenderPass();
+    //if (_device->hasFeature(gfx::Feature::COMPUTE_SHADER)) {
+    //    uint   m = 0;
+    //    uint   p = 0;
+    //    size_t k = 0;
+    //    for (const auto &ro : renderObjects) {
+    //        const auto *model = ro.model;
+    //        for (auto *subModel : model->getSubModels()) {
+    //            for (auto *pass : subModel->getPasses()) {
+    //                if (pass->getPhase() != _reflectionPhaseID) continue;
+    //                // dispatch for reflection
+    //                gfx::Texture *denoiseTex = subModel->getDescriptorSet()->getTexture(uint(ModelLocalBindings::STORAGE_REFLECTION));
+    //                if (!_reflectionComp->isInitialized()) {
+    //                    _reflectionComp->init(_pipeline->getDevice(),
+    //                                          pipeline->getDeferredRenderData()->lightingRenderTarget,
+    //                                          pipeline->getDeferredRenderData()->gbufferFrameBuffer->getColorTextures()[1],
+    //                                          denoiseTex,
+    //                                          camera->matViewProj, 8, 8);
+    //                }
+    //                gfx::Rect clearRenderArea = {0, 0, _reflectionComp->getReflectionTex()->getWidth(), _reflectionComp->getReflectionTex()->getHeight()};
+    //                cmdBuff->beginRenderPass(const_cast<gfx::RenderPass *>(_reflectionComp->getClearPass()), const_cast<gfx::Framebuffer *>(_reflectionComp->getClearFramebuffer()), clearRenderArea, &clearColor, 0, 0);
+    //                cmdBuff->endRenderPass();
 
-                    cmdBuff->pipelineBarrier(_reflectionComp->getBarrierPre());
-                    cmdBuff->bindPipelineState(const_cast<gfx::PipelineState *>(_reflectionComp->getPipelineState()));
-                    cmdBuff->bindDescriptorSet(0, const_cast<gfx::DescriptorSet *>(_reflectionComp->getDescriptorSet()));
-                    cmdBuff->bindDescriptorSet(1, subModel->getDescriptorSet());
+    //                cmdBuff->pipelineBarrier(_reflectionComp->getBarrierPre());
+    //                cmdBuff->bindPipelineState(const_cast<gfx::PipelineState *>(_reflectionComp->getPipelineState()));
+    //                cmdBuff->bindDescriptorSet(0, const_cast<gfx::DescriptorSet *>(_reflectionComp->getDescriptorSet()));
+    //                cmdBuff->bindDescriptorSet(1, subModel->getDescriptorSet());
 
-                    cmdBuff->dispatch(_reflectionComp->getDispatchInfo());
+    //                cmdBuff->dispatch(_reflectionComp->getDispatchInfo());
 
-                    cmdBuff->pipelineBarrier(nullptr, const_cast<gfx::TextureBarrierList &>(_reflectionComp->getBarrierBeforeDenoise()), {const_cast<gfx::Texture *>(_reflectionComp->getReflectionTex()), denoiseTex});
+    //                cmdBuff->pipelineBarrier(nullptr, const_cast<gfx::TextureBarrierList &>(_reflectionComp->getBarrierBeforeDenoise()), {const_cast<gfx::Texture *>(_reflectionComp->getReflectionTex()), denoiseTex});
 
-                    cmdBuff->bindPipelineState(const_cast<gfx::PipelineState *>(_reflectionComp->getDenoisePipelineState()));
-                    cmdBuff->bindDescriptorSet(0, const_cast<gfx::DescriptorSet *>(_reflectionComp->getDenoiseDescriptorSet()));
-                    cmdBuff->bindDescriptorSet(1, subModel->getDescriptorSet());
-                    cmdBuff->dispatch(_reflectionComp->getDenioseDispatchInfo());
-                    cmdBuff->pipelineBarrier(nullptr, _reflectionComp->getBarrierAfterDenoise(), {denoiseTex});
-                }
-            }
-        }
-    }
+    //                cmdBuff->bindPipelineState(const_cast<gfx::PipelineState *>(_reflectionComp->getDenoisePipelineState()));
+    //                cmdBuff->bindDescriptorSet(0, const_cast<gfx::DescriptorSet *>(_reflectionComp->getDenoiseDescriptorSet()));
+    //                cmdBuff->bindDescriptorSet(1, subModel->getDescriptorSet());
+    //                cmdBuff->dispatch(_reflectionComp->getDenioseDispatchInfo());
+    //                cmdBuff->pipelineBarrier(nullptr, _reflectionComp->getBarrierAfterDenoise(), {denoiseTex});
+    //            }
+    //        }
+    //    }
+    //}
 
-    cmdBuff->beginRenderPass(_reflectionPass, frameBuffer, renderArea, &clearColor,
-                             camera->clearDepth, camera->clearStencil);
+    //cmdBuff->beginRenderPass(_reflectionPass, frameBuffer, renderArea, &clearColor,
+    //                         camera->clearDepth, camera->clearStencil);
 
-    cmdBuff->bindDescriptorSet(static_cast<uint>(SetIndex::GLOBAL), pipeline->getDescriptorSet());
+    //cmdBuff->bindDescriptorSet(static_cast<uint>(SetIndex::GLOBAL), pipeline->getDescriptorSet());
 
-    // reflection
-    _reflectionRenderQueue->clear();
+    //// reflection
+    //_reflectionRenderQueue->clear();
 
-    m = 0;
-    p = 0;
-    for (const auto &ro : renderObjects) {
-        const auto *model = ro.model;
-        for (auto *subModel : model->getSubModels()) {
-            for (auto *pass : subModel->getPasses()) {
-                if (pass->getPhase() != _reflectionPhaseID) continue;
-                _reflectionRenderQueue->insertRenderPass(ro, m, p);
-            }
-        }
-    }
+    //m = 0;
+    //p = 0;
+    //for (const auto &ro : renderObjects) {
+    //    const auto *model = ro.model;
+    //    for (auto *subModel : model->getSubModels()) {
+    //        for (auto *pass : subModel->getPasses()) {
+    //            if (pass->getPhase() != _reflectionPhaseID) continue;
+    //            _reflectionRenderQueue->insertRenderPass(ro, m, p);
+    //        }
+    //    }
+    //}
 
-    _reflectionRenderQueue->sort();
-    _reflectionRenderQueue->recordCommandBuffer(_device, renderPass, cmdBuff);
+    //_reflectionRenderQueue->sort();
+    //_reflectionRenderQueue->recordCommandBuffer(_device, renderPass, cmdBuff);
 
-    cmdBuff->endRenderPass();
+    //cmdBuff->endRenderPass();
 }
 
 } // namespace pipeline

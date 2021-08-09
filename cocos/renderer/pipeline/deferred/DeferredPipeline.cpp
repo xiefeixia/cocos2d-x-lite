@@ -375,6 +375,11 @@ void DeferredPipeline::generateDeferredRenderData() {
     };
 
     for (int i = 0; i < 4; i++) {
+        if (i == 1) {
+            info.format = gfx::Format::RGBA32F;
+        } else {
+            info.format = gfx::Format::RGBA16F;
+        }
         gfx::Texture *tex = _device->createTexture(info);
         _deferredRenderData->gbufferRenderTargets.push_back(tex);
     }

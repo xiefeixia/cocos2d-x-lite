@@ -247,6 +247,7 @@ bool js_register_cc_pipeline_PostprocessStage(se::Object* obj);
 bool register_all_pipeline(se::Object* obj);
 
 JSB_REGISTER_OBJECT_TYPE(cc::pipeline::PostprocessStage);
+SE_DECLARE_FUNC(js_pipeline_PostprocessStage_setRenderScale);
 SE_DECLARE_FUNC(js_pipeline_PostprocessStage_PostprocessStage);
 
 extern se::Object* __jsb_cc_pipeline_CommonStage_proto;
@@ -265,5 +266,6 @@ SE_DECLARE_FUNC(js_pipeline_CommonStage_setInputAssembler);
 SE_DECLARE_FUNC(js_pipeline_CommonStage_setPassHandle);
 SE_DECLARE_FUNC(js_pipeline_CommonStage_setPipelineState);
 SE_DECLARE_FUNC(js_pipeline_CommonStage_setRenderArea);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setRenderCallBack);
 SE_DECLARE_FUNC(js_pipeline_CommonStage_CommonStage);
 

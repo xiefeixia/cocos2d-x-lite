@@ -47,6 +47,9 @@ CommonStage::~CommonStage() {
 
 
 void CommonStage::render(scene::Camera *camera) {
+    if (_renderCallBack) {
+        _renderCallBack(camera);
+    }
 
     if (_framebuffer == nullptr || _inputAssembler == nullptr || _pipelineState == nullptr || !_dirty) {
         return;

@@ -50,6 +50,7 @@ public:
     void setInputAssembler(gfx::InputAssembler *inputAssembler) { _inputAssembler = inputAssembler; }
     void setPipelineState(gfx::PipelineState *pipelineState) { _pipelineState = pipelineState; }
     void setPassHandle(scene::Pass* pass) { _pass = pass; }
+    void setRenderCallBack(const std::function<void(scene::Camera *)> callback) { _renderCallBack = callback; };
 
 private:
     bool _dirty = true;
@@ -58,6 +59,8 @@ private:
     gfx::Color             _clearColor = { 0, 0, 0, 1 };
     float                  _clearDepth = 1;
     uint32_t               _clearStencil = 1;
+
+    std::function<void(scene::Camera *)> _renderCallBack = nullptr;
 
     scene::Pass *            _pass           = nullptr;
     gfx::Framebuffer *       _framebuffer    = nullptr;
