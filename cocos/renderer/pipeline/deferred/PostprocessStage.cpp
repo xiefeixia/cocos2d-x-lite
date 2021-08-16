@@ -103,8 +103,8 @@ void PostprocessStage::render(scene::Camera *camera) {
 
     // hack to reduce resolution size
     #if (CC_PLATFORM == CC_PLATFORM_ANDROID)
-        renderArea.width  *= 2;
-        renderArea.height *= 2;
+        renderArea.width  /= _renderScale;
+        renderArea.height /= _renderScale;
     #endif
 
     cmdBf->beginRenderPass(rp, fb, renderArea, _clearColors, camera->clearDepth, camera->clearStencil);
@@ -158,8 +158,8 @@ void PostprocessStage::render(scene::Camera *camera) {
 
     #if (CC_PLATFORM == CC_PLATFORM_ANDROID)
         cmdBf->endRenderPass();
-        renderArea.width /= 2;
-        renderArea.height /= 2;
+        renderArea.width *= _renderScale;
+        renderArea.height *= _renderScale;
         rp = pp->getOrCreateRenderPass(static_cast<gfx::ClearFlags>(0));
         cmdBf->beginRenderPass(rp, fb, renderArea, _clearColors, camera->clearDepth, camera->clearStencil);
     #endif
