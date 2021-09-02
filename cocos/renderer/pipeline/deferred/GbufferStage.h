@@ -57,6 +57,7 @@ private:
     RenderInstancedQueue * _instancedQueue    = nullptr;
     gfx::Rect              _renderArea;
     uint                   _phaseID = 0;
+    uint                   _overdrawID = 0;
 };
 
 } // namespace pipeline

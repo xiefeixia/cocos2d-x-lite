@@ -79,6 +79,7 @@ bool LightingStage::initialize(const RenderStageInfo &info) {
     _phaseID                = getPhaseID("default");
     _defPhaseID             = getPhaseID("deferred");
     _reflectionPhaseID      = getPhaseID("reflection");
+    _overdrawID             = getPhaseID("overdraw");
     return true;
 }
 
@@ -381,8 +382,13 @@ void LightingStage::render(scene::Camera *camera) {
         const auto *const model = ro.model;
         for (auto *subModel : model->getSubModels()) {
             for (auto *pass : subModel->getPasses()) {
+                if (pipeline->isRenderOverDraw()) {
+                    if (pass->getPhase() != _overdrawID) {
+                        continue;
+                    }
+                }
                 // TODO(xwx): need fallback of unlit and gizmo material.
-                if (pass->getPhase() != _phaseID && pass->getPhase() != _defPhaseID) continue;
+                else if (pass->getPhase() != _phaseID && pass->getPhase() != _defPhaseID) continue;
                 for (k = 0; k < _renderQueues.size(); k++) {
                     _renderQueues[k]->insertRenderPass(ro, m, p);
                 }

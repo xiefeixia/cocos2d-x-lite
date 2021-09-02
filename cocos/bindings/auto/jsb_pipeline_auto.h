@@ -197,6 +197,8 @@ JSB_REGISTER_OBJECT_TYPE(cc::pipeline::DeferredPipeline);
 SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_getLightingDepthTex);
 SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_getLightingFrameBuffer);
 SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_getLightingRenderPass);
+SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_isRenderOverDraw);
+SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_setIsRenderOverDraw);
 SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_setLightingFrameBuffer);
 SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_DeferredPipeline);
 

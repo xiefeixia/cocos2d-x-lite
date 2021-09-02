@@ -72,6 +72,7 @@ bool GbufferStage::initialize(const RenderStageInfo &info) {
     RenderStage::initialize(info);
     _renderQueueDescriptors = info.renderQueues;
     _phaseID                = getPhaseID("deferred");
+    _overdrawID             = getPhaseID("overdraw");
     return true;
 }
 
@@ -120,6 +121,9 @@ void GbufferStage::render(scene::Camera *camera) {
             auto        passCount = passes.size();
             for (passIdx = 0; passIdx < passCount; ++passIdx) {
                 const auto &pass = passes[passIdx];
+                if (pipeline->isRenderOverDraw() && pass->getPhase() !=_overdrawID) {
+                    continue;
+                }
                 if (pass->getPhase() != _phaseID) continue;
                 if (pass->getBatchingScheme() == scene::BatchingSchemes::INSTANCING) {
                     auto *instancedBuffer = InstancedBuffer::get(pass);

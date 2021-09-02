@@ -54,6 +54,7 @@ void GLES3Texture::doInit(const TextureInfo& /*info*/) {
     _gpuTexture->samples    = _samples;
     _gpuTexture->flags      = _flags;
     _gpuTexture->isPowerOf2 = math::IsPowerOfTwo(_width) && math::IsPowerOfTwo(_height);
+    _gpuTexture->testTxt    = this;
 
     cmdFuncGLES3CreateTexture(GLES3Device::getInstance(), _gpuTexture);
 

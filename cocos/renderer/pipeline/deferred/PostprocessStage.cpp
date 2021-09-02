@@ -33,6 +33,7 @@
 #include "gfx-base/GFXFramebuffer.h"
 #include "scene/SubModel.h"
 
+
 namespace cc {
 namespace pipeline {
 RenderStageInfo PostprocessStage::initInfo = {
@@ -107,17 +108,24 @@ void PostprocessStage::render(scene::Camera *camera) {
         renderArea.height /= _renderScale;
     #endif
 
+    auto *const sceneData = _pipeline->getPipelineSceneData();
+    const auto &renderObjects = sceneData->getRenderObjects();
+
+    // hack!!!!!
+    pp->getDescriptorSet()->_isDirty = true;
+    pp->getDescriptorSet()->update();
+
     cmdBf->beginRenderPass(rp, fb, renderArea, _clearColors, camera->clearDepth, camera->clearStencil);
     uint const globalOffsets[] = {_pipeline->getPipelineUBO()->getCurrentCameraUBOOffset()};
-    cmdBf->bindDescriptorSet(static_cast<uint>(SetIndex::GLOBAL), pp->getDescriptorSet(), static_cast<uint>(std::size(globalOffsets)), globalOffsets);
 
     // post proces
-    auto *const  sceneData     = _pipeline->getPipelineSceneData();
     scene::Pass *pv            = sceneData->getSharedData()->deferredPostPass;
     gfx::Shader *sd            = sceneData->getSharedData()->deferredPostPassShader;
-    const auto & renderObjects = sceneData->getRenderObjects();
 
     cmdBf->bindDescriptorSet(static_cast<uint>(SetIndex::MATERIAL), pv->getDescriptorSet());
+
+
+    cmdBf->bindDescriptorSet(static_cast<uint>(SetIndex::GLOBAL), pp->getDescriptorSet(), static_cast<uint>(std::size(globalOffsets)), globalOffsets);
 
     if (!renderObjects.empty()) {
         gfx::InputAssembler *ia  = pp->getQuadIAOffScreen();
@@ -129,32 +137,32 @@ void PostprocessStage::render(scene::Camera *camera) {
         cmdBf->draw(ia);
     }
 
-    // // transparent
-    // for (auto *queue : _renderQueues) {
-    //     queue->clear();
-    // }
+     // transparent
+     for (auto *queue : _renderQueues) {
+         queue->clear();
+     }
 
-    // uint   m = 0;
-    // uint   p = 0;
-    // size_t k = 0;
-    // for (auto ro : renderObjects) {
-    //     const auto *const model = ro.model;
+     uint   m = 0;
+     uint   p = 0;
+     size_t k = 0;
+     for (auto ro : renderObjects) {
+         const auto *const model = ro.model;
 
-    //     for (auto *subModel : model->getSubModels()) {
-    //         for (auto *pass : subModel->getPasses()) {
-    //             // TODO(xwx): need fallback of ulit and gizmo material.
-    //             if (pass->getPhase() != _phaseID) continue;
-    //             for (k = 0; k < _renderQueues.size(); k++) {
-    //                 _renderQueues[k]->insertRenderPass(ro, m, p);
-    //             }
-    //         }
-    //     }
-    // }
+         for (auto *subModel : model->getSubModels()) {
+             for (auto *pass : subModel->getPasses()) {
+                 // TODO(xwx): need fallback of ulit and gizmo material.
+                 if (pass->getPhase() != _phaseID) continue;
+                 for (k = 0; k < _renderQueues.size(); k++) {
+                     _renderQueues[k]->insertRenderPass(ro, m, p);
+                 }
+             }
+         }
+     }
 
-    // for (auto *queue : _renderQueues) {
-    //     queue->sort();
-    //     queue->recordCommandBuffer(_device, rp, cmdBf);
-    // }
+     for (auto *queue : _renderQueues) {
+         queue->sort();
+         queue->recordCommandBuffer(_device, rp, cmdBf);
+     }
 
     #if (CC_PLATFORM == CC_PLATFORM_ANDROID)
         cmdBf->endRenderPass();

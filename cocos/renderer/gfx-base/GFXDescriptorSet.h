@@ -62,6 +62,8 @@ public:
     inline Texture *getTexture(uint binding) const { return getTexture(binding, 0U); }
     inline Sampler *getSampler(uint binding) const { return getSampler(binding, 0U); }
 
+    bool _isDirty = false;
+
 protected:
     virtual void doInit(const DescriptorSetInfo &info) = 0;
     virtual void doDestroy()                           = 0;
@@ -71,7 +73,6 @@ protected:
     TextureList          _textures;
     SamplerList          _samplers;
 
-    bool _isDirty = false;
 };
 
 } // namespace gfx

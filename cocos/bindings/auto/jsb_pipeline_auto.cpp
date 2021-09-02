@@ -2105,6 +2105,44 @@ static bool js_pipeline_DeferredPipeline_getLightingRenderPass(se::State& s) // 
 }
 SE_BIND_FUNC(js_pipeline_DeferredPipeline_getLightingRenderPass)
 
+static bool js_pipeline_DeferredPipeline_isRenderOverDraw(se::State& s) // NOLINT(readability-identifier-naming)
+{
+    auto* cobj = SE_THIS_OBJECT<cc::pipeline::DeferredPipeline>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_DeferredPipeline_isRenderOverDraw : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 0) {
+        bool result = cobj->isRenderOverDraw();
+        ok &= nativevalue_to_se(result, s.rval(), nullptr /*ctx*/);
+        SE_PRECONDITION2(ok, false, "js_pipeline_DeferredPipeline_isRenderOverDraw : Error processing arguments");
+        SE_HOLD_RETURN_VALUE(result, s.thisObject(), s.rval());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 0);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_DeferredPipeline_isRenderOverDraw)
+
+static bool js_pipeline_DeferredPipeline_setIsRenderOverDraw(se::State& s) // NOLINT(readability-identifier-naming)
+{
+    auto* cobj = SE_THIS_OBJECT<cc::pipeline::DeferredPipeline>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_DeferredPipeline_setIsRenderOverDraw : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 1) {
+        HolderType<bool, false> arg0 = {};
+        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
+        SE_PRECONDITION2(ok, false, "js_pipeline_DeferredPipeline_setIsRenderOverDraw : Error processing arguments");
+        cobj->setIsRenderOverDraw(arg0.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_DeferredPipeline_setIsRenderOverDraw)
+
 static bool js_pipeline_DeferredPipeline_setLightingFrameBuffer(se::State& s) // NOLINT(readability-identifier-naming)
 {
     auto* cobj = SE_THIS_OBJECT<cc::pipeline::DeferredPipeline>(s);
@@ -2157,6 +2195,8 @@ bool js_register_pipeline_DeferredPipeline(se::Object* obj) // NOLINT(readabilit
     cls->defineFunction("getLightingDepthTex", _SE(js_pipeline_DeferredPipeline_getLightingDepthTex));
     cls->defineFunction("getLightingFrameBuffer", _SE(js_pipeline_DeferredPipeline_getLightingFrameBuffer));
     cls->defineFunction("getLightingRenderPass", _SE(js_pipeline_DeferredPipeline_getLightingRenderPass));
+    cls->defineFunction("isRenderOverDraw", _SE(js_pipeline_DeferredPipeline_isRenderOverDraw));
+    cls->defineFunction("setIsRenderOverDraw", _SE(js_pipeline_DeferredPipeline_setIsRenderOverDraw));
     cls->defineFunction("setLightingFrameBuffer", _SE(js_pipeline_DeferredPipeline_setLightingFrameBuffer));
     cls->defineFinalizeFunction(_SE(js_cc_pipeline_DeferredPipeline_finalize));
     cls->install();

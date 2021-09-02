@@ -75,6 +75,13 @@ public:
     gfx::RenderPass *getLightingRenderPass() { return _lightingRenderPass; }
     gfx::Texture    *getLightingDepthTex() { return _deferredRenderData->depthTex; }
 
+    bool isRenderOverDraw() {
+        return _renderOverdraw;
+    }
+    void setIsRenderOverDraw(bool overdraw) {
+        _renderOverdraw = overdraw;
+    }
+
 private:
     bool activeRenderer();
     bool createQuadInputAssembler(gfx::Buffer **quadIB, gfx::Buffer **quadVB, gfx::InputAssembler **quadIA);
@@ -100,6 +107,8 @@ private:
     gfx::RenderPass *   _lightingRenderPass = nullptr;
     uint                _width;
     uint                _height;
+
+    bool _renderOverdraw;
 };
 
 } // namespace pipeline

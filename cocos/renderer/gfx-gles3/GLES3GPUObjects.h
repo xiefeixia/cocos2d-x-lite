@@ -90,6 +90,7 @@ public:
     GLenum       glWrapT        = 0;
     GLenum       glMinFilter    = 0;
     GLenum       glMagFilter    = 0;
+    Texture *       testTxt        = nullptr;
 };
 
 using GLES3GPUTextureList = vector<GLES3GPUTexture *>;
