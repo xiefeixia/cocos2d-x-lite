@@ -23,47 +23,56 @@
  THE SOFTWARE.
 ****************************************************************************/
 
-#pragma once
-
+#include "CommonStage.h"
+#include "./PipelineStateManager.h"
+#include "RenderPipeline.h"
+#include "RenderFlow.h"
+#include "gfx-base/GFXCommandBuffer.h"
+#include "gfx-base/GFXDescriptorSet.h"
+#include "gfx-base/GFXDevice.h"
 #include "gfx-base/GFXFramebuffer.h"
-#include "pipeline/RenderStage.h"
+#include "gfx-base/GFXQueue.h"
+#include "scene/SubModel.h"
+
+#include "./deferred/DeferredPipeline.h"
 
 namespace cc {
 namespace pipeline {
 
-class RenderFlow;
-class RenderBatchedQueue;
-class RenderInstancedQueue;
-class RenderAdditiveLightQueue;
-class PlanarShadowQueue;
-struct DeferredRenderData;
-class DeferredPipeline;
-struct RenderPass;
 
-class CC_DLL GbufferStage : public RenderStage {
-public:
-    static const RenderStageInfo &getInitializeInfo();
+CommonStage::CommonStage() = default;
 
-    GbufferStage();
-    ~GbufferStage() override;
+CommonStage::~CommonStage() {
+}
 
-    bool initialize(const RenderStageInfo &info) override;
-    void activate(RenderPipeline *pipeline, RenderFlow *flow) override;
-    void destroy() override;
-    void render(scene::Camera *camera) override;
 
-private:
-    void dispenseRenderObject2Queues();
-    void recordCommands(DeferredPipeline *pipeline, gfx::RenderPass *renderPass);
+void CommonStage::render(scene::Camera *camera) {
+    if (_renderCallBack) {
+        _renderCallBack(camera);
+    }
 
-    static RenderStageInfo initInfo;
-    PlanarShadowQueue *    _planarShadowQueue = nullptr;
-    RenderBatchedQueue *   _batchedQueue      = nullptr;
-    RenderInstancedQueue * _instancedQueue    = nullptr;
-    gfx::Rect              _renderArea;
-    uint                   _phaseID = 0;
-    uint                   _overdrawID = 0;
-};
+    if (_framebuffer == nullptr || _inputAssembler == nullptr || _pipelineState == nullptr || !_dirty) {
+        return;
+    }
+
+    if (_pass == nullptr) {
+        return;
+    }
+
+    _dirty = false;
+
+    gfx::CommandBuffer *cmdBuff = _pipeline->getCommandBuffers()[0];
+
+    auto *renderPass = _framebuffer->getRenderPass();
+
+    cmdBuff->beginRenderPass(renderPass, _framebuffer, _renderArea, &_clearColor, _clearDepth, _clearStencil);
+    cmdBuff->bindDescriptorSet((uint32_t)cc::pipeline::SetIndex::GLOBAL, _pipeline->getDescriptorSet());
+    cmdBuff->bindDescriptorSet((uint32_t)cc::pipeline::SetIndex::MATERIAL, _pass->getDescriptorSet());
+    cmdBuff->bindPipelineState(_pipelineState);
+    cmdBuff->bindInputAssembler(_inputAssembler);
+    cmdBuff->draw(_inputAssembler);
+    cmdBuff->endRenderPass();
+}
 
 } // namespace pipeline
 } // namespace cc

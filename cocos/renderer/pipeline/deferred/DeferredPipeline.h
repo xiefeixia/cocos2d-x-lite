@@ -121,6 +121,8 @@ public:
     static framegraph::StringHandle fgStrHandleTransparentPass;
     static framegraph::StringHandle fgStrHandleSsprPass;
     static framegraph::StringHandle fgStrHandlePostprocessPass;
+
+    bool _renderOverdraw = false;
 };
 
 } // namespace pipeline

@@ -72,6 +72,7 @@ private:
     PlanarShadowQueue *    _planarShadowQueue{nullptr};
     gfx::Rect              _renderArea;
     uint                   _phaseID{0};
+    uint                   _overdrawID{0};
 
     gfx::Buffer *             _deferredLitsBufs{nullptr};
     gfx::Buffer *             _deferredLitsBufView{nullptr};

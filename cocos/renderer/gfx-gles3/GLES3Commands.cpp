@@ -2437,14 +2437,14 @@ void cmdFuncGLES3BindState(GLES3Device *device, GLES3GPUPipelineState *gpuPipeli
                 if (gpuDescriptor->gpuTexture->size > 0) {
                     GLuint glTexture = gpuDescriptor->gpuTexture->glTexture;
 
-                    if (cache->glTextures[unit] != glTexture) {
+                    //if (cache->glTextures[unit] != glTexture) {
                         if (cache->texUint != unit) {
                             GL_CHECK(glActiveTexture(GL_TEXTURE0 + unit));
                             cache->texUint = unit;
                         }
                         GL_CHECK(glBindTexture(gpuDescriptor->gpuTexture->glTarget, glTexture));
                         cache->glTextures[unit] = glTexture;
-                    }
+                    //}
 
                     if (cache->glSamplers[unit] != gpuDescriptor->gpuSampler->glSampler) {
                         GL_CHECK(glBindSampler(unit, gpuDescriptor->gpuSampler->glSampler));

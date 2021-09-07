@@ -25,44 +25,47 @@
 
 #pragma once
 
-#include "gfx-base/GFXFramebuffer.h"
-#include "pipeline/RenderStage.h"
+#include "./RenderStage.h"
+#include "scene/Pass.h"
 
 namespace cc {
 namespace pipeline {
 
 class RenderFlow;
-class RenderBatchedQueue;
-class RenderInstancedQueue;
-class RenderAdditiveLightQueue;
-class PlanarShadowQueue;
-struct DeferredRenderData;
-class DeferredPipeline;
-struct RenderPass;
 
-class CC_DLL GbufferStage : public RenderStage {
+class CC_DLL CommonStage : public RenderStage {
 public:
-    static const RenderStageInfo &getInitializeInfo();
 
-    GbufferStage();
-    ~GbufferStage() override;
+    CommonStage();
+    ~CommonStage() override;
 
-    bool initialize(const RenderStageInfo &info) override;
-    void activate(RenderPipeline *pipeline, RenderFlow *flow) override;
-    void destroy() override;
     void render(scene::Camera *camera) override;
 
-private:
-    void dispenseRenderObject2Queues();
-    void recordCommands(DeferredPipeline *pipeline, gfx::RenderPass *renderPass);
+    void setDirty(bool dirty) { _dirty = dirty; }
+    void setRenderArea(const gfx::Rect &renderArea) { _renderArea = renderArea; }
+    void setClearColor(const gfx::Color &color) { _clearColor = color; }
+    void setClearDepth(float clearDepth) { _clearDepth = clearDepth; }
+    void setClearStencil(uint32_t clearStencil) { _clearStencil = clearStencil; }
+    void setFramebuffer(gfx::Framebuffer *framebuffer) { _framebuffer = framebuffer; }
+    void setInputAssembler(gfx::InputAssembler *inputAssembler) { _inputAssembler = inputAssembler; }
+    void setPipelineState(gfx::PipelineState *pipelineState) { _pipelineState = pipelineState; }
+    void setPassHandle(scene::Pass* pass) { _pass = pass; }
+    void setRenderCallBack(const std::function<void(scene::Camera *)> callback) { _renderCallBack = callback; };
 
-    static RenderStageInfo initInfo;
-    PlanarShadowQueue *    _planarShadowQueue = nullptr;
-    RenderBatchedQueue *   _batchedQueue      = nullptr;
-    RenderInstancedQueue * _instancedQueue    = nullptr;
+private:
+    bool _dirty = true;
+
     gfx::Rect              _renderArea;
-    uint                   _phaseID = 0;
-    uint                   _overdrawID = 0;
+    gfx::Color             _clearColor = { 0, 0, 0, 1 };
+    float                  _clearDepth = 1;
+    uint32_t               _clearStencil = 1;
+
+    std::function<void(scene::Camera *)> _renderCallBack = nullptr;
+
+    scene::Pass *            _pass           = nullptr;
+    gfx::Framebuffer *       _framebuffer    = nullptr;
+    gfx::InputAssembler *    _inputAssembler = nullptr;
+    gfx::PipelineState *     _pipelineState  = nullptr;
 };
 
 } // namespace pipeline

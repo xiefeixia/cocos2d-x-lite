@@ -153,7 +153,9 @@ void GlobalDSManager::destroy() {
 }
 
 void GlobalDSManager::setDescriptorSetLayout() {
-    globalDescriptorSetLayout.bindings.resize(static_cast<size_t>(PipelineGlobalBindings::COUNT));
+    if (globalDescriptorSetLayout.bindings.size() < static_cast<size_t>(PipelineGlobalBindings::COUNT)) {
+        globalDescriptorSetLayout.bindings.resize(static_cast<size_t>(PipelineGlobalBindings::COUNT));
+    }
 
     globalDescriptorSetLayout.blocks[UBOGlobal::NAME]            = UBOGlobal::LAYOUT;
     globalDescriptorSetLayout.bindings[UBOGlobal::BINDING]       = UBOGlobal::DESCRIPTOR;

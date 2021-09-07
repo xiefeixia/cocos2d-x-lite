@@ -38,6 +38,7 @@
 #include "pipeline/Define.h"
 #include "scene/SubModel.h"
 
+
 namespace cc {
 namespace pipeline {
 namespace {
@@ -215,9 +216,30 @@ void PostprocessStage::render(scene::Camera *camera) {
         _uiPhase->render(pipeline->getFrameGraphCamera(), renderPass);
     };
 
+    // hack to reduce resolution size
+    // #if (CC_PLATFORM == CC_PLATFORM_ANDROID)
+    //     renderArea.width  /= _renderScale;
+    //     renderArea.height /= _renderScale;
+    // #endif
+
+    // auto *const sceneData = _pipeline->getPipelineSceneData();
+    // const auto &renderObjects = sceneData->getRenderObjects();
+
+    // // hack!!!!!
+    // pp->getDescriptorSet()->_isDirty = true;
+    // pp->getDescriptorSet()->update();
+
     // add pass
     pipeline->getFrameGraph().addPass<RenderData>(static_cast<uint>(DeferredInsertPoint::IP_POSTPROCESS), DeferredPipeline::fgStrHandlePostprocessPass, postSetup, postExec);
     pipeline->getFrameGraph().presentFromBlackboard(fgStrHandlePostProcessOutTexture, camera->window->frameBuffer->getColorTextures()[0]);
+
+    // #if (CC_PLATFORM == CC_PLATFORM_ANDROID)
+    //     cmdBf->endRenderPass();
+    //     renderArea.width *= _renderScale;
+    //     renderArea.height *= _renderScale;
+    //     rp = pp->getOrCreateRenderPass(static_cast<gfx::ClearFlags>(0));
+    //     cmdBf->beginRenderPass(rp, fb, renderArea, _clearColors, camera->clearDepth, camera->clearStencil);
+    // #endif
 }
 
 } // namespace pipeline
