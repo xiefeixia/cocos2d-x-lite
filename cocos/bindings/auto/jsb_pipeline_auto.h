@@ -21,6 +21,8 @@
 #include "cocos/renderer/pipeline/deferred/GbufferStage.h"
 #include "cocos/renderer/pipeline/deferred/LightingStage.h"
 #include "cocos/renderer/pipeline/deferred/PostprocessStage.h"
+#include "cocos/renderer/pipeline/CommonStage.h"
+#include "cocos/renderer/pipeline/TAAStage.h"
 
 extern se::Object* __jsb_cc_pipeline_RenderQueueDesc_proto;
 extern se::Class* __jsb_cc_pipeline_RenderQueueDesc_class;
@@ -185,8 +187,8 @@ bool register_all_pipeline(se::Object* obj);
 JSB_REGISTER_OBJECT_TYPE(cc::pipeline::InstancedBuffer);
 SE_DECLARE_FUNC(js_pipeline_InstancedBuffer_destroy);
 SE_DECLARE_FUNC(js_pipeline_InstancedBuffer_setDynamicOffset);
-SE_DECLARE_FUNC(js_pipeline_InstancedBuffer_get);
 SE_DECLARE_FUNC(js_pipeline_InstancedBuffer_destroyInstancedBuffer);
+SE_DECLARE_FUNC(js_pipeline_InstancedBuffer_get);
 SE_DECLARE_FUNC(js_pipeline_InstancedBuffer_InstancedBuffer);
 
 extern se::Object* __jsb_cc_pipeline_DeferredPipeline_proto;
@@ -201,6 +203,8 @@ SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_getFrameGraph);
 SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_getFrameGraphCamera);
 SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_getHeight);
 SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_getWidth);
+SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_isRenderOverDraw);
+SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_setRenderOverDraw);
 SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_DeferredPipeline);
 
 extern se::Object* __jsb_cc_pipeline_MainFlow_proto;
@@ -240,6 +244,42 @@ bool js_register_cc_pipeline_PostprocessStage(se::Object* obj);
 bool register_all_pipeline(se::Object* obj);
 
 JSB_REGISTER_OBJECT_TYPE(cc::pipeline::PostprocessStage);
+SE_DECLARE_FUNC(js_pipeline_PostprocessStage_setRenderScale);
 SE_DECLARE_FUNC(js_pipeline_PostprocessStage_getInitializeInfo);
 SE_DECLARE_FUNC(js_pipeline_PostprocessStage_PostprocessStage);
+
+extern se::Object* __jsb_cc_pipeline_CommonStage_proto;
+extern se::Class* __jsb_cc_pipeline_CommonStage_class;
+
+bool js_register_cc_pipeline_CommonStage(se::Object* obj);
+bool register_all_pipeline(se::Object* obj);
+
+JSB_REGISTER_OBJECT_TYPE(cc::pipeline::CommonStage);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setClearColor);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setClearDepth);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setClearStencil);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setDirty);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setFramebuffer);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setInputAssembler);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setPassHandle);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setPipelineState);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setRenderArea);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setRenderCallBack);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_CommonStage);
+
+extern se::Object* __jsb_cc_pipeline_TAAStage_proto;
+extern se::Class* __jsb_cc_pipeline_TAAStage_class;
+
+bool js_register_cc_pipeline_TAAStage(se::Object* obj);
+bool register_all_pipeline(se::Object* obj);
+
+JSB_REGISTER_OBJECT_TYPE(cc::pipeline::TAAStage);
+SE_DECLARE_FUNC(js_pipeline_TAAStage_getCamera);
+SE_DECLARE_FUNC(js_pipeline_TAAStage_getPass);
+SE_DECLARE_FUNC(js_pipeline_TAAStage_getShader);
+SE_DECLARE_FUNC(js_pipeline_TAAStage_setCamera);
+SE_DECLARE_FUNC(js_pipeline_TAAStage_setDirty);
+SE_DECLARE_FUNC(js_pipeline_TAAStage_setPass);
+SE_DECLARE_FUNC(js_pipeline_TAAStage_setShader);
+SE_DECLARE_FUNC(js_pipeline_TAAStage_TAAStage);
 

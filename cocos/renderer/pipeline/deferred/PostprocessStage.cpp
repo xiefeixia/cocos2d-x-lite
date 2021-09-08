@@ -101,6 +101,8 @@ void PostprocessStage::render(scene::Camera *camera) {
         framegraph::TextureHandle lightingOut; // read from lighting output
         framegraph::TextureHandle backBuffer;  // write to back buffer
         framegraph::TextureHandle depth;
+
+        framegraph::TextureHandle taaResult;   // read from taa output
     };
 
     if (hasFlag(static_cast<gfx::ClearFlags>(camera->clearFlag), gfx::ClearFlagBit::COLOR)) {
@@ -125,6 +127,13 @@ void PostprocessStage::render(scene::Camera *camera) {
 
         data.lightingOut = builder.read(data.lightingOut);
         builder.writeToBlackboard(DeferredPipeline::fgStrHandleLightingOutTexture, data.lightingOut);
+
+        auto taaResultHande = DeferredPipeline::fgStrHandleTAATexture[1];
+        data.taaResult      = framegraph::TextureHandle(builder.readFromBlackboard(taaResultHande));
+        if (data.taaResult.isValid()) {
+            data.taaResult = builder.read(data.taaResult);
+            builder.writeToBlackboard(taaResultHande, data.taaResult);
+        }
 
         framegraph::RenderTargetAttachment::Descriptor colorAttachmentInfo;
         colorAttachmentInfo.usage      = framegraph::RenderTargetAttachment::Usage::COLOR;
@@ -178,7 +187,12 @@ void PostprocessStage::render(scene::Camera *camera) {
         gfx::RenderPass *renderPass = table.getRenderPass();
 
         // bind descriptor
-        auto *lightingOut = static_cast<gfx::Texture *>(table.getRead(data.lightingOut));
+        gfx::Texture *input = nullptr;
+        if (data.taaResult.isValid()) {
+            input = static_cast<gfx::Texture *>(table.getRead(data.taaResult));
+        } else {
+            input = static_cast<gfx::Texture *>(table.getRead(data.lightingOut));
+        }
 
         auto *     cmdBuff         = pipeline->getCommandBuffers()[0];
         uint const globalOffsets[] = {pipeline->getPipelineUBO()->getCurrentCameraUBOOffset()};
@@ -196,7 +210,7 @@ void PostprocessStage::render(scene::Camera *camera) {
             gfx::InputAssembler *ia        = pipeline->getIAByRenderArea(rendeArea);
             gfx::PipelineState * pso       = PipelineStateManager::getOrCreatePipelineState(pv, sd, ia, renderPass);
 
-            pv->getDescriptorSet()->bindTexture(0, table.getRead(data.lightingOut));
+            pv->getDescriptorSet()->bindTexture(0, input);
             pv->getDescriptorSet()->bindSampler(0, pipeline->getDevice()->getSampler({
                                                        gfx::Filter::POINT,
                                                        gfx::Filter::POINT,

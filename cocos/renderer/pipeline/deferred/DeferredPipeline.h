@@ -84,6 +84,9 @@ public:
     scene::Camera *         getFrameGraphCamera() const { return _frameGraphCamera; }
     gfx::InputAssembler *   getIAByRenderArea(const gfx::Rect &rect);
 
+    bool isRenderOverDraw() { return _renderOverdraw; }
+    void setRenderOverDraw(bool overdraw) { _renderOverdraw = overdraw; }
+
 private:
     bool activeRenderer(gfx::Swapchain *swapchain);
     bool createQuadInputAssembler(gfx::Buffer *quadIB, gfx::Buffer **quadVB, gfx::InputAssembler **quadIA);
@@ -115,12 +118,18 @@ public:
     static framegraph::StringHandle fgStrHandleDepthTexture;
     static framegraph::StringHandle fgStrHandleLightingOutTexture;
 
+    static uint                     taaTextureIndex;
+    static framegraph::StringHandle fgStrHandleTAATexture[2];
+
     // deferred pass names
     static framegraph::StringHandle fgStrHandleGbufferPass;
     static framegraph::StringHandle fgStrHandleLightingPass;
     static framegraph::StringHandle fgStrHandleTransparentPass;
     static framegraph::StringHandle fgStrHandleSsprPass;
     static framegraph::StringHandle fgStrHandlePostprocessPass;
+
+    static framegraph::StringHandle fgStrHandleTAAPass;
+
 
     bool _renderOverdraw = false;
 };

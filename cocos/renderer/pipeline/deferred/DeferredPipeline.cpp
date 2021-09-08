@@ -64,11 +64,19 @@ framegraph::StringHandle DeferredPipeline::fgStrHandleGbufferTexture[GBUFFER_COU
 framegraph::StringHandle DeferredPipeline::fgStrHandleDepthTexture       = framegraph::FrameGraph::stringToHandle("depthTexture");
 framegraph::StringHandle DeferredPipeline::fgStrHandleLightingOutTexture = framegraph::FrameGraph::stringToHandle("lightingOutputTexture");
 
+framegraph::StringHandle DeferredPipeline::fgStrHandleTAATexture[2] = {
+    framegraph::FrameGraph::stringToHandle("TAATexture1"),
+    framegraph::FrameGraph::stringToHandle("TAATexture2")
+};
+uint DeferredPipeline::taaTextureIndex = 0;
+
 framegraph::StringHandle DeferredPipeline::fgStrHandleGbufferPass     = framegraph::FrameGraph::stringToHandle("deferredGbufferPass");
 framegraph::StringHandle DeferredPipeline::fgStrHandleLightingPass    = framegraph::FrameGraph::stringToHandle("deferredLightingPass");
 framegraph::StringHandle DeferredPipeline::fgStrHandleTransparentPass = framegraph::FrameGraph::stringToHandle("deferredTransparentPass");
 framegraph::StringHandle DeferredPipeline::fgStrHandleSsprPass        = framegraph::FrameGraph::stringToHandle("deferredSSPRPass");
 framegraph::StringHandle DeferredPipeline::fgStrHandlePostprocessPass = framegraph::FrameGraph::stringToHandle("deferredPostPass");
+
+framegraph::StringHandle DeferredPipeline::fgStrHandleTAAPass = framegraph::FrameGraph::stringToHandle("deferredTAAPass");
 
 bool DeferredPipeline::initialize(const RenderPipelineInfo &info) {
     RenderPipeline::initialize(info);
@@ -117,13 +125,11 @@ void DeferredPipeline::render(const vector<scene::Camera *> &cameras) {
 
         _fg.compile();
 
-        /* *
-        static bool exported = false;
-        if (!exported) {
+        /*static bool exported = false;
+        if (!exported) {*/
             _fg.exportGraphViz("fg_vis.dot");
-            exported = true;
-        }
-        // */
+          /*  exported = true;
+        }*/
 
         _fg.execute();
         _pipelineUBO->incCameraUBOOffset();

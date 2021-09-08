@@ -802,6 +802,8 @@ cocos_source_files(
                  cocos/renderer/pipeline/RenderStage.h
                  cocos/renderer/pipeline/CommonStage.cpp
                  cocos/renderer/pipeline/CommonStage.h
+                 cocos/renderer/pipeline/TAAStage.cpp
+                 cocos/renderer/pipeline/TAAStage.h
                  cocos/renderer/pipeline/PlanarShadowQueue.cpp
                  cocos/renderer/pipeline/PlanarShadowQueue.h
                  cocos/renderer/pipeline/ShadowMapBatchedQueue.cpp

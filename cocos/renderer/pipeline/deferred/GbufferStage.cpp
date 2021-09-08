@@ -109,6 +109,8 @@ void GbufferStage::dispenseRenderObject2Queues() {
         queue->clear();
     }
 
+    auto pip = static_cast<DeferredPipeline *>(_pipeline);
+
     uint   subModelIdx = 0;
     uint   passIdx     = 0;
     size_t k           = 0;
@@ -122,7 +124,7 @@ void GbufferStage::dispenseRenderObject2Queues() {
             auto        passCount = passes.size();
             for (passIdx = 0; passIdx < passCount; ++passIdx) {
                 const auto &pass = passes[passIdx];
-                if (pipeline->isRenderOverDraw() && pass->getPhase() !=_overdrawID) {
+                if (pip->isRenderOverDraw() && pass->getPhase() != _overdrawID) {
                     continue;
                 }
                 if (pass->getPhase() != _phaseID) continue;
@@ -185,7 +187,7 @@ void GbufferStage::render(scene::Camera *camera) {
         gfx::TextureInfo gbufferInfoFloat = {
             gfx::TextureType::TEX2D,
             gfx::TextureUsageBit::COLOR_ATTACHMENT | gfx::TextureUsageBit::SAMPLED,
-            gfx::Format::RGBA16F,
+            gfx::Format::RGBA32F,
             pipeline->getWidth(),
             pipeline->getHeight(),
         };
