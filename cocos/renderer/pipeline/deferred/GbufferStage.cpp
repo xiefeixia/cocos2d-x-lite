@@ -187,7 +187,7 @@ void GbufferStage::render(scene::Camera *camera) {
         gfx::TextureInfo gbufferInfoFloat = {
             gfx::TextureType::TEX2D,
             gfx::TextureUsageBit::COLOR_ATTACHMENT | gfx::TextureUsageBit::SAMPLED,
-            gfx::Format::RGBA32F,
+            gfx::Format::RGBA16F,
             pipeline->getWidth(),
             pipeline->getHeight(),
         };
