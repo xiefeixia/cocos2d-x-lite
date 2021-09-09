@@ -77,7 +77,6 @@ SE_DECLARE_FUNC(js_pipeline_RenderPipeline_getProfiler);
 SE_DECLARE_FUNC(js_pipeline_RenderPipeline_getRenderstageByName);
 SE_DECLARE_FUNC(js_pipeline_RenderPipeline_initialize);
 SE_DECLARE_FUNC(js_pipeline_RenderPipeline_render);
-SE_DECLARE_FUNC(js_pipeline_RenderPipeline_resize);
 SE_DECLARE_FUNC(js_pipeline_RenderPipeline_setPipelineSharedSceneData);
 SE_DECLARE_FUNC(js_pipeline_RenderPipeline_setProfiler);
 SE_DECLARE_FUNC(js_pipeline_RenderPipeline_setValue);
@@ -198,9 +197,9 @@ bool js_register_cc_pipeline_DeferredPipeline(se::Object* obj);
 bool register_all_pipeline(se::Object* obj);
 
 JSB_REGISTER_OBJECT_TYPE(cc::pipeline::DeferredPipeline);
+SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_ensureEnoughSize);
 SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_getClearcolor);
 SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_getFrameGraph);
-SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_getFrameGraphCamera);
 SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_getHeight);
 SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_getWidth);
 SE_DECLARE_FUNC(js_pipeline_DeferredPipeline_isRenderOverDraw);

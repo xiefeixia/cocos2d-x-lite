@@ -19198,64 +19198,25 @@ static bool js_gfx_Swapchain_initialize(se::State& s) // NOLINT(readability-iden
 }
 SE_BIND_FUNC(js_gfx_Swapchain_initialize)
 
-static bool js_gfx_Swapchain_isPreRotationEnabled(se::State& s) // NOLINT(readability-identifier-naming)
-{
-    auto* cobj = SE_THIS_OBJECT<cc::gfx::Swapchain>(s);
-    SE_PRECONDITION2(cobj, false, "js_gfx_Swapchain_isPreRotationEnabled : Invalid Native Object");
-    const auto& args = s.args();
-    size_t argc = args.size();
-    CC_UNUSED bool ok = true;
-    if (argc == 0) {
-        bool result = cobj->isPreRotationEnabled();
-        ok &= nativevalue_to_se(result, s.rval(), nullptr /*ctx*/);
-        SE_PRECONDITION2(ok, false, "js_gfx_Swapchain_isPreRotationEnabled : Error processing arguments");
-        SE_HOLD_RETURN_VALUE(result, s.thisObject(), s.rval());
-        return true;
-    }
-    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 0);
-    return false;
-}
-SE_BIND_FUNC(js_gfx_Swapchain_isPreRotationEnabled)
-
 static bool js_gfx_Swapchain_resize(se::State& s) // NOLINT(readability-identifier-naming)
 {
-    CC_UNUSED bool ok = true;
     auto* cobj = SE_THIS_OBJECT<cc::gfx::Swapchain>(s);
-    SE_PRECONDITION2( cobj, false, "js_gfx_Swapchain_resize : Invalid Native Object");
+    SE_PRECONDITION2(cobj, false, "js_gfx_Swapchain_resize : Invalid Native Object");
     const auto& args = s.args();
     size_t argc = args.size();
-    do {
-        if (argc == 2) {
-            HolderType<unsigned int, false> arg0 = {};
-            HolderType<unsigned int, false> arg1 = {};
-
-            ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
-            if (!ok) { ok = true; break; }
-            ok &= sevalue_to_native(args[1], &arg1, s.thisObject());
-            if (!ok) { ok = true; break; }
-            cobj->resize(arg0.value(), arg1.value());
-            return true;
-        }
-    } while(false);
-
-    do {
-        if (argc == 3) {
-            HolderType<unsigned int, false> arg0 = {};
-            HolderType<unsigned int, false> arg1 = {};
-            HolderType<cc::gfx::SurfaceTransform, false> arg2 = {};
-
-            ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
-            if (!ok) { ok = true; break; }
-            ok &= sevalue_to_native(args[1], &arg1, s.thisObject());
-            if (!ok) { ok = true; break; }
-            ok &= sevalue_to_native(args[2], &arg2, s.thisObject());
-            if (!ok) { ok = true; break; }
-            cobj->resize(arg0.value(), arg1.value(), arg2.value());
-            return true;
-        }
-    } while(false);
-
-    SE_REPORT_ERROR("wrong number of arguments: %d", (int)argc);
+    CC_UNUSED bool ok = true;
+    if (argc == 3) {
+        HolderType<unsigned int, false> arg0 = {};
+        HolderType<unsigned int, false> arg1 = {};
+        HolderType<cc::gfx::SurfaceTransform, false> arg2 = {};
+        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
+        ok &= sevalue_to_native(args[1], &arg1, s.thisObject());
+        ok &= sevalue_to_native(args[2], &arg2, s.thisObject());
+        SE_PRECONDITION2(ok, false, "js_gfx_Swapchain_resize : Error processing arguments");
+        cobj->resize(arg0.value(), arg1.value(), arg2.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 3);
     return false;
 }
 SE_BIND_FUNC(js_gfx_Swapchain_resize)
@@ -19300,7 +19261,6 @@ bool js_register_gfx_Swapchain(se::Object* obj) // NOLINT(readability-identifier
     cls->defineFunction("getVSyncMode", _SE(js_gfx_Swapchain_getVSyncMode));
     cls->defineFunction("getWindowHandle", _SE(js_gfx_Swapchain_getWindowHandle));
     cls->defineFunction("initialize", _SE(js_gfx_Swapchain_initialize));
-    cls->defineFunction("isPreRotationEnabled", _SE(js_gfx_Swapchain_isPreRotationEnabled));
     cls->defineFunction("resize", _SE(js_gfx_Swapchain_resize));
     cls->defineFinalizeFunction(_SE(js_cc_gfx_Swapchain_finalize));
     cls->install();

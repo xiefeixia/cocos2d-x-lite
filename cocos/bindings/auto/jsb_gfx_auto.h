@@ -777,7 +777,6 @@ SE_DECLARE_FUNC(js_gfx_Swapchain_destroySurface);
 SE_DECLARE_FUNC(js_gfx_Swapchain_getVSyncMode);
 SE_DECLARE_FUNC(js_gfx_Swapchain_getWindowHandle);
 SE_DECLARE_FUNC(js_gfx_Swapchain_initialize);
-SE_DECLARE_FUNC(js_gfx_Swapchain_isPreRotationEnabled);
 SE_DECLARE_FUNC(js_gfx_Swapchain_resize);
 SE_DECLARE_FUNC(js_gfx_Swapchain_Swapchain);
 
