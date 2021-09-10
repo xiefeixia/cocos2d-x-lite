@@ -3033,8 +3033,6 @@ bool register_all_pipeline(se::Object* obj)
     js_register_pipeline_CommonStage(ns);
     js_register_pipeline_RenderQueueDesc(ns);
     js_register_pipeline_RenderFlow(ns);
-
-    js_register_pipeline_RenderStage(ns);
     js_register_pipeline_LightingStage(ns);
     js_register_pipeline_RenderPipeline(ns);
     js_register_pipeline_RenderStageInfo(ns);

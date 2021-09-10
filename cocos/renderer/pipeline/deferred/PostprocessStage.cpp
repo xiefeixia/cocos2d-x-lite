@@ -164,7 +164,7 @@ void PostprocessStage::render(scene::Camera *camera) {
         builder.writeToBlackboard(fgStrHandlePostProcessOutTexture, data.backBuffer);
 
         // depth
-        framegraph::RenderTargetAttachment::Descriptor depthAttachmentInfo;
+        /*framegraph::RenderTargetAttachment::Descriptor depthAttachmentInfo;
         depthAttachmentInfo.usage         = framegraph::RenderTargetAttachment::Usage::DEPTH;
         depthAttachmentInfo.loadOp        = gfx::LoadOp::CLEAR;
         depthAttachmentInfo.beginAccesses = {gfx::AccessType::DEPTH_STENCIL_ATTACHMENT_WRITE};
@@ -174,7 +174,7 @@ void PostprocessStage::render(scene::Camera *camera) {
         if (data.depth.isValid()) {
             data.depth = builder.write(data.depth, depthAttachmentInfo);
             builder.writeToBlackboard(DeferredPipeline::fgStrHandleDepthTexture, data.depth);
-        }
+        }*/
 
         auto renderArea = pipeline->getRenderArea(camera, camera->window->swapchain);
         (void)pipeline->getIAByRenderArea(renderArea);

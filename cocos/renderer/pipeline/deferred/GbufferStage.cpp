@@ -175,21 +175,30 @@ void GbufferStage::render(scene::Camera *camera) {
     // If there are only transparent object, lighting pass is ignored, we should call getIAByRenderArea here
     (void)pipeline->getIAByRenderArea(_renderArea);
 
+    _renderArea.width *= DeferredPipeline::renderScale;
+    _renderArea.height *= DeferredPipeline::renderScale;
+
+    (void)pipeline->getIAByRenderArea(_renderArea);
+
+
     auto gbufferSetup = [&](framegraph::PassNodeBuilder &builder, RenderData &data) {
+        uint32_t width = (uint32_t)(pipeline->getWidth() * DeferredPipeline::renderScale);
+        uint32_t height = (uint32_t)(pipeline->getHeight() * DeferredPipeline::renderScale);
+
         // gbuffer setup
         gfx::TextureInfo gbufferInfo = {
             gfx::TextureType::TEX2D,
             gfx::TextureUsageBit::COLOR_ATTACHMENT | gfx::TextureUsageBit::SAMPLED,
             gfx::Format::RGBA8,
-            pipeline->getWidth(),
-            pipeline->getHeight(),
+            width,
+            height,
         };
         gfx::TextureInfo gbufferInfoFloat = {
             gfx::TextureType::TEX2D,
             gfx::TextureUsageBit::COLOR_ATTACHMENT | gfx::TextureUsageBit::SAMPLED,
             gfx::Format::RGBA16F,
-            pipeline->getWidth(),
-            pipeline->getHeight(),
+            width,
+            height,
         };
         for (int i = 0; i < DeferredPipeline::GBUFFER_COUNT; ++i) {
             if (i % 3) { // positions & normals need more precision
@@ -217,8 +226,8 @@ void GbufferStage::render(scene::Camera *camera) {
             gfx::TextureType::TEX2D,
             gfx::TextureUsageBit::DEPTH_STENCIL_ATTACHMENT,
             gfx::Format::DEPTH_STENCIL,
-            pipeline->getWidth(),
-            pipeline->getHeight(),
+            width,
+            height,
         };
         data.depth = builder.create<framegraph::Texture>(DeferredPipeline::fgStrHandleDepthTexture, depthTexInfo);
 

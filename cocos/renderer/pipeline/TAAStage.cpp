@@ -68,18 +68,28 @@ void TAAStage::render(scene::Camera *camera) {
         return;
     }
 
-    if (!_initPrev) {
-        DeferredPipeline *pip = static_cast<DeferredPipeline *>(pipeline);
-        for (int i = 0; i < 2; i++) {
-            // write taa result
-            framegraph::Texture::Descriptor colorTexInfo;
-            colorTexInfo.format = gfx::Format::RGBA16F;
-            colorTexInfo.usage  = gfx::TextureUsageBit::COLOR_ATTACHMENT | gfx::TextureUsageBit::SAMPLED;
-            colorTexInfo.width  = pip->getWidth();
-            colorTexInfo.height = pip->getHeight();
+    auto renderArea = pipeline->getRenderArea(camera, false);
+    auto width      = renderArea.width;
+    auto height     = renderArea.height;
 
-            _taaTextures[i] = framegraph::Texture(colorTexInfo);
-            _taaTextures[i].createPersistent();
+    DeferredPipeline *pip = static_cast<DeferredPipeline *>(pipeline);
+    if (!_initPrev || !_taaTextures[0].get() || 
+        _taaTextures[0].getDesc().width != width || 
+        _taaTextures[0].getDesc().height != height) {
+        for (int i = 0; i < 2; i++) {
+                framegraph::Texture::Descriptor colorTexInfo;
+                colorTexInfo.format = gfx::Format::RGBA16F;
+                colorTexInfo.usage  = gfx::TextureUsageBit::COLOR_ATTACHMENT | gfx::TextureUsageBit::SAMPLED;
+                colorTexInfo.width  = width;
+                colorTexInfo.height = height;
+
+                if (_taaTextures[i].get()) {
+                    _taaTextures[i].get()->destroy();
+                    _taaTextures[i].destroyPersistent();
+                }
+
+                _taaTextures[i] = framegraph::Texture(colorTexInfo);
+                _taaTextures[i].createPersistent();
         }
     }
 
@@ -134,7 +144,7 @@ void TAAStage::render(scene::Camera *camera) {
         builder.setViewport(viewport, renderArea);
     };
 
-    auto exec = [this](RenderData const &data, const framegraph::DevicePassResourceTable &table) {
+    auto exec = [this, camera](RenderData const &data, const framegraph::DevicePassResourceTable &table) {
         auto *      pipeline  = static_cast<DeferredPipeline *>(_pipeline);
         auto *const sceneData = pipeline->getPipelineSceneData();
         auto *      cmdBuff   = pipeline->getCommandBuffers()[0];
@@ -142,7 +152,7 @@ void TAAStage::render(scene::Camera *camera) {
         uint const globalOffsets[] = {pipeline->getPipelineUBO()->getCurrentCameraUBOOffset()};
         cmdBuff->bindDescriptorSet(globalSet, pipeline->getDescriptorSet(), static_cast<uint>(std::size(globalOffsets)), globalOffsets);
         // get PSO and draw quad
-        auto rendeArea = pipeline->getRenderArea(pipeline->getFrameGraphCamera(), false);
+        auto rendeArea = pipeline->getRenderArea(camera, false);
 
         gfx::InputAssembler *inputAssembler = pipeline->getIAByRenderArea(rendeArea);
         gfx::PipelineState * pState         = PipelineStateManager::getOrCreatePipelineState(_taaPass, _taaShader, inputAssembler, table.getRenderPass());

@@ -359,8 +359,8 @@ void LightingStage::fgLightingPass(scene::Camera *camera) {
         framegraph::Texture::Descriptor colorTexInfo;
         colorTexInfo.format = gfx::Format::RGBA16F;
         colorTexInfo.usage  = gfx::TextureUsageBit::COLOR_ATTACHMENT | gfx::TextureUsageBit::SAMPLED;
-        colorTexInfo.width  = pipeline->getWidth();
-        colorTexInfo.height = pipeline->getHeight();
+        colorTexInfo.width  = pipeline->getWidth() * DeferredPipeline::renderScale;
+        colorTexInfo.height = pipeline->getHeight() * DeferredPipeline::renderScale;
         data.lightOutput    = builder.create<framegraph::Texture>(DeferredPipeline::fgStrHandleLightingOutTexture, colorTexInfo);
 
         framegraph::RenderTargetAttachment::Descriptor colorAttachmentInfo;
@@ -374,6 +374,8 @@ void LightingStage::fgLightingPass(scene::Camera *camera) {
 
         // set render area
         auto          renderArea = pipeline->getRenderArea(camera, false);
+        renderArea.width *= DeferredPipeline::renderScale;
+        renderArea.height *= DeferredPipeline::renderScale;
         gfx::Viewport viewport{renderArea.x, renderArea.y, renderArea.width, renderArea.height, 0.F, 1.F};
         builder.setViewport(viewport, renderArea);
     };
@@ -390,10 +392,10 @@ void LightingStage::fgLightingPass(scene::Camera *camera) {
         cmdBuff->bindDescriptorSet(globalSet, pipeline->getDescriptorSet(), static_cast<uint>(std::size(globalOffsets)), globalOffsets);
         // get PSO and draw quad
         auto rendeArea = pipeline->getRenderArea(camera, false);
+        gfx::InputAssembler *inputAssembler = pipeline->getIAByRenderArea(rendeArea);
 
         scene::Pass *        pass           = sceneData->getSharedData()->deferredLightPass;
         gfx::Shader *        shader         = sceneData->getSharedData()->deferredLightPassShader;
-        gfx::InputAssembler *inputAssembler = pipeline->getIAByRenderArea(rendeArea);
         gfx::PipelineState * pState         = PipelineStateManager::getOrCreatePipelineState(
             pass, shader, inputAssembler, table.getRenderPass());
 
@@ -826,13 +828,13 @@ void LightingStage::render(scene::Camera *camera) {
         fgLightingPass(camera);
     }
 
-    fgTransparent(camera);
+    //fgTransparent(camera);
 
-    // if lighting pass does not exist, skip SSPR pass.
-    // switch to clear image API when available
-    if (pipeline->getFrameGraph().hasPass(DeferredPipeline::fgStrHandleLightingPass)) {
-        fgSsprPass(camera);
-    }
+    //// if lighting pass does not exist, skip SSPR pass.
+    //// switch to clear image API when available
+    //if (pipeline->getFrameGraph().hasPass(DeferredPipeline::fgStrHandleLightingPass)) {
+    //    fgSsprPass(camera);
+    //}
 }
 
 } // namespace pipeline

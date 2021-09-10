@@ -3833,21 +3833,33 @@ bool sevalue_to_native(const se::Value &from, cc::gfx::SwapchainInfo * to, se::O
     }
     se::Value field;
     bool ok = true;
-    json->getProperty("windowHandle", &field);
-    if(!field.isNullOrUndefined()) {
-        ok &= sevalue_to_native(field, &(to->windowHandle), ctx);
-    }
     json->getProperty("vsyncMode", &field);
     if(!field.isNullOrUndefined()) {
         ok &= sevalue_to_native(field, &(to->vsyncMode), ctx);
+        if (!ok) {
+            SE_REPORT_ERROR("SwapchainInfo vsyncMode convertion error");
+        }
     }
     json->getProperty("width", &field);
     if(!field.isNullOrUndefined()) {
         ok &= sevalue_to_native(field, &(to->width), ctx);
+        if (!ok) {
+            SE_REPORT_ERROR("SwapchainInfo width convertion error");
+        }
     }
     json->getProperty("height", &field);
     if(!field.isNullOrUndefined()) {
         ok &= sevalue_to_native(field, &(to->height), ctx);
+        if (!ok) {
+            SE_REPORT_ERROR("SwapchainInfo height convertion error");
+        }
+    }
+    json->getProperty("windowHandle", &field);
+    if (!field.isNullOrUndefined()) {
+        ok &= sevalue_to_native(field, &(to->windowHandle), ctx);
+        if (!ok) {
+            SE_REPORT_ERROR("SwapchainInfo windowHandle convertion error");
+        }
     }
     return ok;
 }
@@ -19820,10 +19832,10 @@ static bool js_gfx_Device_createSwapchain(se::State& s) // NOLINT(readability-id
     if (argc == 1) {
         HolderType<cc::gfx::SwapchainInfo, true> arg0 = {};
         ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
-        SE_PRECONDITION2(ok, false, "js_gfx_Device_createSwapchain : Error processing arguments");
+        SE_PRECONDITION2(ok, false, "js_gfx_Device_createSwapchain : Error processing arguments 1");
         cc::gfx::Swapchain* result = cobj->createSwapchain(arg0.value());
         ok &= nativevalue_to_se(result, s.rval(), nullptr /*ctx*/);
-        SE_PRECONDITION2(ok, false, "js_gfx_Device_createSwapchain : Error processing arguments");
+        SE_PRECONDITION2(ok, false, "js_gfx_Device_createSwapchain : Error processing arguments 2");
         se::NonRefNativePtrCreatedByCtorMap::emplace(result);
         SE_HOLD_RETURN_VALUE(result, s.thisObject(), s.rval());
         return true;

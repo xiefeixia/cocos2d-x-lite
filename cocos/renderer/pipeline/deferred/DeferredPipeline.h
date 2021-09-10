@@ -129,6 +129,7 @@ public:
 
     static framegraph::StringHandle fgStrHandleTAAPass;
 
+    static float renderScale;
 
     bool _renderOverdraw = false;
 };

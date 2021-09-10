@@ -66,6 +66,7 @@ private:
 
     bool _dirty{false};
     bool _initPrev{false};
+    Vec2 _currentSize{0, 0};
 };
 
 } // namespace pipeline

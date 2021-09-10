@@ -78,6 +78,8 @@ framegraph::StringHandle DeferredPipeline::fgStrHandlePostprocessPass = framegra
 
 framegraph::StringHandle DeferredPipeline::fgStrHandleTAAPass = framegraph::FrameGraph::stringToHandle("deferredTAAPass");
 
+float DeferredPipeline::renderScale = 1;
+
 bool DeferredPipeline::initialize(const RenderPipelineInfo &info) {
     RenderPipeline::initialize(info);
 

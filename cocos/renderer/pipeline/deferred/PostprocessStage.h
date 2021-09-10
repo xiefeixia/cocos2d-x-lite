@@ -27,6 +27,7 @@
 
 #include "../RenderStage.h"
 #include "frame-graph/Handle.h"
+#include "DeferredPipeline.h"
 
 namespace cc {
 namespace pipeline {
@@ -44,14 +45,14 @@ public:
     void destroy() override;
     void render(scene::Camera *camera) override;
 
-    void setRenderScale(float v) { _renderScale = v; };
+    void setRenderScale(float v) { 
+        DeferredPipeline::renderScale = v;
+    };
 
 private:
     gfx::Rect _renderArea;
     UIPhase * _uiPhase = nullptr;
     uint      _phaseID = 0;
-
-    float _renderScale = 1;
 
     static RenderStageInfo initInfo;
 };
