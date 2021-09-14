@@ -59,6 +59,13 @@ void TAAStage::activate(RenderPipeline *pipeline, RenderFlow *flow) {
 }
 
 void TAAStage::render(scene::Camera *camera) {
+
+    #ifdef CC_USE_VULKAN
+        #if CC_PLATFORM == CC_PLATFORM_ANDROID
+            return;
+        #endif
+    #endif
+
     if (camera != _camera || !_taaPass || !_taaShader) {
         return;
     }
@@ -69,6 +76,9 @@ void TAAStage::render(scene::Camera *camera) {
     }
 
     auto renderArea = pipeline->getRenderArea(camera, false);
+    renderArea.width *= DeferredPipeline::renderScale;
+    renderArea.height *= DeferredPipeline::renderScale;
+
     auto width      = renderArea.width;
     auto height     = renderArea.height;
 
@@ -139,7 +149,6 @@ void TAAStage::render(scene::Camera *camera) {
         builder.writeToBlackboard(result, data.taaResult);
 
         // set render area
-        auto          renderArea = pipeline->getRenderArea(camera, false);
         gfx::Viewport viewport{renderArea.x, renderArea.y, renderArea.width, renderArea.height, 0.F, 1.F};
         builder.setViewport(viewport, renderArea);
     };
