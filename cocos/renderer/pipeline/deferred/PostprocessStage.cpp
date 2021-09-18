@@ -135,7 +135,10 @@ void PostprocessStage::render(scene::Camera *camera) {
             builder.writeToBlackboard(taaResultHande, data.taaResult);
         }
 
-        framegraph::RenderTargetAttachment::Descriptor colorAttachmentInfo;
+        builder.sideEffect();
+
+
+        /*framegraph::RenderTargetAttachment::Descriptor colorAttachmentInfo;
         colorAttachmentInfo.usage      = framegraph::RenderTargetAttachment::Usage::COLOR;
         colorAttachmentInfo.clearColor = _clearColors[0];
         colorAttachmentInfo.loadOp     = gfx::LoadOp::CLEAR;
@@ -161,7 +164,7 @@ void PostprocessStage::render(scene::Camera *camera) {
         };
         data.backBuffer = builder.create<framegraph::Texture>(fgStrHandlePostProcessOutTexture, textureInfo);
         data.backBuffer = builder.write(data.backBuffer, colorAttachmentInfo);
-        builder.writeToBlackboard(fgStrHandlePostProcessOutTexture, data.backBuffer);
+        builder.writeToBlackboard(fgStrHandlePostProcessOutTexture, data.backBuffer);*/
 
         // depth
         /*framegraph::RenderTargetAttachment::Descriptor depthAttachmentInfo;
@@ -184,7 +187,35 @@ void PostprocessStage::render(scene::Camera *camera) {
 
     auto postExec = [this, camera](RenderData const &data, const framegraph::DevicePassResourceTable &table) {
         auto *           pipeline   = static_cast<DeferredPipeline *>(_pipeline);
-        gfx::RenderPass *renderPass = table.getRenderPass();
+        //gfx::RenderPass *renderPass = table.getRenderPass();
+        auto *           renderPass = camera->window->frameBuffer->getRenderPass();
+
+            auto rendeArea = pipeline->getRenderArea(camera, camera->window->swapchain);
+
+        gfx::CommandBuffer *cmdBuff = pipeline->getCommandBuffers()[0];
+
+        gfx::RenderPassInfo info;
+        info.colorAttachments = renderPass->getColorAttachments();
+        info.depthStencilAttachment = renderPass->getDepthStencilAttachment();
+        info.subpasses              = renderPass->getSubpasses();
+        info.dependencies           = renderPass->getDependencies();
+
+        auto& ca = renderPass->getColorAttachments();
+
+        auto clearFlags = static_cast<gfx::ClearFlagBit>(camera->clearFlag);
+        if (!hasFlag(clearFlags, gfx::ClearFlagBit::COLOR)) {
+            if (hasFlag(clearFlags, static_cast<gfx::ClearFlagBit>(skyboxFlag))) {
+                info.colorAttachments.at(0).loadOp = gfx::LoadOp::DISCARD;
+            } else {
+                info.colorAttachments.at(0).loadOp = gfx::LoadOp::LOAD;
+            }
+        }
+        
+        auto rp = framegraph::RenderPass(info);
+        rp.createTransient();
+
+        cmdBuff->beginRenderPass(rp.get(), camera->window->frameBuffer, rendeArea, _clearColors, camera->clearDepth, camera->clearStencil);
+
 
         // bind descriptor
         gfx::Texture *input = nullptr;
@@ -194,7 +225,6 @@ void PostprocessStage::render(scene::Camera *camera) {
             input = static_cast<gfx::Texture *>(table.getRead(data.lightingOut));
         }
 
-        auto *     cmdBuff         = pipeline->getCommandBuffers()[0];
         uint const globalOffsets[] = {pipeline->getPipelineUBO()->getCurrentCameraUBOOffset()};
         cmdBuff->bindDescriptorSet(globalSet, pipeline->getDescriptorSet(), static_cast<uint>(std::size(globalOffsets)), globalOffsets);
 
@@ -227,11 +257,19 @@ void PostprocessStage::render(scene::Camera *camera) {
         }
 
         _uiPhase->render(camera, renderPass);
+
+        cmdBuff->endRenderPass();
+
+        rp.destroyTransient();
+
     };
 
     // add pass
-    pipeline->getFrameGraph().addPass<RenderData>(static_cast<uint>(DeferredInsertPoint::IP_POSTPROCESS), DeferredPipeline::fgStrHandlePostprocessPass, postSetup, postExec);
-    pipeline->getFrameGraph().presentFromBlackboard(fgStrHandlePostProcessOutTexture, camera->window->frameBuffer->getColorTextures()[0]);
+    //pipeline->getFrameGraph().addPass<RenderData>(static_cast<uint>(DeferredInsertPoint::IP_POSTPROCESS), DeferredPipeline::fgStrHandlePostprocessPass, postSetup, postExec);
+    //pipeline->getFrameGraph().presentFromBlackboard(fgStrHandlePostProcessOutTexture, camera->window->frameBuffer->getColorTextures()[0]);
+
+    static const StringHandle PRESENT_PASS = framegraph::FrameGraph::stringToHandle("Present");
+    pipeline->getFrameGraph().addPass<RenderData>(static_cast<uint>(DeferredInsertPoint::IP_POSTPROCESS), PRESENT_PASS, postSetup, postExec);
 }
 
 } // namespace pipeline
