@@ -87,6 +87,7 @@ public:
     bool isRenderOverDraw() { return _renderOverdraw; }
     void setRenderOverDraw(bool overdraw) { _renderOverdraw = overdraw; }
 
+    vector<scene::Camera *> cameras;
 private:
     bool activeRenderer(gfx::Swapchain *swapchain);
     bool createQuadInputAssembler(gfx::Buffer *quadIB, gfx::Buffer **quadVB, gfx::InputAssembler **quadIA);

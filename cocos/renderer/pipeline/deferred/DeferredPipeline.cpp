@@ -106,6 +106,8 @@ bool DeferredPipeline::activate(gfx::Swapchain *swapchain) {
 }
 
 void DeferredPipeline::render(const vector<scene::Camera *> &cameras) {
+    this->cameras = cameras;
+
     _commandBuffers[0]->begin();
     _pipelineUBO->updateGlobalUBO(cameras[0]);
     _pipelineUBO->updateMultiCameraUBO(cameras);

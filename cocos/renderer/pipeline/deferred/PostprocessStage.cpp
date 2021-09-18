@@ -242,8 +242,8 @@ void PostprocessStage::render(scene::Camera *camera) {
 
             pv->getDescriptorSet()->bindTexture(0, input);
             pv->getDescriptorSet()->bindSampler(0, pipeline->getDevice()->getSampler({
-                                                       gfx::Filter::POINT,
-                                                       gfx::Filter::POINT,
+                                                       gfx::Filter::LINEAR,
+                                                       gfx::Filter::LINEAR,
                                                        gfx::Filter::NONE,
                                                        gfx::Address::CLAMP,
                                                        gfx::Address::CLAMP,
@@ -258,7 +258,11 @@ void PostprocessStage::render(scene::Camera *camera) {
         }
 
         _uiPhase->render(camera, renderPass);
-        renderProfiler(renderPass, cmdBuff, pipeline->getProfiler(), camera->window->swapchain);
+
+        auto it = std::find(pipeline->cameras.begin(), pipeline->cameras.end(), camera);
+        if (it == pipeline->cameras.end() - 1) {
+            renderProfiler(renderPass, cmdBuff, pipeline->getProfiler(), camera->window->swapchain);
+        }
 
         cmdBuff->endRenderPass();
 
