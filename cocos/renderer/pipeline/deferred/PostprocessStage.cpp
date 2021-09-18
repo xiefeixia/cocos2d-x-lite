@@ -36,6 +36,7 @@
 #include "gfx-base/GFXDevice.h"
 #include "gfx-base/GFXFramebuffer.h"
 #include "pipeline/Define.h"
+#include "pipeline/helper/Utils.h"
 #include "scene/SubModel.h"
 
 
@@ -257,11 +258,11 @@ void PostprocessStage::render(scene::Camera *camera) {
         }
 
         _uiPhase->render(camera, renderPass);
+        renderProfiler(renderPass, cmdBuff, pipeline->getProfiler(), camera->window->swapchain);
 
         cmdBuff->endRenderPass();
 
         rp.destroyTransient();
-
     };
 
     // add pass
