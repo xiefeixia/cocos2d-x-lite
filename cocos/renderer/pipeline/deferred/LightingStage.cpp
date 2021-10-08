@@ -46,6 +46,8 @@
 #include "scene/Sphere.h"
 #include "scene/SphereLight.h"
 
+#include "../common/CustomEngine.h"
+
 namespace cc {
 namespace pipeline {
 namespace {
@@ -374,8 +376,8 @@ void LightingStage::fgLightingPass(scene::Camera *camera) {
         framegraph::Texture::Descriptor colorTexInfo;
         colorTexInfo.format = gfx::Format::RGBA16F;
         colorTexInfo.usage  = gfx::TextureUsageBit::COLOR_ATTACHMENT | gfx::TextureUsageBit::SAMPLED;
-        colorTexInfo.width  = pipeline->getWidth() * DeferredPipeline::renderScale;
-        colorTexInfo.height = pipeline->getHeight() * DeferredPipeline::renderScale;
+        colorTexInfo.width  = pipeline->getWidth() * CustomEngine::renderScale;
+        colorTexInfo.height = pipeline->getHeight() * CustomEngine::renderScale;
         data.outputTex      = builder.create<framegraph::Texture>(RenderPipeline::fgStrHandleOutColorTexture, colorTexInfo);
 
         framegraph::RenderTargetAttachment::Descriptor colorAttachmentInfo;
@@ -389,8 +391,8 @@ void LightingStage::fgLightingPass(scene::Camera *camera) {
 
         // set render area
         auto          renderArea = pipeline->getRenderArea(camera);
-        renderArea.width *= DeferredPipeline::renderScale;
-        renderArea.height *= DeferredPipeline::renderScale;
+        renderArea.width *= CustomEngine::renderScale;
+        renderArea.height *= CustomEngine::renderScale;
         gfx::Viewport viewport{renderArea.x, renderArea.y, renderArea.width, renderArea.height, 0.F, 1.F};
         builder.setViewport(viewport, renderArea);
     };

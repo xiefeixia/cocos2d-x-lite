@@ -39,6 +39,8 @@
 #include "pipeline/helper/Utils.h"
 #include "scene/SubModel.h"
 
+#include "./CustomEngine.h"
+
 
 namespace cc {
 namespace pipeline {
@@ -134,12 +136,12 @@ void PostProcessStage::render(scene::Camera *camera) {
         data.outColorTex = builder.read(data.outColorTex);
         builder.writeToBlackboard(RenderPipeline::fgStrHandleOutColorTexture, data.outColorTex);
 
-        auto taaResultHande = DeferredPipeline::fgStrHandleTAATexture[1];
+        /*auto taaResultHande = CustomEngine::fgStrHandleTAATexture[1];
         data.taaResult      = framegraph::TextureHandle(builder.readFromBlackboard(taaResultHande));
         if (data.taaResult.isValid()) {
             data.taaResult = builder.read(data.taaResult);
             builder.writeToBlackboard(taaResultHande, data.taaResult);
-        }
+        }*/
 
         builder.sideEffect();
 
@@ -189,11 +191,10 @@ void PostProcessStage::render(scene::Camera *camera) {
     };
 
     auto postExec = [this, camera](RenderData const &data, const framegraph::DevicePassResourceTable &table) {
-        auto *           pipeline   = static_cast<DeferredPipeline *>(_pipeline);
-        //gfx::RenderPass *renderPass = table.getRenderPass();
+        auto *pipeline = _pipeline;
         auto *           renderPass = camera->window->frameBuffer->getRenderPass();
 
-            auto rendeArea = pipeline->getRenderArea(camera, camera->window->swapchain);
+        auto rendeArea = pipeline->getRenderArea(camera);
 
         auto *                    cmdBuff       = pipeline->getCommandBuffers()[0];
 
@@ -219,17 +220,7 @@ void PostProcessStage::render(scene::Camera *camera) {
 
         cmdBuff->beginRenderPass(rp.get(), camera->window->frameBuffer, rendeArea, _clearColors, camera->clearDepth, camera->clearStencil);
 
-
-        // bind descriptor
-        gfx::Texture *input = nullptr;
-        if (data.taaResult.isValid()) {
-            input = static_cast<gfx::Texture *>(table.getRead(data.taaResult));
-        } else {
-            input = static_cast<gfx::Texture *>(table.getRead(data.outColorTex));
-        }
-
         const std::array<uint, 1> globalOffsets = {_pipeline->getPipelineUBO()->getCurrentCameraUBOOffset()};
-        cmdBuff->bindDescriptorSet(globalSet, pipeline->getDescriptorSet(), static_cast<uint>(std::size(globalOffsets)), globalOffsets);
         cmdBuff->bindDescriptorSet(globalSet, pipeline->getDescriptorSet(), utils::toUint(globalOffsets.size()), globalOffsets.data());
 
         if (!pipeline->getPipelineSceneData()->getRenderObjects().empty()) {
@@ -242,7 +233,7 @@ void PostProcessStage::render(scene::Camera *camera) {
             gfx::InputAssembler *ia        = pipeline->getIAByRenderArea(pipeline->getRenderArea(camera));
             gfx::PipelineState * pso       = PipelineStateManager::getOrCreatePipelineState(pv, sd, ia, renderPass);
 
-            pv->getDescriptorSet()->bindTexture(0, input);
+            pv->getDescriptorSet()->bindTexture(0, table.getRead(data.outColorTex));
             pv->getDescriptorSet()->bindSampler(0, pipeline->getDevice()->getSampler({
                                                        gfx::Filter::LINEAR,
                                                        gfx::Filter::LINEAR,
@@ -276,7 +267,7 @@ void PostProcessStage::render(scene::Camera *camera) {
     // pipeline->getFrameGraph().presentFromBlackboard(fgStrHandlePostProcessOutTexture, camera->window->frameBuffer->getColorTextures()[0]);
 
     static const StringHandle PRESENT_PASS = framegraph::FrameGraph::stringToHandle("Present");
-    pipeline->getFrameGraph().addPass<RenderData>(static_cast<uint>(DeferredInsertPoint::IP_POSTPROCESS), PRESENT_PASS, postSetup, postExec);
+    pipeline->getFrameGraph().addPass<RenderData>(static_cast<uint>(CommonInsertPoint::DIP_POSTPROCESS), PRESENT_PASS, postSetup, postExec);
 }
 
 } // namespace pipeline

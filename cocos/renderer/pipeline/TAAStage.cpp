@@ -35,6 +35,7 @@
 #include "scene/SubModel.h"
 
 #include "./deferred/DeferredPipeline.h"
+#include "./common/CustomEngine.h"
 
 namespace cc {
 namespace pipeline {
@@ -59,6 +60,7 @@ void TAAStage::activate(RenderPipeline *pipeline, RenderFlow *flow) {
 }
 
 void TAAStage::render(scene::Camera *camera) {
+    return;
 
     #ifdef CC_USE_VULKAN
         #if CC_PLATFORM == CC_PLATFORM_ANDROID
@@ -75,9 +77,9 @@ void TAAStage::render(scene::Camera *camera) {
         return;
     }
 
-    auto renderArea = pipeline->getRenderArea(camera, false);
-    renderArea.width *= DeferredPipeline::renderScale;
-    renderArea.height *= DeferredPipeline::renderScale;
+    auto renderArea = pipeline->getRenderArea(camera);
+    renderArea.width *= CustomEngine::renderScale;
+    renderArea.height *= CustomEngine::renderScale;
 
     auto width      = renderArea.width;
     auto height     = renderArea.height;
@@ -118,17 +120,15 @@ void TAAStage::render(scene::Camera *camera) {
     auto setup = [&](framegraph::PassNodeBuilder &builder, RenderData &data) {
         // read gbuffer
         data.gbuffer_pos = builder.read(framegraph::TextureHandle(builder.readFromBlackboard(DeferredPipeline::fgStrHandleGbufferTexture[gbuffer_pos_index])));
-        builder.writeToBlackboard(DeferredPipeline::fgStrHandleGbufferTexture[gbuffer_pos_index], data.gbuffer_pos);
 
-        // write to lighting output
-        data.lightOutput = builder.read(framegraph::TextureHandle(builder.readFromBlackboard(DeferredPipeline::fgStrHandleLightingOutTexture)));
-        builder.writeToBlackboard(DeferredPipeline::fgStrHandleLightingOutTexture, data.lightOutput);
+        // read lighting output
+        data.lightOutput = builder.read(framegraph::TextureHandle(builder.readFromBlackboard(DeferredPipeline::fgStrHandleOutColorTexture)));
 
-        auto prev   = DeferredPipeline::fgStrHandleTAATexture[0];
-        auto result = DeferredPipeline::fgStrHandleTAATexture[1];
+        auto prev   = CustomEngine::fgStrHandleTAATexture[0];
+        auto result = CustomEngine::fgStrHandleTAATexture[1];
 
-        data.taaPrev   = framegraph::TextureHandle(builder.importExternal(prev, _taaTextures[DeferredPipeline::taaTextureIndex % 2]));
-        data.taaResult = framegraph::TextureHandle(builder.importExternal(result, _taaTextures[(DeferredPipeline::taaTextureIndex + 1) % 2]));
+        data.taaPrev   = framegraph::TextureHandle(builder.importExternal(prev, _taaTextures[CustomEngine::taaTextureIndex % 2]));
+        data.taaResult = framegraph::TextureHandle(builder.importExternal(result, _taaTextures[(CustomEngine::taaTextureIndex + 1) % 2]));
 
         if (!_initPrev) {
             data.taaPrev = data.lightOutput;
@@ -148,6 +148,9 @@ void TAAStage::render(scene::Camera *camera) {
         data.taaResult                    = builder.write(data.taaResult, colorAttachmentInfo);
         builder.writeToBlackboard(result, data.taaResult);
 
+        builder.writeToBlackboard(DeferredPipeline::fgStrHandleOutColorTexture, data.taaResult);
+
+
         // set render area
         gfx::Viewport viewport{renderArea.x, renderArea.y, renderArea.width, renderArea.height, 0.F, 1.F};
         builder.setViewport(viewport, renderArea);
@@ -161,7 +164,7 @@ void TAAStage::render(scene::Camera *camera) {
         uint const globalOffsets[] = {pipeline->getPipelineUBO()->getCurrentCameraUBOOffset()};
         cmdBuff->bindDescriptorSet(globalSet, pipeline->getDescriptorSet(), static_cast<uint>(std::size(globalOffsets)), globalOffsets);
         // get PSO and draw quad
-        auto rendeArea = pipeline->getRenderArea(camera, false);
+        auto rendeArea = pipeline->getRenderArea(camera);
 
         gfx::InputAssembler *inputAssembler = pipeline->getIAByRenderArea(rendeArea);
         gfx::PipelineState * pState         = PipelineStateManager::getOrCreatePipelineState(_taaPass, _taaShader, inputAssembler, table.getRenderPass());
@@ -186,10 +189,10 @@ void TAAStage::render(scene::Camera *camera) {
     };
 
 
-    pipeline->getFrameGraph().addPass<RenderData>(static_cast<uint>(DeferredInsertPoint::IP_LIGHTING) + 1, DeferredPipeline::fgStrHandleTAAPass, setup, exec);
+    pipeline->getFrameGraph().addPass<RenderData>(static_cast<uint>(DeferredInsertPoint::DIP_LIGHTING) + 1, CustomEngine::fgStrHandleTAAPass, setup, exec);
     
     if (_dirty) {
-        DeferredPipeline::taaTextureIndex++;
+        CustomEngine::taaTextureIndex++;
         _dirty = false;
     }
 }

@@ -104,6 +104,8 @@ public:
     inline bool getClusterEnabled() const { return _clusterEnabled; }
     inline void setClusterEnabled(bool enable) { _clusterEnabled = enable; }
 
+    vector<scene::Camera *> cameras;
+
 protected:
     static RenderPipeline *instance;
 
@@ -137,7 +139,7 @@ protected:
 
     // use cluster culling or not
     bool _clusterEnabled{false};
-    bool _bloomEnable{false};
+    bool _bloomEnable{true};
 };
 
 } // namespace pipeline

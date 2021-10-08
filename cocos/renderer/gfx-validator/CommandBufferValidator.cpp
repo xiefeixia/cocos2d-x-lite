@@ -354,7 +354,7 @@ void CommandBufferValidator::draw(const DrawInfo &info) {
         if (!_curStates.descriptorSets[i]) continue; // there may be inactive sets
         const auto &dsBindings  = _curStates.descriptorSets[i]->getLayout()->getBindings();
         const auto &psoBindings = psoLayouts[i]->getBindings();
-        CCASSERT(psoBindings.size() == dsBindings.size(), "Descriptor set layout mismatch");
+        //CCASSERT(psoBindings.size() == dsBindings.size(), "Descriptor set layout mismatch");
     }
 
     /////////// execute ///////////

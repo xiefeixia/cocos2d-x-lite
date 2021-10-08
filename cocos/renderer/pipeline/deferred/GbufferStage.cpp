@@ -40,6 +40,8 @@
 #include "gfx-base/GFXFramebuffer.h"
 #include "gfx-base/GFXQueue.h"
 
+#include "../common/CustomEngine.h"
+
 namespace cc {
 namespace pipeline {
 RenderStageInfo GbufferStage::initInfo = {
@@ -108,9 +110,6 @@ void GbufferStage::dispenseRenderObject2Queues() {
             auto        passCount = passes.size();
             for (passIdx = 0; passIdx < passCount; ++passIdx) {
                 const auto &pass = passes[passIdx];
-                if (pip->isRenderOverDraw() && pass->getPhase() != _overdrawID) {
-                    continue;
-                }
                 if (pass->getPhase() != _phaseID) continue;
                 if (pass->getBatchingScheme() == scene::BatchingSchemes::INSTANCING) {
                     auto *instancedBuffer = InstancedBuffer::get(pass);
@@ -159,15 +158,15 @@ void GbufferStage::render(scene::Camera *camera) {
     // If there are only transparent object, lighting pass is ignored, we should call getIAByRenderArea here
     pipeline->getIAByRenderArea(_renderArea);
 
-    _renderArea.width *= DeferredPipeline::renderScale;
-    _renderArea.height *= DeferredPipeline::renderScale;
+    _renderArea.width *= CustomEngine::renderScale;
+    _renderArea.height *= CustomEngine::renderScale;
 
     (void)pipeline->getIAByRenderArea(_renderArea);
 
 
     auto gbufferSetup = [&](framegraph::PassNodeBuilder &builder, RenderData &data) {
-        uint32_t width = (uint32_t)(pipeline->getWidth() * DeferredPipeline::renderScale);
-        uint32_t height = (uint32_t)(pipeline->getHeight() * DeferredPipeline::renderScale);
+        uint32_t width  = (uint32_t)(pipeline->getWidth() * CustomEngine::renderScale);
+        uint32_t height = (uint32_t)(pipeline->getHeight() * CustomEngine::renderScale);
         
         builder.subpass();
 

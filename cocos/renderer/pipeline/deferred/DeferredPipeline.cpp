@@ -54,20 +54,10 @@ framegraph::StringHandle DeferredPipeline::fgStrHandleGbufferTexture[GBUFFER_COU
     framegraph::FrameGraph::stringToHandle("gbufferNormalTexture"),
     framegraph::FrameGraph::stringToHandle("gbufferEmissiveTexture")};
 
-framegraph::StringHandle DeferredPipeline::fgStrHandleTAATexture[2] = {
-    framegraph::FrameGraph::stringToHandle("TAATexture1"),
-    framegraph::FrameGraph::stringToHandle("TAATexture2")
-};
-uint DeferredPipeline::taaTextureIndex = 0;
-
 framegraph::StringHandle DeferredPipeline::fgStrHandleGbufferPass     = framegraph::FrameGraph::stringToHandle("deferredGbufferPass");
 framegraph::StringHandle DeferredPipeline::fgStrHandleLightingPass    = framegraph::FrameGraph::stringToHandle("deferredLightingPass");
 framegraph::StringHandle DeferredPipeline::fgStrHandleTransparentPass = framegraph::FrameGraph::stringToHandle("deferredTransparentPass");
 framegraph::StringHandle DeferredPipeline::fgStrHandleSsprPass        = framegraph::FrameGraph::stringToHandle("deferredSSPRPass");
-
-framegraph::StringHandle DeferredPipeline::fgStrHandleTAAPass = framegraph::FrameGraph::stringToHandle("deferredTAAPass");
-
-float DeferredPipeline::renderScale = 1;
 
 bool DeferredPipeline::initialize(const RenderPipelineInfo &info) {
     RenderPipeline::initialize(info);

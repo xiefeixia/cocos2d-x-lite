@@ -220,8 +220,8 @@ void BloomStage::render(scene::Camera *camera) {
             pass, shader, inputAssembler, renderPass);
         CC_ASSERT(pso != nullptr);
 
-        pass->getDescriptorSet()->bindTexture(0, table.getRead(data.inputTexHandle));
-        pass->getDescriptorSet()->bindSampler(0, data.sampler);
+        pass->getDescriptorSet()->bindTexture(1, table.getRead(data.inputTexHandle));
+        pass->getDescriptorSet()->bindSampler(1, data.sampler);
         pass->getDescriptorSet()->update();
 
         cmdBf->bindDescriptorSet(materialSet, pass->getDescriptorSet());

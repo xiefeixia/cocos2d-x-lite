@@ -808,6 +808,8 @@ cocos_source_files(
                  cocos/renderer/pipeline/RenderStage.h
                  cocos/renderer/pipeline/CommonStage.cpp
                  cocos/renderer/pipeline/CommonStage.h
+                 cocos/renderer/pipeline/common/CustomEngine.cpp
+                 cocos/renderer/pipeline/common/CustomEngine.h
                  cocos/renderer/pipeline/TAAStage.cpp
                  cocos/renderer/pipeline/TAAStage.h
                  cocos/renderer/pipeline/PlanarShadowQueue.cpp

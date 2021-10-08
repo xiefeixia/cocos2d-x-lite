@@ -57,10 +57,6 @@ public:
     inline const UintList &       getLightIndexOffsets() const { return _lightIndexOffsets; }
     inline const UintList &       getLightIndices() const { return _lightIndices; }
 
-    bool isRenderOverDraw() { return _renderOverdraw; }
-    void setRenderOverDraw(bool overdraw) { _renderOverdraw = overdraw; }
-
-    vector<scene::Camera *> cameras;
 private:
     bool activeRenderer(gfx::Swapchain *swapchain);
 
@@ -78,20 +74,11 @@ public:
     // deferred resource names
     static framegraph::StringHandle fgStrHandleGbufferTexture[GBUFFER_COUNT];
 
-    static uint                     taaTextureIndex;
-    static framegraph::StringHandle fgStrHandleTAATexture[2];
-
     // deferred pass names
     static framegraph::StringHandle fgStrHandleGbufferPass;
     static framegraph::StringHandle fgStrHandleLightingPass;
     static framegraph::StringHandle fgStrHandleTransparentPass;
     static framegraph::StringHandle fgStrHandleSsprPass;
-
-    static framegraph::StringHandle fgStrHandleTAAPass;
-
-    static float renderScale;
-
-    bool _renderOverdraw = false;
 };
 
 } // namespace pipeline

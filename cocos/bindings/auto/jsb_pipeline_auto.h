@@ -22,6 +22,8 @@
 #include "cocos/renderer/pipeline/deferred/LightingStage.h"
 #include "cocos/renderer/pipeline/common/BloomStage.h"
 #include "cocos/renderer/pipeline/common/PostProcessStage.h"
+#include "cocos/renderer/pipeline/CommonStage.h"
+#include "cocos/renderer/pipeline/TAAStage.h"
 
 extern se::Object* __jsb_cc_pipeline_RenderQueueDesc_proto;
 extern se::Class* __jsb_cc_pipeline_RenderQueueDesc_class;
@@ -261,6 +263,42 @@ bool js_register_cc_pipeline_PostProcessStage(se::Object* obj);
 bool register_all_pipeline(se::Object* obj);
 
 JSB_REGISTER_OBJECT_TYPE(cc::pipeline::PostProcessStage);
+SE_DECLARE_FUNC(js_pipeline_PostProcessStage_setRenderScale);
 SE_DECLARE_FUNC(js_pipeline_PostProcessStage_getInitializeInfo);
 SE_DECLARE_FUNC(js_pipeline_PostProcessStage_PostProcessStage);
+
+extern se::Object* __jsb_cc_pipeline_CommonStage_proto;
+extern se::Class* __jsb_cc_pipeline_CommonStage_class;
+
+bool js_register_cc_pipeline_CommonStage(se::Object* obj);
+bool register_all_pipeline(se::Object* obj);
+
+JSB_REGISTER_OBJECT_TYPE(cc::pipeline::CommonStage);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setClearColor);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setClearDepth);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setClearStencil);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setDirty);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setFramebuffer);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setInputAssembler);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setPassHandle);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setPipelineState);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setRenderArea);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_setRenderCallBack);
+SE_DECLARE_FUNC(js_pipeline_CommonStage_CommonStage);
+
+extern se::Object* __jsb_cc_pipeline_TAAStage_proto;
+extern se::Class* __jsb_cc_pipeline_TAAStage_class;
+
+bool js_register_cc_pipeline_TAAStage(se::Object* obj);
+bool register_all_pipeline(se::Object* obj);
+
+JSB_REGISTER_OBJECT_TYPE(cc::pipeline::TAAStage);
+SE_DECLARE_FUNC(js_pipeline_TAAStage_getCamera);
+SE_DECLARE_FUNC(js_pipeline_TAAStage_getPass);
+SE_DECLARE_FUNC(js_pipeline_TAAStage_getShader);
+SE_DECLARE_FUNC(js_pipeline_TAAStage_setCamera);
+SE_DECLARE_FUNC(js_pipeline_TAAStage_setDirty);
+SE_DECLARE_FUNC(js_pipeline_TAAStage_setPass);
+SE_DECLARE_FUNC(js_pipeline_TAAStage_setShader);
+SE_DECLARE_FUNC(js_pipeline_TAAStage_TAAStage);
 

@@ -27,8 +27,9 @@
 
 #include "../RenderStage.h"
 #include "frame-graph/Handle.h"
-#include "DeferredPipeline.h"
 #include "Enum.h"
+
+#include "./CustomEngine.h"
 
 namespace cc {
 namespace pipeline {
@@ -47,7 +48,7 @@ public:
     void render(scene::Camera *camera) override;
 
     void setRenderScale(float v) { 
-        DeferredPipeline::renderScale = v;
+        CustomEngine::renderScale = v;
     };
 
 private:
