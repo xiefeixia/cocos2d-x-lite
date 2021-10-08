@@ -175,8 +175,9 @@ void PostProcessStage::render(scene::Camera *camera) {
         builder.writeToBlackboard(fgStrHandlePostProcessOutTexture, data.backBuffer);*/
 
         // depth
-        /*framegraph::RenderTargetAttachment::Descriptor depthAttachmentInfo;
-        depthAttachmentInfo.usage         = framegraph::RenderTargetAttachment::Usage::DEPTH;
+        /*
+        framegraph::RenderTargetAttachment::Descriptor depthAttachmentInfo;
+        depthAttachmentInfo.usage         = framegraph::RenderTargetAttachment::Usage::DEPTH_STENCIL;
         depthAttachmentInfo.loadOp        = gfx::LoadOp::CLEAR;
         depthAttachmentInfo.beginAccesses = {gfx::AccessType::DEPTH_STENCIL_ATTACHMENT_WRITE};
         depthAttachmentInfo.endAccesses   = {gfx::AccessType::DEPTH_STENCIL_ATTACHMENT_WRITE};
@@ -185,7 +186,8 @@ void PostProcessStage::render(scene::Camera *camera) {
         if (data.depth.isValid()) {
             data.depth = builder.write(data.depth, depthAttachmentInfo);
             builder.writeToBlackboard(RenderPipeline::fgStrHandleOutDepthTexture, data.depth);
-        }*/
+        }
+        */
 
         builder.setViewport(pipeline->getRenderArea(camera));
     };
