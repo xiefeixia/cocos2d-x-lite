@@ -24,6 +24,7 @@
 ****************************************************************************/
 
 #include "base/CoreStd.h"
+#include "base/Macros.h"
 #include "base/threading/MessageQueue.h"
 
 #include "DeviceValidator.h"
@@ -49,13 +50,15 @@ void FramebufferValidator::doInit(const FramebufferInfo &info) {
     CCASSERT(!isInited(), "initializing twice?");
     _inited = true;
 
+    CCASSERT(!info.colorTextures.empty() || info.depthStencilTexture, "no attachments?");
+
     for (auto *colorTexture : info.colorTextures) {
-        CCASSERT(static_cast<TextureValidator *>(colorTexture)->isInited(), "already destroyed?");
+        CCASSERT(colorTexture && static_cast<TextureValidator *>(colorTexture)->isInited(), "already destroyed?");
     }
     if (info.depthStencilTexture) {
         CCASSERT(static_cast<TextureValidator *>(info.depthStencilTexture)->isInited(), "already destroyed?");
     }
-    CCASSERT(static_cast<RenderPassValidator *>(info.renderPass)->isInited(), "already destroyed?");
+    CCASSERT(info.renderPass && static_cast<RenderPassValidator *>(info.renderPass)->isInited(), "already destroyed?");
 
     /////////// execute ///////////
 

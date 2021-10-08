@@ -441,10 +441,10 @@ void cmdFuncGLES2CreateBuffer(GLES2Device *device, GLES2GPUBuffer *gpuBuffer) {
             if (device->constantRegistry()->useVAO) {
                 if (device->stateCache()->glVAO) {
                     GL_CHECK(glBindVertexArrayOES(0));
-                    device->stateCache()->glVAO     = 0;
-                    gfxStateCache.gpuInputAssembler = nullptr;
+                    device->stateCache()->glVAO = 0;
                 }
             }
+            gfxStateCache.gpuInputAssembler = nullptr;
 
             if (device->stateCache()->glArrayBuffer != gpuBuffer->glBuffer) {
                 GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, gpuBuffer->glBuffer));
@@ -461,10 +461,10 @@ void cmdFuncGLES2CreateBuffer(GLES2Device *device, GLES2GPUBuffer *gpuBuffer) {
             if (device->constantRegistry()->useVAO) {
                 if (device->stateCache()->glVAO) {
                     GL_CHECK(glBindVertexArrayOES(0));
-                    device->stateCache()->glVAO     = 0;
-                    gfxStateCache.gpuInputAssembler = nullptr;
+                    device->stateCache()->glVAO = 0;
                 }
             }
+            gfxStateCache.gpuInputAssembler = nullptr;
 
             if (device->stateCache()->glElementArrayBuffer != gpuBuffer->glBuffer) {
                 GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gpuBuffer->glBuffer));
@@ -494,10 +494,10 @@ void cmdFuncGLES2DestroyBuffer(GLES2Device *device, GLES2GPUBuffer *gpuBuffer) {
             if (device->constantRegistry()->useVAO) {
                 if (device->stateCache()->glVAO) {
                     GL_CHECK(glBindVertexArrayOES(0));
-                    device->stateCache()->glVAO     = 0;
-                    gfxStateCache.gpuInputAssembler = nullptr;
+                    device->stateCache()->glVAO = 0;
                 }
             }
+            gfxStateCache.gpuInputAssembler = nullptr;
             if (device->stateCache()->glArrayBuffer == gpuBuffer->glBuffer) {
                 GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
                 device->stateCache()->glArrayBuffer = 0;
@@ -506,10 +506,10 @@ void cmdFuncGLES2DestroyBuffer(GLES2Device *device, GLES2GPUBuffer *gpuBuffer) {
             if (device->constantRegistry()->useVAO) {
                 if (device->stateCache()->glVAO) {
                     GL_CHECK(glBindVertexArrayOES(0));
-                    device->stateCache()->glVAO     = 0;
-                    gfxStateCache.gpuInputAssembler = nullptr;
+                    device->stateCache()->glVAO = 0;
                 }
             }
+            gfxStateCache.gpuInputAssembler = nullptr;
             if (device->stateCache()->glElementArrayBuffer == gpuBuffer->glBuffer) {
                 GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
                 device->stateCache()->glElementArrayBuffer = 0;
@@ -531,10 +531,10 @@ void cmdFuncGLES2ResizeBuffer(GLES2Device *device, GLES2GPUBuffer *gpuBuffer) {
             if (device->constantRegistry()->useVAO) {
                 if (device->stateCache()->glVAO) {
                     GL_CHECK(glBindVertexArrayOES(0));
-                    device->stateCache()->glVAO     = 0;
-                    gfxStateCache.gpuInputAssembler = nullptr;
+                    device->stateCache()->glVAO = 0;
                 }
             }
+            gfxStateCache.gpuInputAssembler = nullptr;
 
             if (device->stateCache()->glArrayBuffer != gpuBuffer->glBuffer) {
                 GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, gpuBuffer->glBuffer));
@@ -550,10 +550,10 @@ void cmdFuncGLES2ResizeBuffer(GLES2Device *device, GLES2GPUBuffer *gpuBuffer) {
             if (device->constantRegistry()->useVAO) {
                 if (device->stateCache()->glVAO) {
                     GL_CHECK(glBindVertexArrayOES(0));
-                    device->stateCache()->glVAO     = 0;
-                    gfxStateCache.gpuInputAssembler = nullptr;
+                    device->stateCache()->glVAO = 0;
                 }
             }
+            gfxStateCache.gpuInputAssembler = nullptr;
 
             if (device->stateCache()->glElementArrayBuffer != gpuBuffer->glBuffer) {
                 GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gpuBuffer->glBuffer));
@@ -998,7 +998,8 @@ void cmdFuncGLES2CreateShader(GLES2Device *device, GLES2GPUShader *gpuShader) {
     // fallback subpassInputs into samplerTextures if not using FBF
     if (device->constantRegistry()->mFBF == FBFSupportLevel::NONE) {
         for (const auto &subpassInput : gpuShader->subpassInputs) {
-            auto &samplerTexture   = gpuShader->samplerTextures.emplace_back();
+            gpuShader->samplerTextures.emplace_back();
+            auto &samplerTexture   = gpuShader->samplerTextures.back();
             samplerTexture.name    = subpassInput.name;
             samplerTexture.set     = subpassInput.set;
             samplerTexture.binding = subpassInput.binding;
@@ -1052,7 +1053,8 @@ void cmdFuncGLES2CreateShader(GLES2Device *device, GLES2GPUShader *gpuShader) {
                         glUniform.count = glSize;
                         glUniform.size  = glUniform.stride * glUniform.count;
 
-                        auto &activeUniform = glBlock.glActiveUniforms.emplace_back(glUniform);
+                        glBlock.glActiveUniforms.emplace_back(glUniform);
+                        auto &activeUniform = glBlock.glActiveUniforms.back();
                         activeUniform.buff.resize(activeUniform.size);
                         glBlock.activeUniformIndices.push_back(j);
                         break;
@@ -1451,7 +1453,9 @@ void cmdFuncGLES2CreateFramebuffer(GLES2Device *device, GLES2GPUFramebuffer *gpu
         doCreateFramebufferInstance(device, gpuFBO, gpuFBO->uberColorAttachmentIndices, gpuFBO->uberDepthStencil, &gpuFBO->uberInstance);
     } else {
         for (const auto &subpass : gpuFBO->gpuRenderPass->subpasses) {
-            doCreateFramebufferInstance(device, gpuFBO, subpass.colors, subpass.depthStencil, &gpuFBO->instances.emplace_back(),
+            gpuFBO->instances.emplace_back();
+            auto &fboInst = gpuFBO->instances.back();
+            doCreateFramebufferInstance(device, gpuFBO, subpass.colors, subpass.depthStencil, &fboInst,
                                         subpass.resolves.empty() ? nullptr : subpass.resolves.data(), subpass.depthStencilResolve);
         }
     }
@@ -1808,7 +1812,7 @@ void cmdFuncGLES2EndRenderPass(GLES2Device *device) {
             performStoreOp(attachmentIndex, glAttachmentIndex++);
         }
         bool skipStore = subpass.depthStencil == INVALID_BINDING ||
-                         gpuRenderPass->statistics[subpass.depthStencil].loadSubpass != gfxStateCache.subpassIdx;
+                         gpuRenderPass->statistics[subpass.depthStencil].storeSubpass != gfxStateCache.subpassIdx;
         performDepthStencilStoreOp(subpass.depthStencil, skipStore);
     }
 }
@@ -2500,10 +2504,10 @@ void cmdFuncGLES2UpdateBuffer(GLES2Device *device, GLES2GPUBuffer *gpuBuffer, co
                 if (device->constantRegistry()->useVAO) {
                     if (device->stateCache()->glVAO) {
                         GL_CHECK(glBindVertexArrayOES(0));
-                        device->stateCache()->glVAO     = 0;
-                        gfxStateCache.gpuInputAssembler = nullptr;
+                        device->stateCache()->glVAO = 0;
                     }
                 }
+                gfxStateCache.gpuInputAssembler = nullptr;
                 if (device->stateCache()->glArrayBuffer != gpuBuffer->glBuffer) {
                     GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, gpuBuffer->glBuffer));
                     device->stateCache()->glArrayBuffer = gpuBuffer->glBuffer;
@@ -2515,10 +2519,10 @@ void cmdFuncGLES2UpdateBuffer(GLES2Device *device, GLES2GPUBuffer *gpuBuffer, co
                 if (device->constantRegistry()->useVAO) {
                     if (device->stateCache()->glVAO) {
                         GL_CHECK(glBindVertexArrayOES(0));
-                        device->stateCache()->glVAO     = 0;
-                        gfxStateCache.gpuInputAssembler = nullptr;
+                        device->stateCache()->glVAO = 0;
                     }
                 }
+                gfxStateCache.gpuInputAssembler = nullptr;
                 if (device->stateCache()->glElementArrayBuffer != gpuBuffer->glBuffer) {
                     GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gpuBuffer->glBuffer));
                     device->stateCache()->glElementArrayBuffer = gpuBuffer->glBuffer;

@@ -641,10 +641,10 @@ void cmdFuncGLES3CreateBuffer(GLES3Device *device, GLES3GPUBuffer *gpuBuffer) {
             if (USE_VAO) {
                 if (device->stateCache()->glVAO) {
                     GL_CHECK(glBindVertexArray(0));
-                    device->stateCache()->glVAO     = 0;
-                    gfxStateCache.gpuInputAssembler = nullptr;
+                    device->stateCache()->glVAO = 0;
                 }
             }
+            gfxStateCache.gpuInputAssembler = nullptr;
 
             if (device->stateCache()->glArrayBuffer != gpuBuffer->glBuffer) {
                 GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, gpuBuffer->glBuffer));
@@ -661,10 +661,10 @@ void cmdFuncGLES3CreateBuffer(GLES3Device *device, GLES3GPUBuffer *gpuBuffer) {
             if (USE_VAO) {
                 if (device->stateCache()->glVAO) {
                     GL_CHECK(glBindVertexArray(0));
-                    device->stateCache()->glVAO     = 0;
-                    gfxStateCache.gpuInputAssembler = nullptr;
+                    device->stateCache()->glVAO = 0;
                 }
             }
+            gfxStateCache.gpuInputAssembler = nullptr;
 
             if (device->stateCache()->glElementArrayBuffer != gpuBuffer->glBuffer) {
                 GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gpuBuffer->glBuffer));
@@ -718,10 +718,10 @@ void cmdFuncGLES3DestroyBuffer(GLES3Device *device, GLES3GPUBuffer *gpuBuffer) {
             if (USE_VAO) {
                 if (device->stateCache()->glVAO) {
                     GL_CHECK(glBindVertexArray(0));
-                    device->stateCache()->glVAO     = 0;
-                    gfxStateCache.gpuInputAssembler = nullptr;
+                    device->stateCache()->glVAO = 0;
                 }
             }
+            gfxStateCache.gpuInputAssembler = nullptr;
             if (device->stateCache()->glArrayBuffer == gpuBuffer->glBuffer) {
                 GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, 0));
                 device->stateCache()->glArrayBuffer = 0;
@@ -730,10 +730,10 @@ void cmdFuncGLES3DestroyBuffer(GLES3Device *device, GLES3GPUBuffer *gpuBuffer) {
             if (USE_VAO) {
                 if (device->stateCache()->glVAO) {
                     GL_CHECK(glBindVertexArray(0));
-                    device->stateCache()->glVAO     = 0;
-                    gfxStateCache.gpuInputAssembler = nullptr;
+                    device->stateCache()->glVAO = 0;
                 }
             }
+            gfxStateCache.gpuInputAssembler = nullptr;
             if (device->stateCache()->glElementArrayBuffer == gpuBuffer->glBuffer) {
                 GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
                 device->stateCache()->glElementArrayBuffer = 0;
@@ -783,10 +783,10 @@ void cmdFuncGLES3ResizeBuffer(GLES3Device *device, GLES3GPUBuffer *gpuBuffer) {
             if (USE_VAO) {
                 if (device->stateCache()->glVAO) {
                     GL_CHECK(glBindVertexArray(0));
-                    device->stateCache()->glVAO     = 0;
-                    gfxStateCache.gpuInputAssembler = nullptr;
+                    device->stateCache()->glVAO = 0;
                 }
             }
+            gfxStateCache.gpuInputAssembler = nullptr;
 
             if (device->stateCache()->glArrayBuffer != gpuBuffer->glBuffer) {
                 GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, gpuBuffer->glBuffer));
@@ -802,10 +802,10 @@ void cmdFuncGLES3ResizeBuffer(GLES3Device *device, GLES3GPUBuffer *gpuBuffer) {
             if (USE_VAO) {
                 if (device->stateCache()->glVAO) {
                     GL_CHECK(glBindVertexArray(0));
-                    device->stateCache()->glVAO     = 0;
-                    gfxStateCache.gpuInputAssembler = nullptr;
+                    device->stateCache()->glVAO = 0;
                 }
             }
+            gfxStateCache.gpuInputAssembler = nullptr;
 
             if (device->stateCache()->glElementArrayBuffer != gpuBuffer->glBuffer) {
                 GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gpuBuffer->glBuffer));
@@ -891,24 +891,7 @@ void cmdFuncGLES3CreateTexture(GLES3Device *device, GLES3GPUTexture *gpuTexture)
                     }
                     uint32_t w = gpuTexture->width;
                     uint32_t h = gpuTexture->height;
-                    if (hasFlag(gpuTexture->flags, TextureFlagBit::RESIZABLE)) {
-                        if (!GFX_FORMAT_INFOS[toNumber(gpuTexture->format)].isCompressed) {
-                            for (uint32_t i = 0; i < gpuTexture->mipLevel; ++i) {
-                                GL_CHECK(glTexImage2D(GL_TEXTURE_2D, i, gpuTexture->glInternalFmt, w, h, 0, gpuTexture->glFormat, gpuTexture->glType, nullptr));
-                                w = std::max(1U, w >> 1);
-                                h = std::max(1U, h >> 1);
-                            }
-                        } else {
-                            for (uint32_t i = 0; i < gpuTexture->mipLevel; ++i) {
-                                uint32_t imgSize = formatSize(gpuTexture->format, w, h, 1);
-                                GL_CHECK(glCompressedTexImage2D(GL_TEXTURE_2D, i, gpuTexture->glInternalFmt, w, h, 0, imgSize, nullptr));
-                                w = std::max(1U, w >> 1);
-                                h = std::max(1U, h >> 1);
-                            }
-                        }
-                    } else {
-                        GL_CHECK(glTexStorage2D(GL_TEXTURE_2D, gpuTexture->mipLevel, gpuTexture->glInternalFmt, w, h));
-                    }
+                    GL_CHECK(glTexStorage2D(GL_TEXTURE_2D, gpuTexture->mipLevel, gpuTexture->glInternalFmt, w, h));
                 }
                 break;
             }
@@ -923,28 +906,7 @@ void cmdFuncGLES3CreateTexture(GLES3Device *device, GLES3GPUTexture *gpuTexture)
                     }
                     uint32_t w = gpuTexture->width;
                     uint32_t h = gpuTexture->height;
-                    if (hasFlag(gpuTexture->flags, TextureFlagBit::RESIZABLE)) {
-                        if (!GFX_FORMAT_INFOS[toNumber(gpuTexture->format)].isCompressed) {
-                            for (uint32_t i = 0; i < gpuTexture->mipLevel; ++i) {
-                                for (uint32_t f = 0; f < 6; ++f) {
-                                    GL_CHECK(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + f, i, gpuTexture->glInternalFmt, w, h, 0, gpuTexture->glFormat, gpuTexture->glType, nullptr));
-                                }
-                                w = std::max(1U, w >> 1);
-                                h = std::max(1U, h >> 1);
-                            }
-                        } else {
-                            for (uint32_t i = 0; i < gpuTexture->mipLevel; ++i) {
-                                uint32_t imgSize = formatSize(gpuTexture->format, w, h, 1);
-                                for (uint32_t f = 0; f < 6; ++f) {
-                                    GL_CHECK(glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + f, i, gpuTexture->glInternalFmt, w, h, 0, imgSize, nullptr));
-                                }
-                                w = std::max(1U, w >> 1);
-                                h = std::max(1U, h >> 1);
-                            }
-                        }
-                    } else {
-                        GL_CHECK(glTexStorage2D(GL_TEXTURE_CUBE_MAP, gpuTexture->mipLevel, gpuTexture->glInternalFmt, w, h));
-                    }
+                    GL_CHECK(glTexStorage2D(GL_TEXTURE_CUBE_MAP, gpuTexture->mipLevel, gpuTexture->glInternalFmt, w, h));
                 }
                 break;
             }
@@ -1002,69 +964,9 @@ void cmdFuncGLES3ResizeTexture(GLES3Device *device, GLES3GPUTexture *gpuTexture)
     if (gpuTexture->memoryless || gpuTexture->glTarget == GL_TEXTURE_EXTERNAL_OES) return;
 
     if (gpuTexture->glSamples <= 1) {
-        switch (gpuTexture->type) {
-            case TextureType::TEX2D: {
-                if (gpuTexture->size > 0) {
-                    GLuint &glTexture = device->stateCache()->glTextures[device->stateCache()->texUint];
-                    if (gpuTexture->glTexture != glTexture) {
-                        GL_CHECK(glBindTexture(GL_TEXTURE_2D, gpuTexture->glTexture));
-                        glTexture = gpuTexture->glTexture;
-                    }
-                    uint32_t w = gpuTexture->width;
-                    uint32_t h = gpuTexture->height;
-                    if (!GFX_FORMAT_INFOS[toNumber(gpuTexture->format)].isCompressed) {
-                        for (uint32_t i = 0; i < gpuTexture->mipLevel; ++i) {
-                            GL_CHECK(glTexImage2D(GL_TEXTURE_2D, i, gpuTexture->glInternalFmt, w, h, 0, gpuTexture->glFormat, gpuTexture->glType, nullptr));
-                            w = std::max(1U, w >> 1);
-                            h = std::max(1U, h >> 1);
-                        }
-                    } else {
-                        for (uint32_t i = 0; i < gpuTexture->mipLevel; ++i) {
-                            uint32_t imgSize = formatSize(gpuTexture->format, w, h, 1);
-                            GL_CHECK(glCompressedTexImage2D(GL_TEXTURE_2D, i, gpuTexture->glInternalFmt, w, h, 0, imgSize, nullptr));
-                            w = std::max(1U, w >> 1);
-                            h = std::max(1U, h >> 1);
-                        }
-                    }
-                }
-                break;
-            }
-            case TextureType::CUBE: {
-                if (gpuTexture->size > 0) {
-                    GLuint &glTexture = device->stateCache()->glTextures[device->stateCache()->texUint];
-                    if (gpuTexture->glTexture != glTexture) {
-                        GL_CHECK(glBindTexture(GL_TEXTURE_CUBE_MAP, gpuTexture->glTexture));
-                        glTexture = gpuTexture->glTexture;
-                    }
-                    if (!GFX_FORMAT_INFOS[toNumber(gpuTexture->format)].isCompressed) {
-                        for (uint32_t f = 0; f < 6; ++f) {
-                            uint32_t w = gpuTexture->width;
-                            uint32_t h = gpuTexture->height;
-                            for (uint32_t i = 0; i < gpuTexture->mipLevel; ++i) {
-                                GL_CHECK(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + f, i, gpuTexture->glInternalFmt, w, h, 0, gpuTexture->glFormat, gpuTexture->glType, nullptr));
-                                w = std::max(1U, w >> 1);
-                                h = std::max(1U, h >> 1);
-                            }
-                        }
-                    } else {
-                        for (uint32_t f = 0; f < 6; ++f) {
-                            uint32_t w = gpuTexture->width;
-                            uint32_t h = gpuTexture->height;
-                            for (uint32_t i = 0; i < gpuTexture->mipLevel; ++i) {
-                                uint32_t imgSize = formatSize(gpuTexture->format, w, h, 1);
-                                GL_CHECK(glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + f, i, gpuTexture->glInternalFmt, w, h, 0, imgSize, nullptr));
-                                w = std::max(1U, w >> 1);
-                                h = std::max(1U, h >> 1);
-                            }
-                        }
-                    }
-                }
-                break;
-            }
-            default:
-                CCASSERT(false, "Unsupported TextureType, resize texture failed.");
-                break;
-        }
+        // immutable by default
+        cmdFuncGLES3DestroyTexture(device, gpuTexture);
+        cmdFuncGLES3CreateTexture(device, gpuTexture);
     } else {
         switch (gpuTexture->type) {
             case TextureType::TEX2D: {
@@ -1327,7 +1229,8 @@ void cmdFuncGLES3CreateShader(GLES3Device *device, GLES3GPUShader *gpuShader) {
     // fallback subpassInputs into samplerTextures if not using FBF
     if (device->constantRegistry()->mFBF == FBFSupportLevel::NONE) {
         for (const auto &subpassInput : gpuShader->subpassInputs) {
-            auto &samplerTexture   = gpuShader->samplerTextures.emplace_back();
+            gpuShader->samplerTextures.emplace_back();
+            auto &samplerTexture   = gpuShader->samplerTextures.back();
             samplerTexture.name    = subpassInput.name;
             samplerTexture.set     = subpassInput.set;
             samplerTexture.binding = subpassInput.binding;
@@ -1478,9 +1381,9 @@ void cmdFuncGLES3DestroyShader(GLES3Device *device, GLES3GPUShader *gpuShader) {
 
 void cmdFuncGLES3CreateRenderPass(GLES3Device * /*device*/, GLES3GPURenderPass *gpuRenderPass) {
     // calculate the life cycle of each attachments
-    auto updateLifeCycle = [](GLES3GPURenderPass::AttachmentStatistics &statistics, uint32_t index) {
-        if (statistics.loadSubpass == SUBPASS_EXTERNAL) statistics.loadSubpass = index;
-        statistics.storeSubpass = index;
+    auto updateLifeCycle = [](GLES3GPURenderPass::AttachmentStatistics &statistics, size_t index) {
+        if (statistics.loadSubpass == SUBPASS_EXTERNAL) statistics.loadSubpass = utils::toUint(index);
+        statistics.storeSubpass = utils::toUint(index);
     };
     auto calculateLifeCycle = [&](GLES3GPURenderPass::AttachmentStatistics &statistics, uint32_t targetAttachment) {
         for (size_t j = 0U; j < gpuRenderPass->subpasses.size(); ++j) {
@@ -1510,7 +1413,7 @@ void cmdFuncGLES3CreateRenderPass(GLES3Device * /*device*/, GLES3GPURenderPass *
     bool hasDepth = gpuRenderPass->depthStencilAttachment.format != Format::UNKNOWN;
     gpuRenderPass->statistics.resize(gpuRenderPass->colorAttachments.size() + hasDepth);
     for (size_t i = 0U; i < gpuRenderPass->statistics.size(); ++i) {
-        calculateLifeCycle(gpuRenderPass->statistics[i], i);
+        calculateLifeCycle(gpuRenderPass->statistics[i], static_cast<uint32_t>(i));
         CC_ASSERT(gpuRenderPass->statistics[i].loadSubpass != SUBPASS_EXTERNAL &&
                   gpuRenderPass->statistics[i].storeSubpass != SUBPASS_EXTERNAL);
     }
@@ -1699,10 +1602,10 @@ static void doCreateFramebufferInstance(GLES3Device *device, GLES3GPUFramebuffer
                                              : gpuFBO->gpuDepthStencilTexture;
         }
 
-        outFBO->framebuffer.initialize(doCreateFramebuffer(device, gpuFBO->gpuColorTextures, colors.data(), colors.size(),
+        outFBO->framebuffer.initialize(doCreateFramebuffer(device, gpuFBO->gpuColorTextures, colors.data(), utils::toUint(colors.size()),
                                                            depthStencilTexture, resolves, depthStencilResolveTexture, &outFBO->resolveMask));
         if (outFBO->resolveMask) {
-            size_t             resolveCount = outFBO->resolveMask & GL_COLOR_BUFFER_BIT ? colors.size() : 0U;
+            size_t             resolveCount = outFBO->resolveMask & GL_COLOR_BUFFER_BIT ? utils::toUint(colors.size()) : 0U;
             GLES3GPUSwapchain *resolveSwapchain{getSwapchainIfExists(gpuFBO->gpuColorTextures, resolves, resolveCount)};
             if (!resolveSwapchain) {
                 outFBO->resolveFramebuffer.initialize(doCreateFramebuffer(device, gpuFBO->gpuColorTextures, resolves, resolveCount, depthStencilResolveTexture));
@@ -1731,7 +1634,7 @@ void cmdFuncGLES3CreateFramebuffer(GLES3Device *device, GLES3GPUFramebuffer *gpu
 
         gpuFBO->uberColorAttachmentIndices.clear();
         bool hasDepth{gpuFBO->gpuRenderPass->depthStencilAttachment.format != Format::UNKNOWN};
-        gpuFBO->uberDepthStencil = hasDepth ? gpuFBO->gpuColorTextures.size() : INVALID_BINDING;
+        gpuFBO->uberDepthStencil = hasDepth ? utils::toUint(gpuFBO->gpuColorTextures.size()) : INVALID_BINDING;
         for (uint32_t i = 0U; i < gpuFBO->gpuColorTextures.size(); ++i) {
             if (i == gpuFBO->uberFinalOutput) continue;
             const auto *gpuTexture = gpuFBO->gpuColorTextures[i];
@@ -1744,7 +1647,9 @@ void cmdFuncGLES3CreateFramebuffer(GLES3Device *device, GLES3GPUFramebuffer *gpu
         doCreateFramebufferInstance(device, gpuFBO, gpuFBO->uberColorAttachmentIndices, gpuFBO->uberDepthStencil, &gpuFBO->uberInstance);
     } else {
         for (const auto &subpass : gpuFBO->gpuRenderPass->subpasses) {
-            doCreateFramebufferInstance(device, gpuFBO, subpass.colors, subpass.depthStencil, &gpuFBO->instances.emplace_back(),
+            gpuFBO->instances.emplace_back();
+            auto &fboInst = gpuFBO->instances.back();
+            doCreateFramebufferInstance(device, gpuFBO, subpass.colors, subpass.depthStencil, &fboInst,
                                         subpass.resolves.empty() ? nullptr : subpass.resolves.data(), subpass.depthStencilResolve);
         }
     }
@@ -2210,7 +2115,7 @@ void cmdFuncGLES3EndRenderPass(GLES3Device *device) {
             performStoreOp(attachmentIndex, glAttachmentIndex++);
         }
         bool skipStore = subpass.depthStencil == INVALID_BINDING ||
-                         gpuRenderPass->statistics[subpass.depthStencil].loadSubpass != gfxStateCache.subpassIdx;
+                         gpuRenderPass->statistics[subpass.depthStencil].storeSubpass != gfxStateCache.subpassIdx;
         performDepthStencilStoreOp(subpass.depthStencil, skipStore);
 
         cmdFuncGLES3MemoryBarrier(device, gpuRenderPass->barriers.back().glBarriers, gpuRenderPass->barriers.back().glBarriersByRegion);
@@ -2465,9 +2370,6 @@ void cmdFuncGLES3BindState(GLES3Device *device, GLES3GPUPipelineState *gpuPipeli
                 if (cache->glBindUBOs[glBuffer.glBinding] != gpuDescriptor.gpuBuffer->glBuffer ||
                     cache->glBindUBOOffsets[glBuffer.glBinding] != offset) {
                     if (offset) {
-                        GLint size{0};
-                        glGetIntegeri_v(GL_UNIFORM_BUFFER_SIZE, glBuffer.glBinding, &size);
-
                         GL_CHECK(glBindBufferRange(GL_UNIFORM_BUFFER, glBuffer.glBinding, gpuDescriptor.gpuBuffer->glBuffer,
                                                    offset, gpuDescriptor.gpuBuffer->size));
                     } else {
@@ -2788,9 +2690,9 @@ void cmdFuncGLES3UpdateBuffer(GLES3Device *device, GLES3GPUBuffer *gpuBuffer, co
             case GL_ARRAY_BUFFER: {
                 if (device->stateCache()->glVAO) {
                     GL_CHECK(glBindVertexArray(0));
-                    device->stateCache()->glVAO     = 0;
-                    gfxStateCache.gpuInputAssembler = nullptr;
+                    device->stateCache()->glVAO = 0;
                 }
+                gfxStateCache.gpuInputAssembler = nullptr;
                 if (device->stateCache()->glArrayBuffer != gpuBuffer->glBuffer) {
                     GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, gpuBuffer->glBuffer));
                     device->stateCache()->glArrayBuffer = gpuBuffer->glBuffer;
@@ -2801,9 +2703,9 @@ void cmdFuncGLES3UpdateBuffer(GLES3Device *device, GLES3GPUBuffer *gpuBuffer, co
             case GL_ELEMENT_ARRAY_BUFFER: {
                 if (device->stateCache()->glVAO) {
                     GL_CHECK(glBindVertexArray(0));
-                    device->stateCache()->glVAO     = 0;
-                    gfxStateCache.gpuInputAssembler = nullptr;
+                    device->stateCache()->glVAO = 0;
                 }
+                gfxStateCache.gpuInputAssembler = nullptr;
                 if (device->stateCache()->glElementArrayBuffer != gpuBuffer->glBuffer) {
                     GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gpuBuffer->glBuffer));
                     device->stateCache()->glElementArrayBuffer = gpuBuffer->glBuffer;

@@ -815,7 +815,7 @@ template <typename T>
 inline typename std::enable_if_t<!std::is_enum<T>::value && !std::is_pointer<T>::value, bool>
 sevalue_to_native(const se::Value & /*from*/, T * /*to*/, se::Object * /*unused*/) { // NOLINT(readability-identifier-naming)
     SE_LOGE("Can not convert type ???\n - [[ %s ]]\n", typeid(T).name());
-    CC_STATIC_ASSERT(std::is_same<T, void>::value, "sevalue_to_native not implemented for T");
+    CC_STATIC_ASSERT((std::is_same<T, void>::value), "sevalue_to_native not implemented for T");
     return false;
 }
 
@@ -941,7 +941,9 @@ inline bool sevalue_to_native(const se::Value &from, int64_t *to, se::Object * /
 #if CC_PLATFORM == CC_PLATFORM_MAC_IOS || CC_PLATFORM == CC_PLATFORM_MAC_OSX
 template <>
 inline bool sevalue_to_native(const se::Value &from, unsigned long *to, se::Object * /*ctx*/) {
-    *to = static_cast<unsigned long>(from.toDouble());
+    // on mac: unsiged long  === uintptr_t
+    CC_STATIC_ASSERT(sizeof(*to) == 8);
+    *to = static_cast<unsigned long>(from.toUint64());
     return true;
 }
 #endif

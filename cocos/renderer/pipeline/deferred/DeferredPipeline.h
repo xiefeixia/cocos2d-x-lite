@@ -28,11 +28,11 @@
 #include <array>
 
 #include <unordered_map>
-#include "frame-graph/FrameGraph.h"
-#include "frame-graph/Handle.h"
 #include "gfx-base/GFXBuffer.h"
 #include "gfx-base/GFXInputAssembler.h"
+#include "pipeline/ClusterLightCulling.h"
 #include "pipeline/RenderPipeline.h"
+#include "pipeline/common/Enum.h"
 #include "scene/RenderWindow.h"
 
 namespace cc {
@@ -40,23 +40,6 @@ namespace pipeline {
 struct UBOGlobal;
 struct UBOCamera;
 struct UBOShadow;
-
-struct CC_DLL DeferredRenderData {
-    gfx::TextureList  gbufferRenderTargets;
-    gfx::Framebuffer *gbufferFrameBuffer   = nullptr;
-    gfx::Framebuffer *lightingFrameBuff    = nullptr;
-    gfx::Texture *    lightingRenderTarget = nullptr;
-    gfx::Texture *    depthTex             = nullptr;
-};
-
-enum class DeferredInsertPoint {
-    IP_GBUFFER     = 100,
-    IP_LIGHTING    = 200,
-    IP_TRANSPARENT = 220,
-    IP_SSPR        = 300,
-    IP_POSTPROCESS = 400,
-    IP_INVALID
-};
 
 class CC_DLL DeferredPipeline : public RenderPipeline {
 public:
@@ -73,16 +56,6 @@ public:
     inline const gfx::BufferList &getLightBuffers() const { return _lightBuffers; }
     inline const UintList &       getLightIndexOffsets() const { return _lightIndexOffsets; }
     inline const UintList &       getLightIndices() const { return _lightIndices; }
-    gfx::Rect                     getRenderArea(scene::Camera *camera, bool onScreen);
-    void                          updateQuadVertexData(const gfx::Rect &renderArea, gfx::Buffer *buffer);
-    void                          genQuadVertexData(const gfx::Rect &renderArea, float *data);
-    void                          ensureEnoughSize(const vector<scene::Camera *> &cameras);
-
-    framegraph::FrameGraph &getFrameGraph() { return _fg; }
-    gfx::Color              getClearcolor(scene::Camera *camera);
-    uint                    getWidth() const { return _width; }
-    uint                    getHeight() const { return _height; }
-    gfx::InputAssembler *   getIAByRenderArea(const gfx::Rect &rect);
 
     bool isRenderOverDraw() { return _renderOverdraw; }
     void setRenderOverDraw(bool overdraw) { _renderOverdraw = overdraw; }
@@ -90,33 +63,20 @@ public:
     vector<scene::Camera *> cameras;
 private:
     bool activeRenderer(gfx::Swapchain *swapchain);
-    bool createQuadInputAssembler(gfx::Buffer *quadIB, gfx::Buffer **quadVB, gfx::InputAssembler **quadIA);
-    void destroyQuadInputAssembler();
 
-    gfx::Buffer *                           _lightsUBO = nullptr;
-    LightList                               _validLights;
-    gfx::BufferList                         _lightBuffers;
-    UintList                                _lightIndexOffsets;
-    UintList                                _lightIndices;
-    map<gfx::ClearFlags, gfx::RenderPass *> _renderPasses;
-    gfx::Rect                               _lastUsedRenderArea;
+    gfx::Buffer *   _lightsUBO = nullptr;
+    LightList       _validLights;
+    gfx::BufferList _lightBuffers;
+    UintList        _lightIndexOffsets;
+    UintList        _lightIndices;
 
-    gfx::Buffer *                                   _quadIB = nullptr;
-    std::vector<gfx::Buffer *>                      _quadVB;
-    std::unordered_map<uint, gfx::InputAssembler *> _quadIA;
-
-    uint _width  = 0;
-    uint _height = 0;
-
-    framegraph::FrameGraph _fg;
+    ClusterLightCulling *_clusterComp{nullptr};
 
 public:
     static constexpr uint GBUFFER_COUNT = 4;
 
     // deferred resource names
     static framegraph::StringHandle fgStrHandleGbufferTexture[GBUFFER_COUNT];
-    static framegraph::StringHandle fgStrHandleDepthTexture;
-    static framegraph::StringHandle fgStrHandleLightingOutTexture;
 
     static uint                     taaTextureIndex;
     static framegraph::StringHandle fgStrHandleTAATexture[2];
@@ -126,7 +86,6 @@ public:
     static framegraph::StringHandle fgStrHandleLightingPass;
     static framegraph::StringHandle fgStrHandleTransparentPass;
     static framegraph::StringHandle fgStrHandleSsprPass;
-    static framegraph::StringHandle fgStrHandlePostprocessPass;
 
     static framegraph::StringHandle fgStrHandleTAAPass;
 

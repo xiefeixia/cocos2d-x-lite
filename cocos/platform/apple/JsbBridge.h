@@ -1,5 +1,5 @@
 /****************************************************************************
- Copyright (c) 2020-2021 Huawei Technologies Co., Ltd.
+ Copyright (c) 2018-2021 Xiamen Yaji Software Co., Ltd.
 
  http://www.cocos.com
 
@@ -25,36 +25,16 @@
 
 #pragma once
 
-#include "../RenderStage.h"
-#include "frame-graph/Handle.h"
-#include "DeferredPipeline.h"
+#import <Foundation/Foundation.h>
 
-namespace cc {
-namespace pipeline {
+typedef void (^ICallback)(NSString*, NSString*);
 
-class UIPhase;
 
-class CC_DLL PostprocessStage : public RenderStage {
-public:
-    PostprocessStage();
-    ~PostprocessStage() override = default;
+@interface JsbBridge : NSObject
++(instancetype)sharedInstance;
+-(void)setCallback:(ICallback)cb;
+-(bool)callByScript:(NSString*)arg0 arg1:(NSString*)arg1;
+-(void)sendToScript:(NSString*)arg0 arg1:(NSString*)arg1;
+-(void)sendToScript:(NSString*)arg0;
+@end
 
-    static const RenderStageInfo &getInitializeInfo();
-    bool initialize(const RenderStageInfo &info) override;
-    void activate(RenderPipeline *pipeline, RenderFlow *flow) override;
-    void destroy() override;
-    void render(scene::Camera *camera) override;
-
-    void setRenderScale(float v) { 
-        DeferredPipeline::renderScale = v;
-    };
-
-private:
-    gfx::Rect _renderArea;
-    UIPhase * _uiPhase = nullptr;
-    uint      _phaseID = 0;
-
-    static RenderStageInfo initInfo;
-};
-} // namespace pipeline
-} // namespace cc
