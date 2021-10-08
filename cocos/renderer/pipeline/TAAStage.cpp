@@ -60,7 +60,6 @@ void TAAStage::activate(RenderPipeline *pipeline, RenderFlow *flow) {
 }
 
 void TAAStage::render(scene::Camera *camera) {
-    return;
 
     #ifdef CC_USE_VULKAN
         #if CC_PLATFORM == CC_PLATFORM_ANDROID

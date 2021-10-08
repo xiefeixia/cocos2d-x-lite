@@ -139,7 +139,7 @@ protected:
 
     // use cluster culling or not
     bool _clusterEnabled{false};
-    bool _bloomEnable{true};
+    bool _bloomEnable{false};
 };
 
 } // namespace pipeline

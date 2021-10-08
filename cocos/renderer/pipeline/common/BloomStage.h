@@ -54,7 +54,16 @@ public:
     auto &        getUpsampleUBO() { return _upsampleUBO; }
     gfx::Sampler *getSampler() const { return _sampler; }
 
+    float getThreshold() { return threshold; }
+    void  setThreshold(float v) { threshold = v; }
+
+    float getIntensity() { return intensity; }
+    void  setIntensity(float v) { intensity = v; }
+
 private:
+    float threshold = 1;
+    float intensity = 0.8;
+
     gfx::Rect _renderArea;
     uint      _phaseID = 0;
 
