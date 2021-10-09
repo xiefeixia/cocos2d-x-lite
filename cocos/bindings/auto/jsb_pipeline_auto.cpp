@@ -1650,6 +1650,25 @@ static bool js_pipeline_RenderFlow_initialize(se::State& s) // NOLINT(readabilit
 }
 SE_BIND_FUNC(js_pipeline_RenderFlow_initialize)
 
+static bool js_pipeline_RenderFlow_setRenderStages(se::State& s) // NOLINT(readability-identifier-naming)
+{
+    auto* cobj = SE_THIS_OBJECT<cc::pipeline::RenderFlow>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_RenderFlow_setRenderStages : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 1) {
+        HolderType<std::vector<cc::pipeline::RenderStage *>, false> arg0 = {};
+        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
+        SE_PRECONDITION2(ok, false, "js_pipeline_RenderFlow_setRenderStages : Error processing arguments");
+        cobj->setRenderStages(arg0.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_RenderFlow_setRenderStages)
+
 
 
 bool js_register_pipeline_RenderFlow(se::Object* obj) // NOLINT(readability-identifier-naming)
@@ -1660,6 +1679,7 @@ bool js_register_pipeline_RenderFlow(se::Object* obj) // NOLINT(readability-iden
     cls->defineFunction("getRenderstageByName", _SE(js_pipeline_RenderFlow_getRenderstageByName));
     cls->defineFunction("getTag", _SE(js_pipeline_RenderFlow_getTag));
     cls->defineFunction("initialize", _SE(js_pipeline_RenderFlow_initialize));
+    cls->defineFunction("setRenderStages", _SE(js_pipeline_RenderFlow_setRenderStages));
     cls->install();
     JSBClassType::registerClass<cc::pipeline::RenderFlow>(cls);
 
@@ -2682,6 +2702,25 @@ static bool js_pipeline_BloomStage_getDownsampelUBO(se::State& s) // NOLINT(read
 }
 SE_BIND_FUNC(js_pipeline_BloomStage_getDownsampelUBO)
 
+static bool js_pipeline_BloomStage_getIntensity(se::State& s) // NOLINT(readability-identifier-naming)
+{
+    auto* cobj = SE_THIS_OBJECT<cc::pipeline::BloomStage>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_BloomStage_getIntensity : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 0) {
+        float result = cobj->getIntensity();
+        ok &= nativevalue_to_se(result, s.rval(), nullptr /*ctx*/);
+        SE_PRECONDITION2(ok, false, "js_pipeline_BloomStage_getIntensity : Error processing arguments");
+        SE_HOLD_RETURN_VALUE(result, s.thisObject(), s.rval());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 0);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_BloomStage_getIntensity)
+
 static bool js_pipeline_BloomStage_getSampler(se::State& s) // NOLINT(readability-identifier-naming)
 {
     auto* cobj = SE_THIS_OBJECT<cc::pipeline::BloomStage>(s);
@@ -2701,6 +2740,25 @@ static bool js_pipeline_BloomStage_getSampler(se::State& s) // NOLINT(readabilit
 }
 SE_BIND_FUNC(js_pipeline_BloomStage_getSampler)
 
+static bool js_pipeline_BloomStage_getThreshold(se::State& s) // NOLINT(readability-identifier-naming)
+{
+    auto* cobj = SE_THIS_OBJECT<cc::pipeline::BloomStage>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_BloomStage_getThreshold : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 0) {
+        float result = cobj->getThreshold();
+        ok &= nativevalue_to_se(result, s.rval(), nullptr /*ctx*/);
+        SE_PRECONDITION2(ok, false, "js_pipeline_BloomStage_getThreshold : Error processing arguments");
+        SE_HOLD_RETURN_VALUE(result, s.thisObject(), s.rval());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 0);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_BloomStage_getThreshold)
+
 static bool js_pipeline_BloomStage_getUpsampleUBO(se::State& s) // NOLINT(readability-identifier-naming)
 {
     auto* cobj = SE_THIS_OBJECT<cc::pipeline::BloomStage>(s);
@@ -2719,6 +2777,44 @@ static bool js_pipeline_BloomStage_getUpsampleUBO(se::State& s) // NOLINT(readab
     return false;
 }
 SE_BIND_FUNC(js_pipeline_BloomStage_getUpsampleUBO)
+
+static bool js_pipeline_BloomStage_setIntensity(se::State& s) // NOLINT(readability-identifier-naming)
+{
+    auto* cobj = SE_THIS_OBJECT<cc::pipeline::BloomStage>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_BloomStage_setIntensity : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 1) {
+        HolderType<float, false> arg0 = {};
+        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
+        SE_PRECONDITION2(ok, false, "js_pipeline_BloomStage_setIntensity : Error processing arguments");
+        cobj->setIntensity(arg0.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_BloomStage_setIntensity)
+
+static bool js_pipeline_BloomStage_setThreshold(se::State& s) // NOLINT(readability-identifier-naming)
+{
+    auto* cobj = SE_THIS_OBJECT<cc::pipeline::BloomStage>(s);
+    SE_PRECONDITION2(cobj, false, "js_pipeline_BloomStage_setThreshold : Invalid Native Object");
+    const auto& args = s.args();
+    size_t argc = args.size();
+    CC_UNUSED bool ok = true;
+    if (argc == 1) {
+        HolderType<float, false> arg0 = {};
+        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
+        SE_PRECONDITION2(ok, false, "js_pipeline_BloomStage_setThreshold : Error processing arguments");
+        cobj->setThreshold(arg0.value());
+        return true;
+    }
+    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
+    return false;
+}
+SE_BIND_FUNC(js_pipeline_BloomStage_setThreshold)
 
 static bool js_pipeline_BloomStage_getInitializeInfo(se::State& s) // NOLINT(readability-identifier-naming)
 {
@@ -2768,8 +2864,12 @@ bool js_register_pipeline_BloomStage(se::Object* obj) // NOLINT(readability-iden
     auto* cls = se::Class::create("BloomStage", obj, __jsb_cc_pipeline_RenderStage_proto, _SE(js_pipeline_BloomStage_constructor));
 
     cls->defineFunction("getDownsampelUBO", _SE(js_pipeline_BloomStage_getDownsampelUBO));
+    cls->defineFunction("getIntensity", _SE(js_pipeline_BloomStage_getIntensity));
     cls->defineFunction("getSampler", _SE(js_pipeline_BloomStage_getSampler));
+    cls->defineFunction("getThreshold", _SE(js_pipeline_BloomStage_getThreshold));
     cls->defineFunction("getUpsampleUBO", _SE(js_pipeline_BloomStage_getUpsampleUBO));
+    cls->defineFunction("setIntensity", _SE(js_pipeline_BloomStage_setIntensity));
+    cls->defineFunction("setThreshold", _SE(js_pipeline_BloomStage_setThreshold));
     cls->defineStaticFunction("getInitializeInfo", _SE(js_pipeline_BloomStage_getInitializeInfo));
     cls->defineFinalizeFunction(_SE(js_cc_pipeline_BloomStage_finalize));
     cls->install();

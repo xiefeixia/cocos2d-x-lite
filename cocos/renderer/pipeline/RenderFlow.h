@@ -56,6 +56,10 @@ public:
     inline uint          getTag() const { return _tag; }
     RenderStage         *getRenderstageByName(const String &name) const;
 
+    void setRenderStages(RenderStageList stages) {
+        _stages = stages;
+    }
+
 protected:
     RenderStageList _stages;
     String          _name;

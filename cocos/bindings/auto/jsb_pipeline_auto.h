@@ -126,6 +126,7 @@ SE_DECLARE_FUNC(js_pipeline_RenderFlow_activate);
 SE_DECLARE_FUNC(js_pipeline_RenderFlow_getRenderstageByName);
 SE_DECLARE_FUNC(js_pipeline_RenderFlow_getTag);
 SE_DECLARE_FUNC(js_pipeline_RenderFlow_initialize);
+SE_DECLARE_FUNC(js_pipeline_RenderFlow_setRenderStages);
 
 extern se::Object* __jsb_cc_pipeline_ForwardFlow_proto;
 extern se::Class* __jsb_cc_pipeline_ForwardFlow_class;
@@ -251,8 +252,12 @@ bool register_all_pipeline(se::Object* obj);
 
 JSB_REGISTER_OBJECT_TYPE(cc::pipeline::BloomStage);
 SE_DECLARE_FUNC(js_pipeline_BloomStage_getDownsampelUBO);
+SE_DECLARE_FUNC(js_pipeline_BloomStage_getIntensity);
 SE_DECLARE_FUNC(js_pipeline_BloomStage_getSampler);
+SE_DECLARE_FUNC(js_pipeline_BloomStage_getThreshold);
 SE_DECLARE_FUNC(js_pipeline_BloomStage_getUpsampleUBO);
+SE_DECLARE_FUNC(js_pipeline_BloomStage_setIntensity);
+SE_DECLARE_FUNC(js_pipeline_BloomStage_setThreshold);
 SE_DECLARE_FUNC(js_pipeline_BloomStage_getInitializeInfo);
 SE_DECLARE_FUNC(js_pipeline_BloomStage_BloomStage);
 
