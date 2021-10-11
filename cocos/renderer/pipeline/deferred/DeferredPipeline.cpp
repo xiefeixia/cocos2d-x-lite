@@ -104,6 +104,11 @@ void DeferredPipeline::render(const vector<scene::Camera *> &cameras) {
         _fg.reset();
 
         if (_clusterEnabled) {
+            if (!_clusterComp) {
+                // cluster component resource
+                _clusterComp = new ClusterLightCulling(this);
+                _clusterComp->initialize(this->getDevice());
+            }
             _clusterComp->clusterLightCulling(camera);
         }
 
@@ -166,12 +171,6 @@ bool DeferredPipeline::activeRenderer(gfx::Swapchain *swapchain) {
 
     _width  = swapchain->getWidth();
     _height = swapchain->getHeight();
-
-    if (_clusterEnabled) {
-        // cluster component resource
-        _clusterComp = new ClusterLightCulling(this);
-        _clusterComp->initialize(this->getDevice());
-    }
 
     return true;
 }

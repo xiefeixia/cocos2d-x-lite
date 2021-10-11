@@ -157,6 +157,10 @@ void ClusterLightCulling::updateLights() {
         }
     }
 
+    if (_validLights.size() == 0) {
+        return;
+    }
+
     const auto  exposure        = _camera->exposure;
     const auto  validLightCount = _validLights.size();
     auto* const sceneData       = _pipeline->getPipelineSceneData();

@@ -102,7 +102,10 @@ public:
     inline void          setProfiler(scene::Model *value) { _profiler = value; }
 
     inline bool getClusterEnabled() const { return _clusterEnabled; }
-    inline void setClusterEnabled(bool enable) { _clusterEnabled = enable; }
+    void setClusterEnabled(bool enable) { 
+        _clusterEnabled = enable;
+        generateConstantMacros();
+    }
 
     vector<scene::Camera *> cameras;
     void                    setBloomEnable(bool enable) { _bloomEnable = enable; }
