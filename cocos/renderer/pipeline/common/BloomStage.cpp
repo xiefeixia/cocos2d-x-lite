@@ -95,7 +95,7 @@ bool BloomStage::initialize(const RenderStageInfo &info) {
 
 void BloomStage::activate(RenderPipeline *pipeline, RenderFlow *flow) {
     RenderStage::activate(pipeline, flow);
-    if (!_pipeline->getBloomEnable()) return;
+    //if (!_pipeline->getBloomEnable()) return;
 
     _phaseID = getPhaseID("default");
 
@@ -233,6 +233,7 @@ void BloomStage::render(scene::Camera *camera) {
         CC_ASSERT(pso != nullptr);
 
         data.bloomUBO->update(data.textureSize, sizeof(data.textureSize));
+        pass->getDescriptorSet()->bindBuffer(0, data.bloomUBO);
 
         pass->getDescriptorSet()->bindTexture(1, table.getRead(data.inputTexHandle));
         pass->getDescriptorSet()->bindSampler(1, data.sampler);
@@ -483,6 +484,7 @@ void BloomStage::render(scene::Camera *camera) {
         CC_ASSERT(pso != nullptr);
 
         data.bloomUBO->update(data.textureSize, sizeof(data.textureSize));
+        pass->getDescriptorSet()->bindBuffer(0, data.bloomUBO);
 
         pass->getDescriptorSet()->bindTexture(1, table.getRead(data.lightingOutTexHandle));
         pass->getDescriptorSet()->bindTexture(2, table.getRead(data.upsampleTexHandle));

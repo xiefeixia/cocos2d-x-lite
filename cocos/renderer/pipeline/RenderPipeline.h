@@ -105,6 +105,7 @@ public:
     inline void setClusterEnabled(bool enable) { _clusterEnabled = enable; }
 
     vector<scene::Camera *> cameras;
+    void                    setBloomEnable(bool enable) { _bloomEnable = enable; }
 
 protected:
     static RenderPipeline *instance;
