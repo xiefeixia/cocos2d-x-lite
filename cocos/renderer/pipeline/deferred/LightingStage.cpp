@@ -324,11 +324,11 @@ void LightingStage::destroy() {
 void LightingStage::fgLightingPass(scene::Camera *camera) {
     // lights info and ubo are updated in ClusterLightCulling::update()
     // if using cluster lighting.
-    if (!_pipeline->getClusterEnabled()) {
-        // lighting info, ubo
-        gatherLights(camera);
-        _descriptorSet->update();
-    }
+    //if (!_pipeline->getClusterEnabled()) {
+    //    // lighting info, ubo
+    //    gatherLights(camera);
+    //    _descriptorSet->update();
+    //}
 
     struct RenderData {
         framegraph::TextureHandle gbuffer[4]; // read from gbuffer stage
@@ -404,10 +404,10 @@ void LightingStage::fgLightingPass(scene::Camera *camera) {
         auto *cmdBuff = pipeline->getCommandBuffers()[0];
 
         // no need to bind localSet in cluster
-        if (!_pipeline->getClusterEnabled()) {
-            vector<uint> dynamicOffsets = {0};
-            cmdBuff->bindDescriptorSet(localSet, _descriptorSet, dynamicOffsets);
-        }
+        //if (!_pipeline->getClusterEnabled()) {
+        //    vector<uint> dynamicOffsets = {0};
+        //    cmdBuff->bindDescriptorSet(localSet, _descriptorSet, dynamicOffsets);
+        //}
 
         const std::array<uint, 1> globalOffsets = {_pipeline->getPipelineUBO()->getCurrentCameraUBOOffset()};
         cmdBuff->bindDescriptorSet(globalSet, pipeline->getDescriptorSet(), utils::toUint(globalOffsets.size()), globalOffsets.data());

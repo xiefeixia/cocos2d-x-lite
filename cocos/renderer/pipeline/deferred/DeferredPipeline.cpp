@@ -109,7 +109,10 @@ void DeferredPipeline::render(const vector<scene::Camera *> &cameras) {
                 _clusterComp = new ClusterLightCulling(this);
                 _clusterComp->initialize(this->getDevice());
             }
-            _clusterComp->clusterLightCulling(camera);
+
+            if (getPipelineSceneData()->getRenderObjects().size()) {
+                _clusterComp->clusterLightCulling(camera);
+            }
         }
 
         for (auto *const flow : _flows) {
