@@ -142,7 +142,7 @@ protected:
     map<gfx::ClearFlags, gfx::RenderPass *> _renderPasses;
 
     // use cluster culling or not
-    bool _clusterEnabled{false};
+    bool _clusterEnabled{true};
     bool _bloomEnable{false};
 };
 
