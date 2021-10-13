@@ -79,7 +79,7 @@ int StringUtil::printf(char *buf, const char *last, const char *fmt, ...) {
 }
 
 String StringUtil::format(const char *fmt, ...) {
-    char    sz[4096];
+    char    sz[8192];
     va_list args;
     va_start(args, fmt);
     vprintf(sz, sz + sizeof(sz) - 1, fmt, args);
