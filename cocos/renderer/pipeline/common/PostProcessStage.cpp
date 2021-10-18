@@ -205,6 +205,7 @@ void PostProcessStage::render(scene::Camera *camera) {
         info.depthStencilAttachment = renderPass->getDepthStencilAttachment();
         info.subpasses              = renderPass->getSubpasses();
         info.dependencies           = renderPass->getDependencies();
+        info.colorAttachments.at(0).beginAccesses = info.colorAttachments.at(0).endAccesses;
 
         auto& ca = renderPass->getColorAttachments();
 

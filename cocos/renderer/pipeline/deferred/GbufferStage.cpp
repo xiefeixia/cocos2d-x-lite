@@ -163,11 +163,10 @@ void GbufferStage::render(scene::Camera *camera) {
 
     (void)pipeline->getIAByRenderArea(_renderArea);
 
-
     auto gbufferSetup = [&](framegraph::PassNodeBuilder &builder, RenderData &data) {
         uint32_t width  = (uint32_t)(pipeline->getWidth() * CustomEngine::renderScale);
         uint32_t height = (uint32_t)(pipeline->getHeight() * CustomEngine::renderScale);
-        
+
         builder.subpass();
 
         // gbuffer setup
@@ -186,7 +185,17 @@ void GbufferStage::render(scene::Camera *camera) {
             height,
         };
         for (int i = 0; i < DeferredPipeline::GBUFFER_COUNT - 1; ++i) {
-            if (i != 0) { // positions & normals need more precision
+            if (i == 1) {
+                // need the sampled bit for next render pass
+                gfx::TextureInfo posInfo{
+                    gfx::TextureType::TEX2D,
+                    gfx::TextureUsageBit::COLOR_ATTACHMENT | gfx::TextureUsageBit::INPUT_ATTACHMENT | gfx::TextureUsageBit::SAMPLED,
+                    gfx::Format::RGBA16F,
+                    width,
+                    height,
+                };
+                data.gbuffer[i] = builder.create<framegraph::Texture>(DeferredPipeline::fgStrHandleGbufferTexture[i], posInfo);
+            } else if (i != 0) { // positions & normals need more precision
                 data.gbuffer[i] = builder.create<framegraph::Texture>(DeferredPipeline::fgStrHandleGbufferTexture[i], gbufferInfoFloat);
             } else {
                 data.gbuffer[i] = builder.create<framegraph::Texture>(DeferredPipeline::fgStrHandleGbufferTexture[i], gbufferInfo);
