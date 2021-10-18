@@ -390,7 +390,7 @@ void LightingStage::fgLightingPass(scene::Camera *camera) {
         builder.writeToBlackboard(RenderPipeline::fgStrHandleOutColorTexture, data.outputTex);
 
         // set render area
-        auto          renderArea = pipeline->getRenderArea(camera);
+        auto renderArea = pipeline->getRenderArea(camera);
         renderArea.width *= CustomEngine::renderScale;
         renderArea.height *= CustomEngine::renderScale;
         gfx::Viewport viewport{renderArea.x, renderArea.y, renderArea.width, renderArea.height, 0.F, 1.F};

@@ -134,6 +134,8 @@ private:
     std::vector<float>    _lightBufferData;
 
     gfx::GlobalBarrier* _resetBarrier{nullptr};
+    gfx::GlobalBarrier* _transferBarrier{nullptr};
+    gfx::GlobalBarrier* _lightingBarrier{nullptr};
 
     gfx::DispatchInfo _buildingDispatchInfo;
     gfx::DispatchInfo _resetDispatchInfo;
