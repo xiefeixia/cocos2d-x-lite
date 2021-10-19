@@ -23,6 +23,8 @@
  THE SOFTWARE.
 ****************************************************************************/
 
+#include <boost/functional/hash.hpp>
+
 #include "VKStd.h"
 
 #include "VKCommands.h"
@@ -91,6 +93,14 @@ void cmdFuncCCVKGetDeviceQueue(CCVKDevice *device, CCVKGPUQueue *gpuQueue) {
 
     vkGetDeviceQueue(device->gpuDevice()->vkDevice, gpuQueue->possibleQueueFamilyIndices[0], 0, &gpuQueue->vkQueue);
     gpuQueue->queueFamilyIndex = gpuQueue->possibleQueueFamilyIndices[0];
+}
+
+void cmdFuncCCVKCreateQuery(CCVKDevice *device, CCVKGPUQueryPool *gpuQueryPool) {
+    VkQueryPoolCreateInfo queryPoolInfo = {};
+    queryPoolInfo.sType                 = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
+    queryPoolInfo.queryType             = mapVkQueryType(gpuQueryPool->type);
+    queryPoolInfo.queryCount            = gpuQueryPool->maxQueryObjects;
+    VK_CHECK(vkCreateQueryPool(device->gpuDevice()->vkDevice, &queryPoolInfo, nullptr, &gpuQueryPool->pool));
 }
 
 void cmdFuncCCVKCreateTexture(CCVKDevice *device, CCVKGPUTexture *gpuTexture) {
@@ -306,22 +316,27 @@ struct SubpassDependencyManager final {
         _hashes.clear();
     }
 
-    void append(const VkSubpassDependency2 &dependency) {
-        uint32_t hash = 6U;
-        hash ^= (dependency.srcSubpass) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-        hash ^= (dependency.srcStageMask) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-        hash ^= (dependency.srcAccessMask) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-        hash ^= (dependency.dstSubpass) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-        hash ^= (dependency.dstStageMask) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-        hash ^= (dependency.dstAccessMask) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-
-        if (_hashes.count(hash)) return;
-        subpassDependencies.push_back(dependency);
-        _hashes.insert(hash);
+    void append(const VkSubpassDependency2 &info) {
+        if (_hashes.count(info)) return;
+        subpassDependencies.push_back(info);
+        _hashes.insert(info);
     }
 
 private:
-    unordered_set<uint32_t> _hashes;
+    // only the src/dst attributes differs
+    struct DependencyHasher {
+        size_t operator()(const VkSubpassDependency2 &info) const {
+            return boost::hash_range(reinterpret_cast<const uint64_t *>(&info.srcSubpass),
+                                     reinterpret_cast<const uint64_t *>(&info.dependencyFlags));
+        }
+    };
+    struct DependencyComparer {
+        size_t operator()(const VkSubpassDependency2 &lhs, const VkSubpassDependency2 &rhs) const {
+            auto size = static_cast<size_t>(reinterpret_cast<const uint8_t *>(&lhs.dependencyFlags) - reinterpret_cast<const uint8_t *>(&lhs.srcSubpass));
+            return !memcmp(&lhs.srcSubpass, &rhs.srcSubpass, size);
+        }
+    };
+    unordered_set<VkSubpassDependency2, DependencyHasher, DependencyComparer> _hashes;
 };
 
 void cmdFuncCCVKCreateRenderPass(CCVKDevice *device, CCVKGPURenderPass *gpuRenderPass) {
@@ -603,7 +618,7 @@ void cmdFuncCCVKCreateRenderPass(CCVKDevice *device, CCVKGPURenderPass *gpuRende
             statistics.storeSubpass = index;
         };
         auto calculateLifeCycle = [&](uint32_t targetAttachment, AttachmentStatistics &statistics) {
-            for (size_t j = 0U; j < subpassCount; ++j) {
+            for (uint32_t j = 0U; j < utils::toUint(subpassCount); ++j) {
                 auto &subpass = subpassDescriptions[j];
                 for (size_t k = 0U; k < subpass.colorAttachmentCount; ++k) {
                     if (subpass.pColorAttachments[k].attachment == targetAttachment) {
@@ -628,7 +643,7 @@ void cmdFuncCCVKCreateRenderPass(CCVKDevice *device, CCVKGPURenderPass *gpuRende
             }
         };
         attachmentStatistics.resize(colorAttachmentCount + hasDepth);
-        for (size_t i = 0U; i < colorAttachmentCount + hasDepth; ++i) {
+        for (uint32_t i = 0U; i < utils ::toUint(colorAttachmentCount + hasDepth); ++i) {
             attachmentStatistics[i].clear();
             calculateLifeCycle(i, attachmentStatistics[i]);
             CC_ASSERT(attachmentStatistics[i].loadSubpass != VK_SUBPASS_EXTERNAL &&
@@ -646,7 +661,8 @@ void cmdFuncCCVKCreateRenderPass(CCVKDevice *device, CCVKGPURenderPass *gpuRende
                 dependency.srcStageMask |= info.stageMask;
                 dependency.dstStageMask |= dstStage;
                 dependency.srcAccessMask |= info.hasWriteAccess ? info.accessMask : 0;
-                dependency.dstAccessMask |= (desc.loadOp == VK_ATTACHMENT_LOAD_OP_CLEAR || desc.initialLayout != ref.layout ? dstAccessWrite : dstAccessRead);
+                dependency.dstAccessMask |= dstAccessRead;
+                if (desc.loadOp == VK_ATTACHMENT_LOAD_OP_CLEAR || desc.initialLayout != ref.layout) dependency.dstAccessMask |= dstAccessWrite;
                 return true;
             }
             return false;
@@ -654,7 +670,7 @@ void cmdFuncCCVKCreateRenderPass(CCVKDevice *device, CCVKGPURenderPass *gpuRende
         VkSubpassDependency2 beginDependency;
         uint32_t             lastLoadSubpass{VK_SUBPASS_EXTERNAL};
         bool                 beginDependencyValid{false};
-        for (size_t i = 0U; i < colorAttachmentCount + hasDepth; ++i) {
+        for (uint32_t i = 0U; i < utils ::toUint(colorAttachmentCount + hasDepth); ++i) {
             auto &statistics = attachmentStatistics[i];
             if (lastLoadSubpass != statistics.loadSubpass) {
                 if (beginDependencyValid) dependencyManager.append(beginDependency);
@@ -686,7 +702,7 @@ void cmdFuncCCVKCreateRenderPass(CCVKDevice *device, CCVKGPURenderPass *gpuRende
         VkSubpassDependency2 endDependency;
         uint32_t             lastStoreSubpass{VK_SUBPASS_EXTERNAL};
         bool                 endDependencyValid{false};
-        for (size_t i = 0U; i < colorAttachmentCount + hasDepth; ++i) {
+        for (uint32_t i = 0U; i < utils ::toUint(colorAttachmentCount + hasDepth); ++i) {
             auto &statistics = attachmentStatistics[i];
             if (lastStoreSubpass != statistics.storeSubpass) {
                 if (endDependencyValid) dependencyManager.append(endDependency);
@@ -1260,12 +1276,13 @@ void cmdFuncCCVKCopyBuffersToTexture(CCVKDevice *device, const uint8_t *const *b
 
         // upload in chunks
         for (size_t h = 0U, s = 0U; h < regionHeight; h += stepHeight, s += stepSize) {
-            auto heightOffset = static_cast<int32_t>(h);
+            auto   heightOffset = static_cast<int32_t>(h);
+            size_t curSize      = std::min(regionSize - s, stepSize);
 
             CCVKGPUBuffer stagingBuffer;
-            stagingBuffer.size = std::min(regionSize - s, stepSize);
+            stagingBuffer.size = curSize;
             device->gpuStagingBufferPool()->alloc(&stagingBuffer, GFX_FORMAT_INFOS[toNumber(gpuTexture->format)].size);
-            memcpy(stagingBuffer.mappedData, buffers[i] + s, stagingBuffer.size);
+            memcpy(stagingBuffer.mappedData, buffers[i] + s, curSize);
 
             VkBufferImageCopy stagingRegion;
             stagingRegion.bufferOffset      = stagingBuffer.startOffset;
@@ -1380,6 +1397,10 @@ CC_VULKAN_API void cmdFuncCCVKCopyTextureToBuffers(CCVKDevice *device, CCVKGPUTe
     device->gpuBarrierManager()->checkIn(srcTexture);
 }
 
+void cmdFuncCCVKDestroyQuery(CCVKGPUDevice *gpuDevice, CCVKGPUQueryPool *gpuQueryPool) {
+    vkDestroyQueryPool(gpuDevice->vkDevice, gpuQueryPool->pool, nullptr);
+}
+
 void cmdFuncCCVKDestroyRenderPass(CCVKGPUDevice *gpuDevice, CCVKGPURenderPass *gpuRenderPass) {
     gpuRenderPass->beginAccesses.clear();
     gpuRenderPass->endAccesses.clear();
@@ -1492,6 +1513,13 @@ void CCVKGPURecycleBin::clear() {
                 if (res.vkImageView) {
                     vkDestroyImageView(_device->vkDevice, res.vkImageView, nullptr);
                     res.vkImageView = VK_NULL_HANDLE;
+                }
+                break;
+            case RecycledType::QUERY:
+                if (res.gpuQueryPool) {
+                    cmdFuncCCVKDestroyQuery(_device, res.gpuQueryPool);
+                    CC_DELETE(res.gpuQueryPool);
+                    res.gpuQueryPool = nullptr;
                 }
                 break;
             case RecycledType::RENDER_PASS:

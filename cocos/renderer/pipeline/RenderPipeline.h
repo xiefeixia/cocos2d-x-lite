@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <unordered_map>
 #include "Define.h"
 #include "GlobalDescriptorSetManager.h"
 #include "PipelineSceneData.h"
@@ -42,6 +43,9 @@ class CommandBuffer;
 class DescriptorSet;
 class DescriptorSetLayout;
 } // namespace gfx
+namespace scene {
+class SubModel;
+} // namespace scene
 namespace pipeline {
 class DefineMap;
 class GlobalDSManager;
@@ -81,13 +85,17 @@ public:
     inline gfx::Texture *                          getDefaultTexture() const { return _defaultTexture; }
     inline PipelineSceneData *                     getPipelineSceneData() const { return _pipelineSceneData; }
     inline const gfx::CommandBufferList &          getCommandBuffers() const { return _commandBuffers; }
+    inline const gfx::QueryPoolList &              getQueryPools() const { return _queryPools; }
     inline PipelineUBO *                           getPipelineUBO() const { return _pipelineUBO; }
     inline const String &                          getConstantMacros() const { return _constantMacros; }
     inline gfx::Device *                           getDevice() const { return _device; }
-    inline bool                                    getBloomEnable() const { return _bloomEnable; }
     RenderStage *                                  getRenderstageByName(const String &name) const;
+    bool                                           isOccluded(const scene::Camera *camera, const scene::SubModel *subModel);
+    bool                                           getOcclusionQueryEnabled() const { return _occlusionQueryEnabled && _device->getCapabilities().supportQuery; }
+    void                                           setOcclusionQueryEnabled(bool enable) { _occlusionQueryEnabled = enable; }
 
     gfx::Rect               getRenderArea(scene::Camera *camera);
+    gfx::Viewport           getViewport(scene::Camera *camera);
     void                    genQuadVertexData(const Vec4 &viewport, float *data);
     uint                    getWidth() const { return _width; }
     uint                    getHeight() const { return _height; }
@@ -108,7 +116,9 @@ public:
     }
 
     vector<scene::Camera *> cameras;
-    void                    setBloomEnable(bool enable) { _bloomEnable = enable; }
+        
+    inline bool getBloomEnabled() const { return _bloomEnabled; }
+    inline void setBloomEnabled(bool enable) { _bloomEnabled = enable; }
 
 protected:
     static RenderPipeline *instance;
@@ -116,7 +126,10 @@ protected:
     void generateConstantMacros();
     void destroyQuadInputAssembler();
 
+    static void framegraphGC();
+
     gfx::CommandBufferList           _commandBuffers;
+    gfx::QueryPoolList               _queryPools;
     RenderFlowList                   _flows;
     map<String, InternalBindingInst> _globalBindings;
     DefineMap                        _macros;
@@ -131,19 +144,21 @@ protected:
     scene::Model *      _profiler{nullptr};
     // has not initBuiltinRes,
     // create temporary default Texture to binding sampler2d
-    gfx::Texture *                                  _defaultTexture{nullptr};
-    uint                                            _width{0};
-    uint                                            _height{0};
-    gfx::Buffer *                                   _quadIB{nullptr};
-    std::vector<gfx::Buffer *>                      _quadVB;
-    std::unordered_map<uint, gfx::InputAssembler *> _quadIA;
+    gfx::Texture *                                                _defaultTexture{nullptr};
+    uint                                                          _width{0};
+    uint                                                          _height{0};
+    gfx::Buffer *                                                 _quadIB{nullptr};
+    std::vector<gfx::Buffer *>                                    _quadVB;
+    std::unordered_map<Vec4, gfx::InputAssembler *, Hasher<Vec4>> _quadIA;
 
-    framegraph::FrameGraph                  _fg;
-    map<gfx::ClearFlags, gfx::RenderPass *> _renderPasses;
+    framegraph::FrameGraph                            _fg;
+    unordered_map<gfx::ClearFlags, gfx::RenderPass *> _renderPasses;
 
     // use cluster culling or not
+
     bool _clusterEnabled{true};
-    bool _bloomEnable{false};
+    bool _bloomEnabled{false};
+    bool _occlusionQueryEnabled{true};
 };
 
 } // namespace pipeline

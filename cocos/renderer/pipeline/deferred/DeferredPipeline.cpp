@@ -128,10 +128,13 @@ void DeferredPipeline::render(const vector<scene::Camera *> &cameras) {
     _commandBuffers[0]->end();
     _device->flushCommands(_commandBuffers);
     _device->getQueue()->submit(_commandBuffers);
+
+    RenderPipeline::framegraphGC();
 }
 
 bool DeferredPipeline::activeRenderer(gfx::Swapchain *swapchain) {
     _commandBuffers.push_back(_device->getCommandBuffer());
+    _queryPools.push_back(_device->getQueryPool());
     auto *const sharedData = _pipelineSceneData->getSharedData();
 
     gfx::Sampler *const sampler = _device->getSampler({
@@ -186,6 +189,7 @@ void DeferredPipeline::destroy() {
     }
     _renderPasses.clear();
 
+    _queryPools.clear();
     _commandBuffers.clear();
 
     CC_SAFE_DELETE(_clusterComp);

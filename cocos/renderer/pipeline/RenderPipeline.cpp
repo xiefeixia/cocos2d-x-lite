@@ -23,10 +23,13 @@
  THE SOFTWARE.
 ****************************************************************************/
 
-#include "RenderPipeline.h"
+#include <boost/functional/hash.hpp>
+
 #include "InstancedBuffer.h"
 #include "PipelineStateManager.h"
 #include "RenderFlow.h"
+#include "RenderPipeline.h"
+#include "frame-graph/FrameGraph.h"
 #include "gfx-base/GFXCommandBuffer.h"
 #include "gfx-base/GFXDescriptorSet.h"
 #include "gfx-base/GFXDescriptorSetLayout.h"
@@ -58,6 +61,7 @@ RenderPipeline::RenderPipeline()
 }
 
 RenderPipeline::~RenderPipeline() {
+    framegraph::FrameGraph::gc(0);
     RenderPipeline::instance = nullptr;
 }
 
@@ -103,6 +107,8 @@ void RenderPipeline::render(const vector<scene::Camera *> &cameras) {
             flow->render(camera);
         }
     }
+
+    RenderPipeline::framegraphGC();
 }
 
 void RenderPipeline::destroyQuadInputAssembler() {
@@ -130,14 +136,17 @@ void RenderPipeline::destroy() {
     CC_SAFE_DESTROY(_pipelineUBO);
     CC_SAFE_DESTROY(_pipelineSceneData);
 
+    for (auto *const queryPool : _queryPools) {
+        queryPool->destroy();
+    }
+    _queryPools.clear();
+
     for (auto *const cmdBuffer : _commandBuffers) {
         cmdBuffer->destroy();
     }
     _commandBuffers.clear();
 
     CC_SAFE_DESTROY(_defaultTexture);
-
-    CC_SAFE_DELETE(_defaultTexture);
 
     PipelineStateManager::destroyAll();
     InstancedBuffer::destroyInstancedBuffer();
@@ -148,15 +157,7 @@ gfx::Color RenderPipeline::getClearcolor(scene::Camera *camera) const {
     auto *const sharedData = sceneData->getSharedData();
     gfx::Color  clearColor{0.0, 0.0, 0.0, 1.0F};
     if (camera->clearFlag & static_cast<uint>(gfx::ClearFlagBit::COLOR)) {
-        if (sharedData->isHDR) {
-            srgbToLinear(&clearColor, camera->clearColor);
-            const auto scale = sharedData->fpScale / camera->exposure;
-            clearColor.x *= scale;
-            clearColor.y *= scale;
-            clearColor.z *= scale;
-        } else {
-            clearColor = camera->clearColor;
-        }
+        clearColor = camera->clearColor;
     }
 
     clearColor.w = 0;
@@ -164,7 +165,7 @@ gfx::Color RenderPipeline::getClearcolor(scene::Camera *camera) const {
 }
 
 void RenderPipeline::updateQuadVertexData(const Vec4 &viewport, gfx::Buffer *buffer) {
-    float vbData[16]    = {0};
+    float vbData[16] = {0};
     genQuadVertexData(viewport, vbData);
     buffer->update(vbData, sizeof(vbData));
 }
@@ -173,19 +174,13 @@ gfx::InputAssembler *RenderPipeline::getIAByRenderArea(const gfx::Rect &renderAr
     auto bufferWidth{static_cast<float>(_width)};
     auto bufferHeight{static_cast<float>(_height)};
     Vec4 viewport{
-            static_cast<float>(renderArea.x) / bufferWidth,
-            static_cast<float>(renderArea.y) / bufferHeight,
-            static_cast<float>(renderArea.width) / bufferWidth,
-            static_cast<float>(renderArea.height) / bufferHeight,
+        static_cast<float>(renderArea.x) / bufferWidth,
+        static_cast<float>(renderArea.y) / bufferHeight,
+        static_cast<float>(renderArea.width) / bufferWidth,
+        static_cast<float>(renderArea.height) / bufferHeight,
     };
 
-    uint32_t hash = 4;
-    hash ^= *reinterpret_cast<uint32_t*>(&viewport.x) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-    hash ^= *reinterpret_cast<uint32_t*>(&viewport.y) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-    hash ^= *reinterpret_cast<uint32_t*>(&viewport.z) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-    hash ^= *reinterpret_cast<uint32_t*>(&viewport.w) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-
-    const auto iter = _quadIA.find(hash);
+    const auto iter = _quadIA.find(viewport);
     if (iter != _quadIA.end()) {
         return iter->second;
     }
@@ -194,7 +189,7 @@ gfx::InputAssembler *RenderPipeline::getIAByRenderArea(const gfx::Rect &renderAr
     gfx::InputAssembler *ia = nullptr;
     createQuadInputAssembler(_quadIB, &vb, &ia);
     _quadVB.push_back(vb);
-    _quadIA[hash] = ia;
+    _quadIA[viewport] = ia;
 
     updateQuadVertexData(viewport, vb);
 
@@ -209,10 +204,6 @@ bool RenderPipeline::createQuadInputAssembler(gfx::Buffer *quadIB, gfx::Buffer *
     if (*quadVB == nullptr) {
         *quadVB = _device->createBuffer({gfx::BufferUsageBit::VERTEX | gfx::BufferUsageBit::TRANSFER_DST,
                                          gfx::MemoryUsageBit::DEVICE, vbSize, vbStride});
-    }
-
-    if (*quadVB == nullptr) {
-        return false;
     }
 
     // step 2 create input assembler
@@ -232,10 +223,20 @@ void RenderPipeline::ensureEnoughSize(const vector<scene::Camera *> &cameras) {
     }
 }
 
+gfx::Viewport RenderPipeline::getViewport(scene::Camera *camera) {
+    auto             scale{_pipelineSceneData->getSharedData()->shadingScale};
+    const gfx::Rect &rect = getRenderArea(camera);
+    return {
+        static_cast<int>(rect.x * scale),
+        static_cast<int>(rect.y * scale),
+        static_cast<uint>(rect.width * scale),
+        static_cast<uint>(rect.height * scale)};
+}
+
 gfx::Rect RenderPipeline::getRenderArea(scene::Camera *camera) {
-    auto scale{_pipelineSceneData->getSharedData()->shadingScale};
-    auto w{static_cast<float>(camera->window->getWidth()) * scale};
-    auto h{static_cast<float>(camera->window->getHeight()) * scale};
+    float shadingScale{_pipelineSceneData->getSharedData()->shadingScale};
+    float w{static_cast<float>(camera->window->getWidth()) * shadingScale};
+    float h{static_cast<float>(camera->window->getHeight()) * shadingScale};
 
     return {
         static_cast<int>(camera->viewPort.x * w),
@@ -300,6 +301,38 @@ RenderStage *RenderPipeline::getRenderstageByName(const String &name) const {
         }
     }
     return nullptr;
+}
+
+bool RenderPipeline::isOccluded(const scene::Camera *camera, const scene::SubModel *subModel) {
+    auto *model      = subModel->getOwner();
+    auto *worldBound = model->getWorldBounds();
+
+    // assume visible if there is no worldBound.
+    if (!worldBound) {
+        return false;
+    }
+
+    // assume visible if camera is inside of worldBound.
+    if (worldBound->contain(camera->position)) {
+        return false;
+    }
+
+    // assume visible if no query in the last frame.
+    uint32_t id = subModel->getId();
+    if (!_queryPools[0]->hasResult(id)) {
+        return false;
+    }
+
+    // check query results.
+    return _queryPools[0]->getResult(id) == 0;
+}
+
+void RenderPipeline::framegraphGC() {
+    static uint64_t frameCount{0U};
+    static constexpr uint32_t INTERVAL_IN_SECONDS = 30;
+    if (++frameCount % (INTERVAL_IN_SECONDS * 60)) {
+        framegraph::FrameGraph::gc(INTERVAL_IN_SECONDS * 60);
+    }
 }
 
 } // namespace pipeline

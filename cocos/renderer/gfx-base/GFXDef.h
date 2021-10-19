@@ -25,12 +25,44 @@
 
 #pragma once
 
+#include <functional>
 #include "GFXDef-common.h"
 
 namespace cc {
 namespace gfx {
 
-struct SwapchainTextureInfo {
+template <typename T, typename Enable = std::enable_if_t<std::is_class<T>::value>>
+struct Hasher final { size_t operator()(const T& info) const; };
+
+// make this boost::hash compatible
+template <typename T, typename Enable = std::enable_if_t<std::is_class<T>::value>>
+size_t hash_value(const T& info) { return Hasher<T>()(info); } // NOLINT(readability-identifier-naming)
+
+#define DEFINE_CMP_OP(type)                            \
+    bool operator==(const type& lhs, const type& rhs); \
+    inline bool operator!=(const type& lhs, const type& rhs) { return !(lhs == rhs); }
+
+DEFINE_CMP_OP(DepthStencilAttachment)
+DEFINE_CMP_OP(SubpassInfo)
+DEFINE_CMP_OP(SubpassDependency)
+DEFINE_CMP_OP(RenderPassInfo)
+DEFINE_CMP_OP(FramebufferInfo)
+DEFINE_CMP_OP(Viewport)
+DEFINE_CMP_OP(Rect)
+DEFINE_CMP_OP(Color)
+DEFINE_CMP_OP(Offset)
+DEFINE_CMP_OP(Extent)
+DEFINE_CMP_OP(Size)
+DEFINE_CMP_OP(TextureInfo)
+DEFINE_CMP_OP(TextureViewInfo)
+DEFINE_CMP_OP(BufferInfo)
+DEFINE_CMP_OP(SamplerInfo)
+DEFINE_CMP_OP(GlobalBarrierInfo)
+DEFINE_CMP_OP(TextureBarrierInfo)
+
+#undef DEFINE_CMP_OP
+
+struct SwapchainTextureInfo final {
     Swapchain* swapchain{nullptr};
     Format     format{Format::UNKNOWN};
     uint32_t   width{0};

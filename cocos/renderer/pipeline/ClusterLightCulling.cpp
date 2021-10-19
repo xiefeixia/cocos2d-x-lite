@@ -1,8 +1,6 @@
 /****************************************************************************
  Copyright (c) 2020-2021 Xiamen Yaji Software Co., Ltd.
-
  http://www.cocos.com
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated engine source code (the "Software"), a limited,
  worldwide, royalty-free, non-assignable, revocable and non-exclusive license
@@ -10,10 +8,8 @@
  not use Cocos Creator software for developing other software or tools that's
  used for developing games. You are not granted to publish, distribute,
  sublicense, and/or sell copies of Cocos Creator.
-
  The software or tools in this License Agreement are licensed, not sold.
  Xiamen Yaji Software Co., Ltd. reserves all rights not expressly granted to you.
-
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -27,8 +23,6 @@
 #include "Define.h"
 #include "deferred/DeferredPipeline.h"
 #include "frame-graph/FrameGraph.h"
-
-#include "./common/CustomEngine.h"
 
 namespace cc {
 namespace pipeline {
@@ -94,24 +88,6 @@ void ClusterLightCulling::initialize(gfx::Device* dev) {
         }};
     _resetBarrier = _device->getGlobalBarrier(resetBarrierInfo);
 
-    gfx::GlobalBarrierInfo transferBarrierInfo = {
-        {
-            gfx::AccessType::TRANSFER_WRITE,
-        },
-        {
-            gfx::AccessType::COMPUTE_SHADER_READ_OTHER,
-        }};
-    _transferBarrier = _device->getGlobalBarrier(transferBarrierInfo);
-
-    _lightingBarrier = _device->getGlobalBarrier({
-        {
-            gfx::AccessType::COMPUTE_SHADER_WRITE,
-        },
-        {
-            gfx::AccessType::FRAGMENT_SHADER_READ_OTHER,
-        },
-    });
-
     initBuildingSatge();
     initResetStage();
     initCullingStage();
@@ -127,10 +103,10 @@ void ClusterLightCulling::update() {
 
     _constants[NEAR_FAR_OFFSET + 0]  = static_cast<float>(_camera->nearClip);
     _constants[NEAR_FAR_OFFSET + 1]  = static_cast<float>(_camera->farClip);
-    _constants[VIEW_PORT_OFFSET + 0] = _camera->viewPort.x * static_cast<float>(_camera->width) * sharedData->shadingScale * CustomEngine::renderScale;
-    _constants[VIEW_PORT_OFFSET + 1] = _camera->viewPort.y * static_cast<float>(_camera->height) * sharedData->shadingScale * CustomEngine::renderScale;
-    _constants[VIEW_PORT_OFFSET + 2] = _camera->viewPort.z * static_cast<float>(_camera->width) * sharedData->shadingScale * CustomEngine::renderScale;
-    _constants[VIEW_PORT_OFFSET + 3] = _camera->viewPort.w * static_cast<float>(_camera->height) * sharedData->shadingScale * CustomEngine::renderScale;
+    _constants[VIEW_PORT_OFFSET + 0] = _camera->viewPort.x * static_cast<float>(_camera->width) * sharedData->shadingScale;
+    _constants[VIEW_PORT_OFFSET + 1] = _camera->viewPort.y * static_cast<float>(_camera->height) * sharedData->shadingScale;
+    _constants[VIEW_PORT_OFFSET + 2] = _camera->viewPort.z * static_cast<float>(_camera->width) * sharedData->shadingScale;
+    _constants[VIEW_PORT_OFFSET + 3] = _camera->viewPort.w * static_cast<float>(_camera->height) * sharedData->shadingScale;
 
     memcpy(_constants.data() + MAT_VIEW_OFFSET, _camera->matView.m, sizeof(cc::Mat4));
     memcpy(_constants.data() + MAT_PROJ_INV_OFFSET, _camera->matProjInv.m, sizeof(cc::Mat4));
@@ -175,10 +151,6 @@ void ClusterLightCulling::updateLights() {
         }
     }
 
-    if (_validLights.size() == 0) {
-        return;
-    }
-
     const auto  exposure        = _camera->exposure;
     const auto  validLightCount = _validLights.size();
     auto* const sceneData       = _pipeline->getPipelineSceneData();
@@ -219,11 +191,12 @@ void ClusterLightCulling::updateLights() {
             _lightBufferData[index++] = color.z;
         }
 
-        float illuminance = isSpotLight ? spotLight->getIlluminance() : sphereLight->getIlluminance();
+        float luminanceHDR = isSpotLight ? spotLight->getLuminanceHDR() : sphereLight->getLuminanceHDR();
+        float luminanceLDR = isSpotLight ? spotLight->getLuminanceLDR() : sphereLight->getLuminanceLDR();
         if (sharedData->isHDR) {
-            _lightBufferData[index] = illuminance * sharedData->fpScale * _lightMeterScale;
+            _lightBufferData[index] = luminanceHDR * exposure * _lightMeterScale;
         } else {
-            _lightBufferData[index] = illuminance * exposure * _lightMeterScale;
+            _lightBufferData[index] = luminanceLDR;
         }
 
         switch (light->getType()) {
@@ -255,7 +228,6 @@ void ClusterLightCulling::initBuildingSatge() {
         R"(
 		#define CLUSTERS_X 16
 		#define CLUSTERS_Y 8
-
 		layout(set=0, binding=0, std140) uniform CCConst {
 		  vec4 cc_nearFar;
 		  vec4 cc_viewPort;
@@ -263,7 +235,6 @@ void ClusterLightCulling::initBuildingSatge() {
 		  mat4 cc_matProjInv;
 		};
 		layout(set=0, binding=1, std430) buffer b_clustersBuffer { vec4 b_clusters[]; };
-
 		vec4 screen2Eye(vec4 coord) {
 			vec3 ndc = vec3(
 				2.0 * (coord.x - cc_viewPort.x) / cc_viewPort.z - 1.0,
@@ -273,7 +244,6 @@ void ClusterLightCulling::initBuildingSatge() {
 			eye      = eye / eye.w;
 			return eye;
 		}
-
 		layout(local_size_x=16, local_size_y=8, local_size_z=4) in;
 		void main() {
 			uint clusterIndex = gl_GlobalInvocationID.z * uvec3(16, 8, 4).x * uvec3(16, 8, 4).y +
@@ -292,19 +262,13 @@ void ClusterLightCulling::initBuildingSatge() {
 			vec3  maxFar       = maxEye * clusterFar / maxEye.z;
 			vec3  minBounds    = min(min(minNear, minFar), min(maxNear, maxFar));
 			vec3  maxBounds    = max(max(minNear, minFar), max(maxNear, maxFar));
-
 			b_clusters[2u * clusterIndex + 0u] = vec4(minBounds, 1.0);
 			b_clusters[2u * clusterIndex + 1u] = vec4(maxBounds, 1.0);
 		})");
     sources.glsl3 = StringUtil::format(
         R"(
-		#define CLUSTERS_X %du
-		#define CLUSTERS_Y %du
-
-        #define CLUSTERS_X_THREADS %du
-        #define CLUSTERS_Y_THREADS %du
-        #define CLUSTERS_Z_THREADS %du
-
+		#define CLUSTERS_X 16
+		#define CLUSTERS_Y 8
 		layout(std140) uniform CCConst {
 		  vec4 cc_nearFar;
 		  vec4 cc_viewPort;
@@ -312,7 +276,6 @@ void ClusterLightCulling::initBuildingSatge() {
 		  mat4 cc_matProjInv;
 		};
 		layout(std430, binding=1) buffer b_clustersBuffer { vec4 b_clusters[]; };
-
 		vec4 screen2Eye(vec4 coord) {
 			vec3 ndc = vec3(
 				2.0 * (coord.x - cc_viewPort.x) / cc_viewPort.z - 1.0,
@@ -322,11 +285,10 @@ void ClusterLightCulling::initBuildingSatge() {
 			eye      = eye / eye.w;
 			return eye;
 		}
-
-		layout(local_size_x=CLUSTERS_X_THREADS, local_size_y=CLUSTERS_Y_THREADS, local_size_z=CLUSTERS_Z_THREADS) in;
+		layout(local_size_x=16, local_size_y=8, local_size_z=4) in;
 		void main() {
-			uint clusterIndex = gl_GlobalInvocationID.z * CLUSTERS_X * CLUSTERS_Y +
-								gl_GlobalInvocationID.y * CLUSTERS_X + gl_GlobalInvocationID.x;
+			uint clusterIndex = gl_GlobalInvocationID.z * uvec3(16, 8, 4).x * uvec3(16, 8, 4).y +
+								gl_GlobalInvocationID.y * uvec3(16, 8, 4).x + gl_GlobalInvocationID.x;
 			float clusterSizeX = ceil(cc_viewPort.z / float(CLUSTERS_X));
 			float clusterSizeY = ceil(cc_viewPort.w / float(CLUSTERS_Y));
 			vec4  minScreen    = vec4(vec2(gl_GlobalInvocationID.xy) * vec2(clusterSizeX, clusterSizeY), 1.0, 1.0);
@@ -341,12 +303,9 @@ void ClusterLightCulling::initBuildingSatge() {
 			vec3  maxFar       = maxEye * clusterFar / maxEye.z;
 			vec3  minBounds    = min(min(minNear, minFar), min(maxNear, maxFar));
 			vec3  maxBounds    = max(max(minNear, minFar), max(maxNear, maxFar));
-
 			b_clusters[2u * clusterIndex + 0u] = vec4(minBounds, 1.0);
 			b_clusters[2u * clusterIndex + 1u] = vec4(maxBounds, 1.0);
-		})",
-        CLUSTERS_X, CLUSTERS_Y,
-        CLUSTERS_X_THREADS, CLUSTERS_Y_THREADS, CLUSTERS_Z_THREADS);
+		})");
     // no compute support in GLES2
 
     gfx::ShaderInfo shaderInfo;
@@ -490,7 +449,6 @@ void ClusterLightCulling::initCullingStage() {
 				bool frontCull = v1Len > sphereRadius + light.cc_lightSizeRangeAngle.y;
 				bool backCull = v1Len < -sphereRadius;
 				return !(angleCull || frontCull || backCull);
-
 			}
 			vec3 closest = max(cluster.minBounds, min(light.cc_lightPos.xyz, cluster.maxBounds));
 			vec3 dist = closest - light.cc_lightPos.xyz;
@@ -534,13 +492,6 @@ void ClusterLightCulling::initCullingStage() {
 		})");
     sources.glsl3 = StringUtil::format(
         R"(
-        #define CLUSTERS_X %du
-        #define CLUSTERS_Y %du
-
-        #define CLUSTERS_X_THREADS %du
-        #define CLUSTERS_Y_THREADS %du
-        #define CLUSTERS_Z_THREADS %du
-
 		layout(std140) uniform CCConst {
 		  vec4 cc_nearFar;
 		  vec4 cc_viewPort;
@@ -604,25 +555,24 @@ void ClusterLightCulling::initCullingStage() {
 				bool frontCull = v1Len > sphereRadius + light.cc_lightSizeRangeAngle.y;
 				bool backCull = v1Len < -sphereRadius;
 				return !(angleCull || frontCull || backCull);
-
 			}
 			vec3 closest = max(cluster.minBounds, min(light.cc_lightPos.xyz, cluster.maxBounds));
 			vec3 dist = closest - light.cc_lightPos.xyz;
 			return dot(dist, dist) <= (light.cc_lightSizeRangeAngle.y * light.cc_lightSizeRangeAngle.y);
 		}
-		shared CCLight lights[(CLUSTERS_X_THREADS * CLUSTERS_Y_THREADS * CLUSTERS_Z_THREADS)];
-		layout(local_size_x = CLUSTERS_X_THREADS, local_size_y = CLUSTERS_Y_THREADS, local_size_z = CLUSTERS_Z_THREADS) in;
+		shared CCLight lights[(16 * 8 * 4)];
+		layout(local_size_x = 16, local_size_y = 8, local_size_z = 4) in;
 		void main()
 		{
 			uint visibleLights[100];
 			uint visibleCount = 0u;
-			uint clusterIndex = gl_GlobalInvocationID.z * CLUSTERS_X * CLUSTERS_Y +
-				gl_GlobalInvocationID.y * CLUSTERS_X + gl_GlobalInvocationID.x;
+			uint clusterIndex = gl_GlobalInvocationID.z * uvec3(16, 8, 4).x * uvec3(16, 8, 4).y +
+				gl_GlobalInvocationID.y * uvec3(16, 8, 4).x + gl_GlobalInvocationID.x;
 			Cluster cluster = getCluster(clusterIndex);
 			uint lightCount = ccLightCount();
 			uint lightOffset = 0u;
 			while (lightOffset < lightCount) {
-				uint batchSize = min((CLUSTERS_X_THREADS * CLUSTERS_Y_THREADS * CLUSTERS_Z_THREADS), lightCount - lightOffset);
+				uint batchSize = min((16u * 8u * 4u), lightCount - lightOffset);
 				if (uint(gl_LocalInvocationIndex) < batchSize) {
 					uint lightIndex = lightOffset + gl_LocalInvocationIndex;
 					CCLight light = getCCLight(lightIndex);
@@ -645,9 +595,7 @@ void ClusterLightCulling::initCullingStage() {
 				b_clusterLightIndices[offset + i] = visibleLights[i];
 			}
 			b_clusterLightGrid[clusterIndex] = uvec4(offset, visibleCount, 0, 0);
-		})",
-        CLUSTERS_X, CLUSTERS_Y,
-        CLUSTERS_X_THREADS, CLUSTERS_Y_THREADS, CLUSTERS_Z_THREADS);
+		})");
     // no compute support in GLES2
 
     gfx::ShaderInfo shaderInfo;
@@ -689,10 +637,6 @@ void ClusterLightCulling::clusterLightCulling(scene::Camera* camera) {
     _camera = camera;
     update(); // update ubo and light data
 
-    if (_validLights.size() == 0) {
-        return;
-    }
-
     struct DataClusterBuild {
         framegraph::BufferHandle clusterBuffer;     // cluster build storage buffer
         framegraph::BufferHandle globalIndexBuffer; // global light index storage buffer
@@ -710,7 +654,7 @@ void ClusterLightCulling::clusterLightCulling(scene::Camera* camera) {
             bufferInfo.size     = clusterBufferSize;
             bufferInfo.stride   = clusterBufferSize;
             bufferInfo.flags    = gfx::BufferFlagBit::NONE;
-            data.clusterBuffer  = builder.create<framegraph::Buffer>(fgStrHandleClusterBuffer, bufferInfo);
+            data.clusterBuffer  = builder.create(fgStrHandleClusterBuffer, bufferInfo);
             builder.writeToBlackboard(fgStrHandleClusterBuffer, data.clusterBuffer);
         }
         // only rebuild cluster necceray
@@ -729,7 +673,7 @@ void ClusterLightCulling::clusterLightCulling(scene::Camera* camera) {
             bufferInfo.size        = atomicIndexBufferSize;
             bufferInfo.stride      = atomicIndexBufferSize;
             bufferInfo.flags       = gfx::BufferFlagBit::NONE;
-            data.globalIndexBuffer = builder.create<framegraph::Buffer>(fgStrHandleClusterGlobalIndexBuffer, bufferInfo);
+            data.globalIndexBuffer = builder.create(fgStrHandleClusterGlobalIndexBuffer, bufferInfo);
             builder.writeToBlackboard(fgStrHandleClusterGlobalIndexBuffer, data.globalIndexBuffer);
         }
         // atomic counter for building the light grid
@@ -775,7 +719,7 @@ void ClusterLightCulling::clusterLightCulling(scene::Camera* camera) {
             bufferInfo.size     = _lightBufferStride * _lightBufferCount;
             bufferInfo.stride   = _lightBufferStride;
             bufferInfo.flags    = gfx::BufferFlagBit::NONE;
-            data.lightBuffer    = builder.create<framegraph::Buffer>(fgStrHandleClusterLightBuffer, bufferInfo);
+            data.lightBuffer    = builder.create(fgStrHandleClusterLightBuffer, bufferInfo);
             builder.writeToBlackboard(fgStrHandleClusterLightBuffer, data.lightBuffer);
             _lightBufferResized = false;
         }
@@ -793,7 +737,7 @@ void ClusterLightCulling::clusterLightCulling(scene::Camera* camera) {
             bufferInfo.size       = lightIndicesBufferSize;
             bufferInfo.stride     = lightIndicesBufferSize;
             bufferInfo.flags      = gfx::BufferFlagBit::NONE;
-            data.lightIndexBuffer = builder.create<framegraph::Buffer>(fgStrHandleClusterLightIndexBuffer, bufferInfo);
+            data.lightIndexBuffer = builder.create(fgStrHandleClusterLightIndexBuffer, bufferInfo);
             builder.writeToBlackboard(fgStrHandleClusterLightIndexBuffer, data.lightIndexBuffer);
         }
         data.lightIndexBuffer = builder.write(data.lightIndexBuffer);
@@ -810,7 +754,7 @@ void ClusterLightCulling::clusterLightCulling(scene::Camera* camera) {
             bufferInfo.size      = lightGridBufferSize;
             bufferInfo.stride    = lightGridBufferSize;
             bufferInfo.flags     = gfx::BufferFlagBit::NONE;
-            data.lightGridBuffer = builder.create<framegraph::Buffer>(fgStrHandleClusterLightGridBuffer, bufferInfo);
+            data.lightGridBuffer = builder.create(fgStrHandleClusterLightGridBuffer, bufferInfo);
             builder.writeToBlackboard(fgStrHandleClusterLightGridBuffer, data.lightGridBuffer);
         }
         data.lightGridBuffer = builder.write(data.lightGridBuffer);
@@ -831,8 +775,6 @@ void ClusterLightCulling::clusterLightCulling(scene::Camera* camera) {
         cmdBuff->updateBuffer(table.getRead(data.lightBuffer), _lightBufferData.data(),
                               static_cast<uint>(_lightBufferData.size() * sizeof(float)));
 
-        cmdBuff->pipelineBarrier(_transferBarrier);
-
         _cullingDescriptorSet->bindBuffer(0, _constantsBuffer);
         _cullingDescriptorSet->bindBuffer(1, table.getRead(data.lightBuffer));
         _cullingDescriptorSet->bindBuffer(2, table.getWrite(data.lightIndexBuffer));
@@ -844,8 +786,6 @@ void ClusterLightCulling::clusterLightCulling(scene::Camera* camera) {
         cmdBuff->bindPipelineState(const_cast<gfx::PipelineState*>(_cullingPipelineState));
         cmdBuff->bindDescriptorSet(0, const_cast<gfx::DescriptorSet*>(_cullingDescriptorSet));
         cmdBuff->dispatch(_cullingDispatchInfo);
-
-        cmdBuff->pipelineBarrier(_lightingBarrier);
     };
 
     auto* pipeline    = static_cast<DeferredPipeline*>(_pipeline);
