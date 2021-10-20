@@ -76,12 +76,9 @@ void TAAStage::render(scene::Camera *camera) {
     }
 
     auto shadingScale = pipeline->getPipelineSceneData()->getSharedData()->shadingScale;
-    auto renderArea = pipeline->getRenderArea(camera);
-    renderArea.width *= shadingScale;
-    renderArea.height *= shadingScale;
 
-    auto width      = renderArea.width;
-    auto height     = renderArea.height;
+    auto width  = pipeline->getWidth() * shadingScale;
+    auto height = pipeline->getHeight() * shadingScale;
 
     DeferredPipeline *pip = static_cast<DeferredPipeline *>(pipeline);
     if (!_initPrev || !_taaTextures[0].get() || 
@@ -149,10 +146,8 @@ void TAAStage::render(scene::Camera *camera) {
 
         builder.writeToBlackboard(DeferredPipeline::fgStrHandleOutColorTexture, data.taaResult);
 
-
         // set render area
-        gfx::Viewport viewport{renderArea.x, renderArea.y, renderArea.width, renderArea.height, 0.F, 1.F};
-        builder.setViewport(viewport, renderArea);
+        builder.setViewport(pipeline->getViewport(camera), pipeline->getRenderArea(camera));
     };
 
     auto exec = [this, camera](RenderData const &data, const framegraph::DevicePassResourceTable &table) {

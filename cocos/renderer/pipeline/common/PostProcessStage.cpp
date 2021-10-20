@@ -200,8 +200,8 @@ void PostProcessStage::render(scene::Camera *camera) {
 
             pv->getDescriptorSet()->bindTexture(0, table.getRead(data.outColorTex));
             pv->getDescriptorSet()->bindSampler(0, pipeline->getDevice()->getSampler({
-                                                       gfx::Filter::POINT,
-                                                       gfx::Filter::POINT,
+                                                       gfx::Filter::LINEAR,
+                                                       gfx::Filter::LINEAR,
                                                        gfx::Filter::NONE,
                                                        gfx::Address::CLAMP,
                                                        gfx::Address::CLAMP,
