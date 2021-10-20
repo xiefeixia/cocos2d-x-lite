@@ -40,7 +40,7 @@ class RenderPipeline;
 
 class CC_DLL PipelineUBO : public Object {
 public:
-    static void    updateGlobalUBOView(const scene::Camera *camera, std::array<float, UBOGlobal::COUNT> *bufferView);
+    static void    updateGlobalUBOView(const scene::Camera *camera, std::array<float, UBOGlobal::COUNT> *bufferView, RenderPipeline *pipeline);
     static void    updateCameraUBOView(const RenderPipeline *pipeline, float *output, const scene::Camera *camera);
     static void    updateShadowUBOView(const RenderPipeline *pipeline, std::array<float, UBOShadow::COUNT> *bufferView, const scene::Camera *camera);
     static void    updateShadowUBOLightView(const RenderPipeline *pipeline, std::array<float, UBOShadow::COUNT> *bufferView, const scene::Light *light);

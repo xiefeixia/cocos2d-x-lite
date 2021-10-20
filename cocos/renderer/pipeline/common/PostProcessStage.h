@@ -47,10 +47,6 @@ public:
     void destroy() override;
     void render(scene::Camera *camera) override;
 
-    void setRenderScale(float v) { 
-        CustomEngine::renderScale = v;
-    };
-
 private:
     gfx::Rect _renderArea;
     UIPhase * _uiPhase = nullptr;

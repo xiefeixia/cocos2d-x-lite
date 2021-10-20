@@ -159,9 +159,6 @@ void GbufferStage::render(scene::Camera *camera) {
     // If there are only transparent object, lighting pass is ignored, we should call getIAByRenderArea here
     pipeline->getIAByRenderArea(_renderArea);
 
-    _renderArea.width *= CustomEngine::renderScale;
-    _renderArea.height *= CustomEngine::renderScale;
-
     (void)pipeline->getIAByRenderArea(_renderArea);
 
     auto gbufferSetup = [&](framegraph::PassNodeBuilder &builder, RenderData &data) {

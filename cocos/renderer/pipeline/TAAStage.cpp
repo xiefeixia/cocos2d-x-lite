@@ -75,9 +75,10 @@ void TAAStage::render(scene::Camera *camera) {
         return;
     }
 
+    auto shadingScale = pipeline->getPipelineSceneData()->getSharedData()->shadingScale;
     auto renderArea = pipeline->getRenderArea(camera);
-    renderArea.width *= CustomEngine::renderScale;
-    renderArea.height *= CustomEngine::renderScale;
+    renderArea.width *= shadingScale;
+    renderArea.height *= shadingScale;
 
     auto width      = renderArea.width;
     auto height     = renderArea.height;

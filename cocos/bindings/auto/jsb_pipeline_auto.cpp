@@ -3048,24 +3048,6 @@ bool js_register_pipeline_BloomStage(se::Object* obj) // NOLINT(readability-iden
 se::Object* __jsb_cc_pipeline_PostProcessStage_proto = nullptr;
 se::Class* __jsb_cc_pipeline_PostProcessStage_class = nullptr;
 
-static bool js_pipeline_PostProcessStage_setRenderScale(se::State& s) // NOLINT(readability-identifier-naming)
-{
-    auto* cobj = SE_THIS_OBJECT<cc::pipeline::PostProcessStage>(s);
-    SE_PRECONDITION2(cobj, false, "js_pipeline_PostProcessStage_setRenderScale : Invalid Native Object");
-    const auto& args = s.args();
-    size_t argc = args.size();
-    CC_UNUSED bool ok = true;
-    if (argc == 1) {
-        HolderType<float, false> arg0 = {};
-        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
-        SE_PRECONDITION2(ok, false, "js_pipeline_PostProcessStage_setRenderScale : Error processing arguments");
-        cobj->setRenderScale(arg0.value());
-        return true;
-    }
-    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
-    return false;
-}
-SE_BIND_FUNC(js_pipeline_PostProcessStage_setRenderScale)
 
 static bool js_pipeline_PostProcessStage_getInitializeInfo(se::State& s) // NOLINT(readability-identifier-naming)
 {
@@ -3114,7 +3096,6 @@ bool js_register_pipeline_PostProcessStage(se::Object* obj) // NOLINT(readabilit
 {
     auto* cls = se::Class::create("PostProcessStage", obj, __jsb_cc_pipeline_RenderStage_proto, _SE(js_pipeline_PostProcessStage_constructor));
 
-    cls->defineFunction("setRenderScale", _SE(js_pipeline_PostProcessStage_setRenderScale));
     cls->defineStaticFunction("getInitializeInfo", _SE(js_pipeline_PostProcessStage_getInitializeInfo));
     cls->defineFinalizeFunction(_SE(js_cc_pipeline_PostProcessStage_finalize));
     cls->install();

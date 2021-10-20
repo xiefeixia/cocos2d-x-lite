@@ -11,7 +11,6 @@ public:
     static uint                     taaTextureIndex;
     static framegraph::StringHandle fgStrHandleTAATexture[2];
     static framegraph::StringHandle fgStrHandleTAAPass;
-    static float renderScale;
 };
 
 

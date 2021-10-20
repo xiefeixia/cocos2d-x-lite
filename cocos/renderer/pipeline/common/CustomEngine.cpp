@@ -4,7 +4,6 @@ namespace cc {
 namespace pipeline {
 
 framegraph::StringHandle CustomEngine::fgStrHandleTAAPass = framegraph::FrameGraph::stringToHandle("deferredTAAPass");
-float CustomEngine::renderScale = 1;
 
 framegraph::StringHandle CustomEngine::fgStrHandleTAATexture[2] = {
     framegraph::FrameGraph::stringToHandle("TAATexture1"),
