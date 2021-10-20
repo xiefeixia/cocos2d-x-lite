@@ -63,7 +63,6 @@ bool GbufferStage::initialize(const RenderStageInfo &info) {
     RenderStage::initialize(info);
     _renderQueueDescriptors = info.renderQueues;
     _phaseID                = getPhaseID("default");
-    _overdrawID             = getPhaseID("overdraw");
     return true;
 }
 
@@ -94,8 +93,6 @@ void GbufferStage::dispenseRenderObject2Queues() {
     for (auto *queue : _renderQueues) {
         queue->clear();
     }
-
-    auto pip = static_cast<DeferredPipeline *>(_pipeline);
 
     uint   subModelIdx = 0;
     uint   passIdx     = 0;
@@ -158,8 +155,6 @@ void GbufferStage::render(scene::Camera *camera) {
     // render area is not oriented, copy buffer must be called outsize of RenderPass, it should not be called in execute lambda expression
     // If there are only transparent object, lighting pass is ignored, we should call getIAByRenderArea here
     pipeline->getIAByRenderArea(_renderArea);
-
-    (void)pipeline->getIAByRenderArea(_renderArea);
 
     auto gbufferSetup = [&](framegraph::PassNodeBuilder &builder, RenderData &data) {
         builder.subpass();
