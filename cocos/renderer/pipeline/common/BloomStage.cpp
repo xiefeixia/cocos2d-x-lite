@@ -96,6 +96,14 @@ bool BloomStage::initialize(const RenderStageInfo &info) {
 
 void BloomStage::activate(RenderPipeline *pipeline, RenderFlow *flow) {
     RenderStage::activate(pipeline, flow);
+
+    init();
+}
+
+void BloomStage::init() {
+    if (_inited) {
+        return;
+    }
     if (!_pipeline->getBloomEnabled()) return;
 
     _phaseID = getPhaseID("default");
@@ -115,7 +123,9 @@ void BloomStage::activate(RenderPipeline *pipeline, RenderFlow *flow) {
         gfx::Address::CLAMP,
         gfx::Address::CLAMP,
     };
-    _sampler = pipeline->getDevice()->getSampler(info);
+    _sampler = _pipeline->getDevice()->getSampler(info);
+
+    _inited = true;
 }
 
 void BloomStage::destroy() {
@@ -132,6 +142,8 @@ void BloomStage::render(scene::Camera *camera) {
     auto *pipeline = _pipeline;
     CC_ASSERT(pipeline != nullptr);
     if (!pipeline->getBloomEnabled() || !pipeline->getPipelineSceneData()->getRenderObjects().empty()) return;
+
+    init();
 
     if (hasFlag(static_cast<gfx::ClearFlags>(camera->clearFlag), gfx::ClearFlagBit::COLOR)) {
         _clearColors[0].x = camera->clearColor.x;
