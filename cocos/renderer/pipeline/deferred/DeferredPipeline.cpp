@@ -92,8 +92,18 @@ bool DeferredPipeline::activate(gfx::Swapchain *swapchain) {
 
 void DeferredPipeline::render(const vector<scene::Camera *> &cameras) {
     this->cameras = cameras;
+    auto *device               = gfx::Device::getInstance();
+    bool  enableOcclusionQuery = getOcclusionQueryEnabled();
+    if (enableOcclusionQuery) {
+        device->getQueryPoolResults(_queryPools[0]);
+    }
 
     _commandBuffers[0]->begin();
+
+    if (enableOcclusionQuery) {
+        _commandBuffers[0]->resetQuery(_queryPools[0]);
+    }
+
     _pipelineUBO->updateGlobalUBO(cameras[0]);
     _pipelineUBO->updateMultiCameraUBO(cameras);
     ensureEnoughSize(cameras);
@@ -123,6 +133,10 @@ void DeferredPipeline::render(const vector<scene::Camera *> &cameras) {
         _fg.execute();
 
         _pipelineUBO->incCameraUBOOffset();
+    }
+
+    if (enableOcclusionQuery) {
+        _commandBuffers[0]->completeQuery(_queryPools[0]);
     }
 
     _commandBuffers[0]->end();
