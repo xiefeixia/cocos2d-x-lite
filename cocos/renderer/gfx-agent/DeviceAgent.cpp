@@ -208,9 +208,6 @@ QueryPool *DeviceAgent::createQueryPool() {
 
 Swapchain *DeviceAgent::createSwapchain() {
     Swapchain *actor = _actor->createSwapchain();
-
-    CC_LOG_INFO("createSwapchain : %d", actor);
-
     return CC_NEW(SwapchainAgent(actor));
 }
 

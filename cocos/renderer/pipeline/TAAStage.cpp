@@ -60,7 +60,6 @@ void TAAStage::activate(RenderPipeline *pipeline, RenderFlow *flow) {
 }
 
 void TAAStage::render(scene::Camera *camera) {
-
     #ifdef CC_USE_VULKAN
         #if CC_PLATFORM == CC_PLATFORM_ANDROID
             return;
@@ -169,11 +168,11 @@ void TAAStage::render(scene::Camera *camera) {
         gfx::PipelineState * pState         = PipelineStateManager::getOrCreatePipelineState(_taaPass, _taaShader, inputAssembler, table.getRenderPass());
 
         // update taa descriptorSet
-        // 0 - position gbuffer map
-        _taaPass->getDescriptorSet()->bindTexture(0, table.getRead(data.gbuffer_pos));
+        // 0 - lighting result map
+        _taaPass->getDescriptorSet()->bindTexture(0, table.getRead(data.lightOutput));
         _taaPass->getDescriptorSet()->bindSampler(0, _linearSampler);
-        // 1 - lighting result map
-        _taaPass->getDescriptorSet()->bindTexture(1, table.getRead(data.lightOutput));
+        // 1 - position gbuffer map
+        _taaPass->getDescriptorSet()->bindTexture(1, table.getRead(data.gbuffer_pos));
         _taaPass->getDescriptorSet()->bindSampler(1, _linearSampler);
         // 2 - previous taa result map
         _taaPass->getDescriptorSet()->bindTexture(2, table.getRead(data.taaPrev));
