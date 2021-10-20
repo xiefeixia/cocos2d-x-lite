@@ -212,7 +212,11 @@ void BloomStage::render(scene::Camera *camera) {
         data.outputTexHandle = builder.write(data.outputTexHandle, colorAttachmentInfo);
         builder.writeToBlackboard(prefilterTexHandle, data.outputTexHandle);
 
-        builder.setViewport(pipeline->getViewport(camera), renderArea);
+        auto &vp = pipeline->getViewport(camera);
+        vp.width = renderArea.width;
+        vp.height = renderArea.height;
+
+        builder.setViewport(vp, renderArea);
 
         // Update threshold
         data.bloomUBO       = stage->getPrefilterUBO();
@@ -293,7 +297,10 @@ void BloomStage::render(scene::Camera *camera) {
             data.outputTexHandle = builder.write(data.outputTexHandle, colorAttachmentInfo);
             builder.writeToBlackboard(downsampleTexHandles[data.index], data.outputTexHandle);
 
-            builder.setViewport(pipeline->getViewport(camera), renderArea);
+            auto &vp  = pipeline->getViewport(camera);
+            vp.width  = renderArea.width;
+            vp.height = renderArea.height;
+            builder.setViewport(vp, renderArea);
 
             // Update cc_textureSize
             data.bloomUBO       = stage->getDownsampelUBO()[data.index];
@@ -369,7 +376,10 @@ void BloomStage::render(scene::Camera *camera) {
             data.outputTexHandle = builder.write(data.outputTexHandle, colorAttachmentInfo);
             builder.writeToBlackboard(upsampleTexHandles[data.index], data.outputTexHandle);
 
-            builder.setViewport(pipeline->getViewport(camera), renderArea);
+            auto &vp  = pipeline->getViewport(camera);
+            vp.width  = renderArea.width;
+            vp.height = renderArea.height;
+            builder.setViewport(vp, renderArea);
 
             // Update cc_textureSize
             data.bloomUBO       = stage->getUpsampleUBO()[data.index];
@@ -451,7 +461,10 @@ void BloomStage::render(scene::Camera *camera) {
         data.bloomOutTexHandle = builder.write(data.bloomOutTexHandle, colorAttachmentInfo);
         builder.writeToBlackboard(RenderPipeline::fgStrHandleBloomOutTexture, data.bloomOutTexHandle);
 
-        builder.setViewport(pipeline->getViewport(camera), renderArea);
+        auto &vp  = pipeline->getViewport(camera);
+        vp.width  = renderArea.width;
+        vp.height = renderArea.height;
+        builder.setViewport(vp, renderArea);
 
         // Update intensity
         data.bloomUBO       = stage->getCombineUBO();
