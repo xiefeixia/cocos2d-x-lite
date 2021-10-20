@@ -141,7 +141,7 @@ void BloomStage::destroy() {
 void BloomStage::render(scene::Camera *camera) {
     auto *pipeline = _pipeline;
     CC_ASSERT(pipeline != nullptr);
-    if (!pipeline->getBloomEnabled() || !pipeline->getPipelineSceneData()->getRenderObjects().empty()) return;
+    if (!pipeline->getBloomEnabled() || pipeline->getPipelineSceneData()->getRenderObjects().empty()) return;
 
     init();
 

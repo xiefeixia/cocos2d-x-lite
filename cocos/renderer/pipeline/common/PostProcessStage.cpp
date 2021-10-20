@@ -216,7 +216,11 @@ void PostProcessStage::render(scene::Camera *camera) {
         }
 
         _uiPhase->render(camera, renderPass);
-        renderProfiler(renderPass, cmdBuff, pipeline->getProfiler(), camera->window->swapchain);
+
+        auto it = std::find(pipeline->cameras.begin(), pipeline->cameras.end(), camera);
+        if (it == pipeline->cameras.end() - 1) {
+            renderProfiler(renderPass, cmdBuff, pipeline->getProfiler(), camera->window->swapchain);
+        }
     };
 
     // add pass
