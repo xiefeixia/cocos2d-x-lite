@@ -175,7 +175,18 @@ void GbufferStage::render(scene::Camera *camera) {
             static_cast<uint>(pipeline->getHeight() * shadingScale),
         };
         for (int i = 0; i < DeferredPipeline::GBUFFER_COUNT - 1; ++i) {
-            if (i != 0) { // positions & normals need more precision
+            if (i == 1) {
+                // for taa pass
+                // need the sampled bit for next render pass
+                gfx::TextureInfo posInfo{
+                    gfx::TextureType::TEX2D,
+                    gfx::TextureUsageBit::COLOR_ATTACHMENT | gfx::TextureUsageBit::INPUT_ATTACHMENT | gfx::TextureUsageBit::SAMPLED,
+                    gfx::Format::RGBA16F,
+                    static_cast<uint>(pipeline->getWidth() * shadingScale),
+                    static_cast<uint>(pipeline->getHeight() * shadingScale),
+                };
+                data.gbuffer[i] = builder.create(DeferredPipeline::fgStrHandleGbufferTexture[i], posInfo);
+            } else if (i != 0) { // positions & normals need more precision
                 data.gbuffer[i] = builder.create(DeferredPipeline::fgStrHandleGbufferTexture[i], gbufferInfoFloat);
             } else {
                 data.gbuffer[i] = builder.create(DeferredPipeline::fgStrHandleGbufferTexture[i], gbufferInfo);
