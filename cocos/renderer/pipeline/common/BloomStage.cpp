@@ -212,7 +212,7 @@ void BloomStage::render(scene::Camera *camera) {
         data.outputTexHandle = builder.write(data.outputTexHandle, colorAttachmentInfo);
         builder.writeToBlackboard(prefilterTexHandle, data.outputTexHandle);
 
-        auto &vp = pipeline->getViewport(camera);
+        auto vp = pipeline->getViewport(camera);
         vp.width = renderArea.width;
         vp.height = renderArea.height;
 
@@ -297,7 +297,7 @@ void BloomStage::render(scene::Camera *camera) {
             data.outputTexHandle = builder.write(data.outputTexHandle, colorAttachmentInfo);
             builder.writeToBlackboard(downsampleTexHandles[data.index], data.outputTexHandle);
 
-            auto &vp  = pipeline->getViewport(camera);
+            auto vp  = pipeline->getViewport(camera);
             vp.width  = renderArea.width;
             vp.height = renderArea.height;
             builder.setViewport(vp, renderArea);
@@ -376,7 +376,7 @@ void BloomStage::render(scene::Camera *camera) {
             data.outputTexHandle = builder.write(data.outputTexHandle, colorAttachmentInfo);
             builder.writeToBlackboard(upsampleTexHandles[data.index], data.outputTexHandle);
 
-            auto &vp  = pipeline->getViewport(camera);
+            auto vp  = pipeline->getViewport(camera);
             vp.width  = renderArea.width;
             vp.height = renderArea.height;
             builder.setViewport(vp, renderArea);
@@ -461,7 +461,7 @@ void BloomStage::render(scene::Camera *camera) {
         data.bloomOutTexHandle = builder.write(data.bloomOutTexHandle, colorAttachmentInfo);
         builder.writeToBlackboard(RenderPipeline::fgStrHandleBloomOutTexture, data.bloomOutTexHandle);
 
-        auto &vp  = pipeline->getViewport(camera);
+        auto vp  = pipeline->getViewport(camera);
         vp.width  = renderArea.width;
         vp.height = renderArea.height;
         builder.setViewport(vp, renderArea);
