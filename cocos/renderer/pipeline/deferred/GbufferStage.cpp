@@ -193,13 +193,13 @@ void GbufferStage::render(scene::Camera *camera) {
             }
         }
 
-        auto subpassEnabled = _device->hasFeature(gfx::Feature::INPUT_ATTACHMENT_BENEFIT);
-        if (subpassEnabled) {
+        // auto subpassEnabled = _device->hasFeature(gfx::Feature::INPUT_ATTACHMENT_BENEFIT);
+        // if (subpassEnabled) {
             // when subpass enabled, the color result (gles2/gles3) will write to gbuffer[3] and the blit to color texture, so the format should be RGBA16F
             data.gbuffer[3] = builder.create(DeferredPipeline::fgStrHandleGbufferTexture[3], gbufferInfoFloat);
-        } else {
-            data.gbuffer[3] = builder.create(DeferredPipeline::fgStrHandleGbufferTexture[3], gbufferInfo);
-        }
+        // } else {
+        //     data.gbuffer[3] = builder.create(DeferredPipeline::fgStrHandleGbufferTexture[3], gbufferInfo);
+        // }
 
         gfx::Color clearColor{0.0, 0.0, 0.0, 0.0};
 
