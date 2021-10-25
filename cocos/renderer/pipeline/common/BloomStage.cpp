@@ -175,7 +175,7 @@ void BloomStage::render(scene::Camera *camera) {
     float intensity  = stage->getIntensity();
     float threshold  = stage->getThreshold();
 
-    auto renderArea = pipeline->getRenderArea(camera);
+    auto renderArea =  RenderPipeline::getRenderArea(camera);
     renderArea.width >>= 1;
     renderArea.height >>= 1;
     float shadingScale{_pipeline->getPipelineSceneData()->getSharedData()->shadingScale};
@@ -212,12 +212,6 @@ void BloomStage::render(scene::Camera *camera) {
         data.outputTexHandle = builder.write(data.outputTexHandle, colorAttachmentInfo);
         builder.writeToBlackboard(prefilterTexHandle, data.outputTexHandle);
 
-        auto vp = pipeline->getViewport(camera);
-        vp.width = renderArea.width;
-        vp.height = renderArea.height;
-
-        builder.setViewport(vp, renderArea);
-
         // Update threshold
         data.bloomUBO       = stage->getPrefilterUBO();
         data.textureSize[2] = threshold;
@@ -234,7 +228,7 @@ void BloomStage::render(scene::Camera *camera) {
         auto *const          sharedData     = pipeline->getPipelineSceneData()->getSharedData();
         scene::Pass *        pass           = sharedData->bloomPrefilterPass;
         gfx::Shader *        shader         = sharedData->bloomPrefilterPassShader;
-        auto                 rendeArea      = pipeline->getRenderArea(camera);
+        auto                 rendeArea      = RenderPipeline::getRenderArea(camera);
         gfx::InputAssembler *inputAssembler = pipeline->getIAByRenderArea(rendeArea);
         gfx::PipelineState * pso            = PipelineStateManager::getOrCreatePipelineState(
             pass, shader, inputAssembler, renderPass);
@@ -297,11 +291,6 @@ void BloomStage::render(scene::Camera *camera) {
             data.outputTexHandle = builder.write(data.outputTexHandle, colorAttachmentInfo);
             builder.writeToBlackboard(downsampleTexHandles[data.index], data.outputTexHandle);
 
-            auto vp  = pipeline->getViewport(camera);
-            vp.width  = renderArea.width;
-            vp.height = renderArea.height;
-            builder.setViewport(vp, renderArea);
-
             // Update cc_textureSize
             data.bloomUBO       = stage->getDownsampelUBO()[data.index];
             data.textureSize[0] = static_cast<float>(static_cast<uint>(renderArea.width * shadingScale) << 1);
@@ -319,7 +308,7 @@ void BloomStage::render(scene::Camera *camera) {
             auto *const          sharedData     = pipeline->getPipelineSceneData()->getSharedData();
             scene::Pass *        pass           = sharedData->bloomDownsamplePass[data.index];
             gfx::Shader *        shader         = sharedData->bloomDownsamplePassShader;
-            auto                 rendeArea      = pipeline->getRenderArea(camera);
+            auto                 rendeArea      = RenderPipeline::getRenderArea(camera);
             gfx::InputAssembler *inputAssembler = pipeline->getIAByRenderArea(rendeArea);
             gfx::PipelineState * pso            = PipelineStateManager::getOrCreatePipelineState(
                 pass, shader, inputAssembler, renderPass);
@@ -376,11 +365,6 @@ void BloomStage::render(scene::Camera *camera) {
             data.outputTexHandle = builder.write(data.outputTexHandle, colorAttachmentInfo);
             builder.writeToBlackboard(upsampleTexHandles[data.index], data.outputTexHandle);
 
-            auto vp  = pipeline->getViewport(camera);
-            vp.width  = renderArea.width;
-            vp.height = renderArea.height;
-            builder.setViewport(vp, renderArea);
-
             // Update cc_textureSize
             data.bloomUBO       = stage->getUpsampleUBO()[data.index];
             data.textureSize[0] = static_cast<float>(static_cast<uint>(renderArea.width * shadingScale) >> 1);
@@ -398,7 +382,7 @@ void BloomStage::render(scene::Camera *camera) {
             auto *const          sharedData     = pipeline->getPipelineSceneData()->getSharedData();
             scene::Pass *        pass           = sharedData->bloomUpsamplePass[data.index];
             gfx::Shader *        shader         = sharedData->bloomUpsamplePassShader;
-            auto                 rendeArea      = pipeline->getRenderArea(camera);
+            auto                 rendeArea      = RenderPipeline::getRenderArea(camera);
             gfx::InputAssembler *inputAssembler = pipeline->getIAByRenderArea(rendeArea);
             gfx::PipelineState * pso            = PipelineStateManager::getOrCreatePipelineState(
                 pass, shader, inputAssembler, renderPass);
@@ -461,11 +445,6 @@ void BloomStage::render(scene::Camera *camera) {
         data.bloomOutTexHandle = builder.write(data.bloomOutTexHandle, colorAttachmentInfo);
         builder.writeToBlackboard(RenderPipeline::fgStrHandleBloomOutTexture, data.bloomOutTexHandle);
 
-        auto vp  = pipeline->getViewport(camera);
-        vp.width  = renderArea.width;
-        vp.height = renderArea.height;
-        builder.setViewport(vp, renderArea);
-
         // Update intensity
         data.bloomUBO       = stage->getCombineUBO();
         data.textureSize[3] = intensity;
@@ -482,7 +461,7 @@ void BloomStage::render(scene::Camera *camera) {
         auto *const          sharedData     = pipeline->getPipelineSceneData()->getSharedData();
         scene::Pass *        pass           = sharedData->bloomCombinePass;
         gfx::Shader *        shader         = sharedData->bloomCombinePassShader;
-        auto                 rendeArea      = pipeline->getRenderArea(camera);
+        auto                 rendeArea      = RenderPipeline::getRenderArea(camera);
         gfx::InputAssembler *inputAssembler = pipeline->getIAByRenderArea(rendeArea);
         gfx::PipelineState * pso            = PipelineStateManager::getOrCreatePipelineState(
             pass, shader, inputAssembler, renderPass);

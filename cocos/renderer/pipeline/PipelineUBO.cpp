@@ -83,15 +83,14 @@ void PipelineUBO::updateCameraUBOView(const RenderPipeline *pipeline, float *out
     auto *                         ambient             = sharedData->ambient;
     auto *                         fog                 = sharedData->fog;
     const auto                     isHDR               = sharedData->isHDR;
-    const auto                     shadingScale        = sharedData->shadingScale;
 
     auto *device = gfx::Device::getInstance();
 
     const auto shadingWidth  = static_cast<float>(std::floor(camera->window->getWidth()));
     const auto shadingHeight = static_cast<float>(std::floor(camera->window->getHeight()));
 
-    output[UBOCamera::SCREEN_SCALE_OFFSET + 0] = static_cast<float>(camera->width / shadingWidth * shadingScale);
-    output[UBOCamera::SCREEN_SCALE_OFFSET + 1] = static_cast<float>(camera->height / shadingHeight * shadingScale);
+    output[UBOCamera::SCREEN_SCALE_OFFSET + 0] = static_cast<float>(camera->width / shadingWidth);
+    output[UBOCamera::SCREEN_SCALE_OFFSET + 1] = static_cast<float>(camera->height / shadingHeight);
     output[UBOCamera::SCREEN_SCALE_OFFSET + 2] = 1.0F / output[UBOCamera::SCREEN_SCALE_OFFSET];
     output[UBOCamera::SCREEN_SCALE_OFFSET + 3] = 1.0F / output[UBOCamera::SCREEN_SCALE_OFFSET + 1];
 
@@ -176,7 +175,7 @@ void PipelineUBO::updateShadowUBOView(const RenderPipeline *pipeline, std::array
     const PipelineSceneData *            sceneData  = pipeline->getPipelineSceneData();
     scene::Shadow *const                 shadowInfo = sceneData->getSharedData()->shadow;
     std::array<float, UBOShadow::COUNT> &shadowUBO  = *bufferView;
-    const bool                           hFTexture  = supportsHalfFloatTexture(device);
+    const bool                           hFTexture  = supportsFloatTexture(device);
 
     if (shadowInfo->enabled) {
         if (mainLight && shadowInfo->shadowType == scene::ShadowType::SHADOWMAP) {
@@ -240,7 +239,7 @@ void PipelineUBO::updateShadowUBOLightView(const RenderPipeline *pipeline, std::
     const auto *shadowInfo = sceneData->getSharedData()->shadow;
     auto *      device     = gfx::Device::getInstance();
     auto &      shadowUBO  = *bufferView;
-    const bool  hFTexture  = supportsHalfFloatTexture(device);
+    const bool  hFTexture  = supportsFloatTexture(device);
     const float linear     = 0.0F;
     const float packing    = hFTexture ? 0.0F : 1.0F;
     switch (light->getType()) {
