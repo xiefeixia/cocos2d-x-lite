@@ -155,8 +155,8 @@ void TAAStage::render(scene::Camera *camera) {
         auto *const sceneData = pipeline->getPipelineSceneData();
         auto *      cmdBuff   = pipeline->getCommandBuffers()[0];
 
-        uint const globalOffsets[] = {pipeline->getPipelineUBO()->getCurrentCameraUBOOffset()};
-        cmdBuff->bindDescriptorSet(globalSet, pipeline->getDescriptorSet(), static_cast<uint>(std::size(globalOffsets)), globalOffsets);
+        const std::array<uint, 1> globalOffsets = {_pipeline->getPipelineUBO()->getCurrentCameraUBOOffset()};
+        cmdBuff->bindDescriptorSet(globalSet, pipeline->getDescriptorSet(), utils::toUint(globalOffsets.size()), globalOffsets.data());
         // get PSO and draw quad
         auto rendeArea = pipeline->getRenderArea(camera);
 
