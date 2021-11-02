@@ -844,7 +844,7 @@ void LightingStage::render(scene::Camera *camera) {
         fgLightingPass(camera);
     }
 
-    //fgTransparent(camera);
+    fgTransparent(camera);
 
     //// if lighting pass does not exist, skip SSPR pass.
     //// switch to clear image API when available

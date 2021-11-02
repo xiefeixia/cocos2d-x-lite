@@ -187,7 +187,7 @@ void TAAStage::render(scene::Camera *camera) {
     };
 
 
-    pipeline->getFrameGraph().addPass<RenderData>(static_cast<uint>(DeferredInsertPoint::DIP_LIGHTING) + 1, CustomEngine::fgStrHandleTAAPass, setup, exec);
+    pipeline->getFrameGraph().addPass<RenderData>(static_cast<uint>(DeferredInsertPoint::DIP_SSPR) + 1, CustomEngine::fgStrHandleTAAPass, setup, exec);
     
     if (_dirty) {
         CustomEngine::taaTextureIndex++;
