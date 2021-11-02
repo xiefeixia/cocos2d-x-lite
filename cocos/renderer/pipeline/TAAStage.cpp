@@ -113,6 +113,10 @@ void TAAStage::render(scene::Camera *camera) {
 
     gfx::Color clearColor = pipeline->getClearcolor(camera);
 
+    if (!_initPrev) {
+        _dirty = true;
+    }
+
     auto setup = [&](framegraph::PassNodeBuilder &builder, RenderData &data) {
         // read gbuffer
         data.gbuffer_pos = builder.read(framegraph::TextureHandle(builder.readFromBlackboard(DeferredPipeline::fgStrHandleGbufferTexture[gbuffer_pos_index])));
@@ -129,7 +133,7 @@ void TAAStage::render(scene::Camera *camera) {
         if (!_initPrev) {
             data.taaPrev = data.lightOutput;
             _initPrev = true;
-        }
+        } 
 
         data.taaPrev = builder.read(data.taaPrev);
         builder.writeToBlackboard(prev, data.taaPrev);
