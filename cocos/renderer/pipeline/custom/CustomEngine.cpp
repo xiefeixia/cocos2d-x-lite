@@ -10,7 +10,5 @@ framegraph::StringHandle CustomEngine::fgStrHandleTAATexture[2] = {
     framegraph::FrameGraph::stringToHandle("TAATexture2")
 };
 
-uint CustomEngine::taaTextureIndex = 0;
-
 } // namespace pipeline
 } // namespace cc

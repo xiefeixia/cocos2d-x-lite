@@ -157,7 +157,7 @@ protected:
 
     // use cluster culling or not
 
-    bool _clusterEnabled{true};
+    bool _clusterEnabled{false};
     bool _bloomEnabled{false};
     bool _occlusionQueryEnabled{true};
 };

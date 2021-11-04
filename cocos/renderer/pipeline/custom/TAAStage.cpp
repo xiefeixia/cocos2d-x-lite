@@ -24,9 +24,11 @@
 ****************************************************************************/
 
 #include "TAAStage.h"
-#include "./PipelineStateManager.h"
-#include "RenderPipeline.h"
-#include "RenderFlow.h"
+
+#include "../PipelineStateManager.h"
+#include "../RenderPipeline.h"
+#include "../RenderFlow.h"
+
 #include "gfx-base/GFXCommandBuffer.h"
 #include "gfx-base/GFXDescriptorSet.h"
 #include "gfx-base/GFXDevice.h"
@@ -34,54 +36,43 @@
 #include "gfx-base/GFXQueue.h"
 #include "scene/SubModel.h"
 
-#include "./deferred/DeferredPipeline.h"
-#include "./common/CustomEngine.h"
+#include "../deferred/DeferredPipeline.h"
+#include "./CustomEngine.h"
+
 
 namespace cc {
 namespace pipeline {
 
+static framegraph::StringHandle fgStrHandleTAAOutTexture = framegraph::FrameGraph::stringToHandle("taaOutputTexture");
 
 TAAStage::TAAStage() = default;
 
 TAAStage::~TAAStage() {
 }
 
-void TAAStage::activate(RenderPipeline *pipeline, RenderFlow *flow) {
-    RenderStage::activate(pipeline, flow);
-
-    gfx::SamplerInfo samplerInfo;
-    samplerInfo.minFilter = gfx::Filter::LINEAR;
-    samplerInfo.magFilter = gfx::Filter::LINEAR;
-    samplerInfo.addressU  = gfx::Address::CLAMP;
-    samplerInfo.addressV  = gfx::Address::CLAMP;
-    samplerInfo.addressW  = gfx::Address::CLAMP;
-    _linearSampler        = _device->getSampler(samplerInfo);
-
-}
-
 void TAAStage::render(scene::Camera *camera) {
+    auto *pipeline = static_cast<DeferredPipeline *>(_pipeline);
+    if (!pipeline->getFrameGraph().hasPass(DeferredPipeline::fgStrHandleLightingPass)) {
+        return;
+    }
+
     #ifdef CC_USE_VULKAN
         #if CC_PLATFORM == CC_PLATFORM_ANDROID
             return;
         #endif
     #endif
 
-    if (camera != _camera || !_taaPass || !_taaShader) {
+    if (camera != _camera || !_pass || !_shader) {
         return;
     }
 
-    auto *pipeline = static_cast<DeferredPipeline *>(_pipeline);
-    if (!pipeline->getFrameGraph().hasPass(DeferredPipeline::fgStrHandleLightingPass)) {
-        return;
-    }
 
     auto shadingScale = pipeline->getPipelineSceneData()->getSharedData()->shadingScale;
 
     auto width  = pipeline->getWidth() * shadingScale;
     auto height = pipeline->getHeight() * shadingScale;
 
-    DeferredPipeline *pip = static_cast<DeferredPipeline *>(pipeline);
-    if (!_initPrev || !_taaTextures[0].get() || 
+    if (!_taaTextures[0].get() || 
         _taaTextures[0].getDesc().width != width || 
         _taaTextures[0].getDesc().height != height) {
         for (int i = 0; i < 2; i++) {
@@ -113,10 +104,6 @@ void TAAStage::render(scene::Camera *camera) {
 
     gfx::Color clearColor = pipeline->getClearcolor(camera);
 
-    if (!_initPrev) {
-        _dirty = true;
-    }
-
     auto setup = [&](framegraph::PassNodeBuilder &builder, RenderData &data) {
         // read gbuffer
         data.gbuffer_pos = builder.read(framegraph::TextureHandle(builder.readFromBlackboard(DeferredPipeline::fgStrHandleGbufferTexture[gbuffer_pos_index])));
@@ -127,15 +114,16 @@ void TAAStage::render(scene::Camera *camera) {
         auto prev   = CustomEngine::fgStrHandleTAATexture[0];
         auto result = CustomEngine::fgStrHandleTAATexture[1];
 
-        data.taaPrev   = framegraph::TextureHandle(builder.importExternal(prev, _taaTextures[CustomEngine::taaTextureIndex % 2]));
-        data.taaResult = framegraph::TextureHandle(builder.importExternal(result, _taaTextures[(CustomEngine::taaTextureIndex + 1) % 2]));
-
-        if (!_initPrev) {
+        if (_taaTextureIndex == -1) {
             data.taaPrev = data.lightOutput;
-            _initPrev = true;
         } 
+        else {
+            data.taaPrev = framegraph::TextureHandle(builder.importExternal(prev, _taaTextures[_taaTextureIndex % 2]));
+            data.taaPrev = builder.read(data.taaPrev);
+        }
 
-        data.taaPrev = builder.read(data.taaPrev);
+        data.taaResult = framegraph::TextureHandle(builder.importExternal(result, _taaTextures[(_taaTextureIndex + 1) % 2]));
+
         builder.writeToBlackboard(prev, data.taaPrev);
 
         // write taa result
@@ -165,32 +153,31 @@ void TAAStage::render(scene::Camera *camera) {
         auto rendeArea = pipeline->getRenderArea(camera);
 
         gfx::InputAssembler *inputAssembler = pipeline->getIAByRenderArea(rendeArea);
-        gfx::PipelineState * pState         = PipelineStateManager::getOrCreatePipelineState(_taaPass, _taaShader, inputAssembler, table.getRenderPass());
+        gfx::PipelineState * pState         = PipelineStateManager::getOrCreatePipelineState(_pass, _shader, inputAssembler, table.getRenderPass());
 
         // update taa descriptorSet
         // 0 - lighting result map
-        _taaPass->getDescriptorSet()->bindTexture(0, table.getRead(data.lightOutput));
-        _taaPass->getDescriptorSet()->bindSampler(0, _linearSampler);
+        _pass->getDescriptorSet()->bindTexture(0, table.getRead(data.lightOutput));
+        _pass->getDescriptorSet()->bindSampler(0, pipeline->getGlobalDSManager()->getLinearSampler());
         // 1 - position gbuffer map
-        _taaPass->getDescriptorSet()->bindTexture(1, table.getRead(data.gbuffer_pos));
-        _taaPass->getDescriptorSet()->bindSampler(1, _linearSampler);
+        _pass->getDescriptorSet()->bindTexture(1, table.getRead(data.gbuffer_pos));
+        _pass->getDescriptorSet()->bindSampler(1, pipeline->getGlobalDSManager()->getLinearSampler());
         // 2 - previous taa result map
-        _taaPass->getDescriptorSet()->bindTexture(2, table.getRead(data.taaPrev));
-        _taaPass->getDescriptorSet()->bindSampler(2, _linearSampler);
+        _pass->getDescriptorSet()->bindTexture(2, table.getRead(data.taaPrev));
+        _pass->getDescriptorSet()->bindSampler(2, pipeline->getGlobalDSManager()->getLinearSampler());
 
-        _taaPass->getDescriptorSet()->update();
+        _pass->getDescriptorSet()->update();
 
         cmdBuff->bindPipelineState(pState);
         cmdBuff->bindInputAssembler(inputAssembler);
-        cmdBuff->bindDescriptorSet(materialSet, _taaPass->getDescriptorSet());
+        cmdBuff->bindDescriptorSet(materialSet, _pass->getDescriptorSet());
         cmdBuff->draw(inputAssembler);
     };
 
-
-    pipeline->getFrameGraph().addPass<RenderData>(static_cast<uint>(DeferredInsertPoint::DIP_SSPR) + 1, CustomEngine::fgStrHandleTAAPass, setup, exec);
+    pipeline->getFrameGraph().addPass<RenderData>(static_cast<uint>(CommonInsertPoint::DIP_BLOOM) - 1, CustomEngine::fgStrHandleTAAPass, setup, exec);
     
     if (_dirty) {
-        CustomEngine::taaTextureIndex++;
+        _taaTextureIndex++;
         _dirty = false;
     }
 }

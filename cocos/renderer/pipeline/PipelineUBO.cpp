@@ -31,8 +31,6 @@
 #include "scene/RenderScene.h"
 #include "forward/ForwardPipeline.h"
 
-#include "./common/CustomEngine.h"
-
 namespace cc {
 
 namespace pipeline {

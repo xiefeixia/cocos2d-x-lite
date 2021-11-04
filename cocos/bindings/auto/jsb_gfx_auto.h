@@ -623,6 +623,7 @@ SE_DECLARE_FUNC(js_gfx_CommandBuffer_bindDescriptorSet);
 SE_DECLARE_FUNC(js_gfx_CommandBuffer_bindInputAssembler);
 SE_DECLARE_FUNC(js_gfx_CommandBuffer_bindPipelineState);
 SE_DECLARE_FUNC(js_gfx_CommandBuffer_blitTexture);
+SE_DECLARE_FUNC(js_gfx_CommandBuffer_completeQuery);
 SE_DECLARE_FUNC(js_gfx_CommandBuffer_destroy);
 SE_DECLARE_FUNC(js_gfx_CommandBuffer_dispatch);
 SE_DECLARE_FUNC(js_gfx_CommandBuffer_draw);

@@ -24,9 +24,11 @@
 ****************************************************************************/
 
 #include "CommonStage.h"
-#include "./PipelineStateManager.h"
-#include "RenderPipeline.h"
-#include "RenderFlow.h"
+
+#include "../PipelineStateManager.h"
+#include "../RenderPipeline.h"
+#include "../RenderFlow.h"
+
 #include "gfx-base/GFXCommandBuffer.h"
 #include "gfx-base/GFXDescriptorSet.h"
 #include "gfx-base/GFXDevice.h"
@@ -34,7 +36,7 @@
 #include "gfx-base/GFXQueue.h"
 #include "scene/SubModel.h"
 
-#include "./deferred/DeferredPipeline.h"
+#include "../deferred/DeferredPipeline.h"
 
 namespace cc {
 namespace pipeline {

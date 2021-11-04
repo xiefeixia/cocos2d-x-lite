@@ -40,8 +40,6 @@
 #include "gfx-base/GFXFramebuffer.h"
 #include "gfx-base/GFXQueue.h"
 
-#include "../common/CustomEngine.h"
-
 namespace cc {
 namespace pipeline {
 RenderStageInfo GbufferStage::initInfo = {

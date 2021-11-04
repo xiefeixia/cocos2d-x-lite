@@ -26,31 +26,39 @@
 #pragma once
 
 #include "../RenderStage.h"
-#include "frame-graph/Handle.h"
-#include "Enum.h"
+#include "scene/Pass.h"
+#include "frame-graph/FrameGraph.h"
 
 namespace cc {
 namespace pipeline {
 
-class UIPhase;
+class RenderFlow;
 
-class CC_DLL PostProcessStage : public RenderStage {
+
+class CC_DLL BaseStage : public RenderStage {
 public:
-    PostProcessStage();
-    ~PostProcessStage() override = default;
+    BaseStage();
+    ~BaseStage() override;
 
-    static const RenderStageInfo &getInitializeInfo();
-    bool initialize(const RenderStageInfo &info) override;
-    void activate(RenderPipeline *pipeline, RenderFlow *flow) override;
-    void destroy() override;
-    void render(scene::Camera *camera) override;
+    void setCamera(scene::Camera *camera) { _camera = camera; }
+    scene::Camera *getCamera() { return _camera; }
 
-private:
-    gfx::Rect _renderArea;
-    UIPhase * _uiPhase = nullptr;
-    uint      _phaseID = 0;
+    void setPass(scene::Pass *pass) { _pass = pass; }
+    scene::Pass *getPass() { return _pass; }
 
-    static RenderStageInfo initInfo;
+    void setShader(gfx::Shader *shader) { _shader = shader; }
+    gfx::Shader *getShader() { return _shader; }
+
+    void setDirty(bool dirty) { _dirty = dirty; }
+
+protected:
+    scene::Camera *_camera{nullptr};
+
+    scene::Pass *_pass{nullptr};
+    gfx::Shader *_shader{nullptr};
+
+    bool _dirty{false};
 };
+
 } // namespace pipeline
 } // namespace cc

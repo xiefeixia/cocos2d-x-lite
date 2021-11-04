@@ -22,8 +22,10 @@
 #include "cocos/renderer/pipeline/deferred/LightingStage.h"
 #include "cocos/renderer/pipeline/common/BloomStage.h"
 #include "cocos/renderer/pipeline/common/PostProcessStage.h"
-#include "cocos/renderer/pipeline/CommonStage.h"
-#include "cocos/renderer/pipeline/TAAStage.h"
+#include "cocos/renderer/pipeline/custom/CommonStage.h"
+#include "cocos/renderer/pipeline/custom/BaseStage.h"
+#include "cocos/renderer/pipeline/custom/TAAStage.h"
+#include "cocos/renderer/pipeline/custom/TonemapStage.h"
 
 extern se::Object* __jsb_cc_pipeline_RenderQueueDesc_proto;
 extern se::Class* __jsb_cc_pipeline_RenderQueueDesc_class;
@@ -84,8 +86,8 @@ SE_DECLARE_FUNC(js_pipeline_RenderPipeline_getIAByRenderArea);
 SE_DECLARE_FUNC(js_pipeline_RenderPipeline_getOcclusionQueryEnabled);
 SE_DECLARE_FUNC(js_pipeline_RenderPipeline_getProfiler);
 SE_DECLARE_FUNC(js_pipeline_RenderPipeline_getQueryPools);
-SE_DECLARE_FUNC(js_pipeline_RenderPipeline_getRenderArea);
 SE_DECLARE_FUNC(js_pipeline_RenderPipeline_getRenderstageByName);
+SE_DECLARE_FUNC(js_pipeline_RenderPipeline_getScissor);
 SE_DECLARE_FUNC(js_pipeline_RenderPipeline_getViewport);
 SE_DECLARE_FUNC(js_pipeline_RenderPipeline_getWidth);
 SE_DECLARE_FUNC(js_pipeline_RenderPipeline_initialize);
@@ -96,6 +98,7 @@ SE_DECLARE_FUNC(js_pipeline_RenderPipeline_setPipelineSharedSceneData);
 SE_DECLARE_FUNC(js_pipeline_RenderPipeline_setProfiler);
 SE_DECLARE_FUNC(js_pipeline_RenderPipeline_setValue);
 SE_DECLARE_FUNC(js_pipeline_RenderPipeline_updateQuadVertexData);
+SE_DECLARE_FUNC(js_pipeline_RenderPipeline_getRenderArea);
 SE_DECLARE_FUNC(js_pipeline_RenderPipeline_getInstance);
 
 extern se::Object* __jsb_cc_pipeline_ForwardPipeline_proto;
@@ -268,7 +271,6 @@ bool js_register_cc_pipeline_PostProcessStage(se::Object* obj);
 bool register_all_pipeline(se::Object* obj);
 
 JSB_REGISTER_OBJECT_TYPE(cc::pipeline::PostProcessStage);
-SE_DECLARE_FUNC(js_pipeline_PostProcessStage_setRenderScale);
 SE_DECLARE_FUNC(js_pipeline_PostProcessStage_getInitializeInfo);
 SE_DECLARE_FUNC(js_pipeline_PostProcessStage_PostProcessStage);
 
@@ -291,6 +293,21 @@ SE_DECLARE_FUNC(js_pipeline_CommonStage_setRenderArea);
 SE_DECLARE_FUNC(js_pipeline_CommonStage_setRenderCallBack);
 SE_DECLARE_FUNC(js_pipeline_CommonStage_CommonStage);
 
+extern se::Object* __jsb_cc_pipeline_BaseStage_proto;
+extern se::Class* __jsb_cc_pipeline_BaseStage_class;
+
+bool js_register_cc_pipeline_BaseStage(se::Object* obj);
+bool register_all_pipeline(se::Object* obj);
+
+JSB_REGISTER_OBJECT_TYPE(cc::pipeline::BaseStage);
+SE_DECLARE_FUNC(js_pipeline_BaseStage_getCamera);
+SE_DECLARE_FUNC(js_pipeline_BaseStage_getPass);
+SE_DECLARE_FUNC(js_pipeline_BaseStage_getShader);
+SE_DECLARE_FUNC(js_pipeline_BaseStage_setCamera);
+SE_DECLARE_FUNC(js_pipeline_BaseStage_setDirty);
+SE_DECLARE_FUNC(js_pipeline_BaseStage_setPass);
+SE_DECLARE_FUNC(js_pipeline_BaseStage_setShader);
+
 extern se::Object* __jsb_cc_pipeline_TAAStage_proto;
 extern se::Class* __jsb_cc_pipeline_TAAStage_class;
 
@@ -298,12 +315,14 @@ bool js_register_cc_pipeline_TAAStage(se::Object* obj);
 bool register_all_pipeline(se::Object* obj);
 
 JSB_REGISTER_OBJECT_TYPE(cc::pipeline::TAAStage);
-SE_DECLARE_FUNC(js_pipeline_TAAStage_getCamera);
-SE_DECLARE_FUNC(js_pipeline_TAAStage_getPass);
-SE_DECLARE_FUNC(js_pipeline_TAAStage_getShader);
-SE_DECLARE_FUNC(js_pipeline_TAAStage_setCamera);
-SE_DECLARE_FUNC(js_pipeline_TAAStage_setDirty);
-SE_DECLARE_FUNC(js_pipeline_TAAStage_setPass);
-SE_DECLARE_FUNC(js_pipeline_TAAStage_setShader);
 SE_DECLARE_FUNC(js_pipeline_TAAStage_TAAStage);
+
+extern se::Object* __jsb_cc_pipeline_TonemapStage_proto;
+extern se::Class* __jsb_cc_pipeline_TonemapStage_class;
+
+bool js_register_cc_pipeline_TonemapStage(se::Object* obj);
+bool register_all_pipeline(se::Object* obj);
+
+JSB_REGISTER_OBJECT_TYPE(cc::pipeline::TonemapStage);
+SE_DECLARE_FUNC(js_pipeline_TonemapStage_TonemapStage);
 

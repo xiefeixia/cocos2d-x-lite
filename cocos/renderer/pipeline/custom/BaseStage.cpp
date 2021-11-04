@@ -23,51 +23,27 @@
  THE SOFTWARE.
 ****************************************************************************/
 
-#pragma once
+#include "BaseStage.h"
 
-#include "./RenderStage.h"
-#include "scene/Pass.h"
-#include "frame-graph/FrameGraph.h"
+#include "../PipelineStateManager.h"
+#include "../RenderPipeline.h"
+#include "../RenderFlow.h"
+
+#include "gfx-base/GFXCommandBuffer.h"
+#include "gfx-base/GFXDescriptorSet.h"
+#include "gfx-base/GFXDevice.h"
+#include "gfx-base/GFXFramebuffer.h"
+#include "gfx-base/GFXQueue.h"
+#include "scene/SubModel.h"
 
 namespace cc {
 namespace pipeline {
 
-class RenderFlow;
 
+BaseStage::BaseStage() = default;
 
-class CC_DLL TAAStage : public RenderStage {
-public:
-
-    TAAStage();
-    ~TAAStage() override;
-
-    void render(scene::Camera *camera) override;
-    void activate(RenderPipeline *pipeline, RenderFlow *flow) override;
-
-    void setCamera(scene::Camera *camera) { _camera = camera; }
-    scene::Camera *getCamera() { return _camera; }
-
-    void setPass(scene::Pass *pass) { _taaPass = pass; }
-    scene::Pass *getPass() { return _taaPass; }
-
-    void setShader(gfx::Shader *shader) { _taaShader = shader; }
-    gfx::Shader *getShader() { return _taaShader; }
-
-    void setDirty(bool dirty) { _dirty = dirty; }
-
-private:
-    scene::Camera *_camera{nullptr};
-    gfx::Sampler * _linearSampler{nullptr};
-
-    scene::Pass *  _taaPass;
-    gfx::Shader *  _taaShader;
-
-    framegraph::Texture _taaTextures[2];
-
-    bool _dirty{false};
-    bool _initPrev{false};
-    Vec2 _currentSize{0, 0};
-};
+BaseStage::~BaseStage() {
+}
 
 } // namespace pipeline
 } // namespace cc

@@ -25,32 +25,18 @@
 
 #pragma once
 
-#include "../RenderStage.h"
-#include "frame-graph/Handle.h"
-#include "Enum.h"
+#include "./BaseStage.h"
 
 namespace cc {
 namespace pipeline {
 
-class UIPhase;
-
-class CC_DLL PostProcessStage : public RenderStage {
+class CC_DLL TonemapStage : public BaseStage {
 public:
-    PostProcessStage();
-    ~PostProcessStage() override = default;
+    TonemapStage();
+    ~TonemapStage() override;
 
-    static const RenderStageInfo &getInitializeInfo();
-    bool initialize(const RenderStageInfo &info) override;
-    void activate(RenderPipeline *pipeline, RenderFlow *flow) override;
-    void destroy() override;
     void render(scene::Camera *camera) override;
-
-private:
-    gfx::Rect _renderArea;
-    UIPhase * _uiPhase = nullptr;
-    uint      _phaseID = 0;
-
-    static RenderStageInfo initInfo;
 };
+
 } // namespace pipeline
 } // namespace cc

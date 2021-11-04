@@ -814,12 +814,16 @@ cocos_source_files(
                  cocos/renderer/pipeline/RenderQueue.h
                  cocos/renderer/pipeline/RenderStage.cpp
                  cocos/renderer/pipeline/RenderStage.h
-                 cocos/renderer/pipeline/CommonStage.cpp
-                 cocos/renderer/pipeline/CommonStage.h
-                 cocos/renderer/pipeline/common/CustomEngine.cpp
-                 cocos/renderer/pipeline/common/CustomEngine.h
-                 cocos/renderer/pipeline/TAAStage.cpp
-                 cocos/renderer/pipeline/TAAStage.h
+                 cocos/renderer/pipeline/custom/CommonStage.cpp
+                 cocos/renderer/pipeline/custom/CommonStage.h
+                 cocos/renderer/pipeline/custom/CustomEngine.cpp
+                 cocos/renderer/pipeline/custom/CustomEngine.h
+                 cocos/renderer/pipeline/custom/TAAStage.cpp
+                 cocos/renderer/pipeline/custom/TAAStage.h
+                 cocos/renderer/pipeline/custom/BaseStage.cpp
+                 cocos/renderer/pipeline/custom/BaseStage.h
+                 cocos/renderer/pipeline/custom/TonemapStage.cpp
+                 cocos/renderer/pipeline/custom/TonemapStage.h
                  cocos/renderer/pipeline/PlanarShadowQueue.cpp
                  cocos/renderer/pipeline/PlanarShadowQueue.h
                  cocos/renderer/pipeline/ShadowMapBatchedQueue.cpp

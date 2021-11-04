@@ -25,47 +25,22 @@
 
 #pragma once
 
-#include "./RenderStage.h"
-#include "scene/Pass.h"
+#include "./BaseStage.h"
 
 namespace cc {
 namespace pipeline {
 
-class RenderFlow;
-
-class CC_DLL CommonStage : public RenderStage {
+class CC_DLL TAAStage : public BaseStage {
 public:
 
-    CommonStage();
-    ~CommonStage() override;
+    TAAStage();
+    ~TAAStage() override;
 
     void render(scene::Camera *camera) override;
-
-    void setDirty(bool dirty) { _dirty = dirty; }
-    void setRenderArea(const gfx::Rect &renderArea) { _renderArea = renderArea; }
-    void setClearColor(const gfx::Color &color) { _clearColor = color; }
-    void setClearDepth(float clearDepth) { _clearDepth = clearDepth; }
-    void setClearStencil(uint32_t clearStencil) { _clearStencil = clearStencil; }
-    void setFramebuffer(gfx::Framebuffer *framebuffer) { _framebuffer = framebuffer; }
-    void setInputAssembler(gfx::InputAssembler *inputAssembler) { _inputAssembler = inputAssembler; }
-    void setPipelineState(gfx::PipelineState *pipelineState) { _pipelineState = pipelineState; }
-    void setPassHandle(scene::Pass* pass) { _pass = pass; }
-    void setRenderCallBack(const std::function<void(scene::Camera *)> callback) { _renderCallBack = callback; };
-
 private:
-    bool _dirty = true;
+    framegraph::Texture _taaTextures[2];
 
-    gfx::Rect              _renderArea;
-    gfx::Color             _clearColor = { 0, 0, 0, 1 };
-    float                  _clearDepth = 1;
-    uint32_t               _clearStencil = 1;
-
-    std::function<void(scene::Camera *)> _renderCallBack = nullptr;
-
-    scene::Pass *            _pass           = nullptr;
-    gfx::Framebuffer *       _framebuffer    = nullptr;
-    gfx::InputAssembler *    _inputAssembler = nullptr;
-    gfx::PipelineState *     _pipelineState  = nullptr;
+    int _taaTextureIndex{-1};
 };
 
 } // namespace pipeline

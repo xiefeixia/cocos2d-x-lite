@@ -443,7 +443,7 @@ void BloomStage::render(scene::Camera *camera) {
                 RenderPipeline::fgStrHandleBloomOutTexture, colorTexInfo);
         }
         data.bloomOutTexHandle = builder.write(data.bloomOutTexHandle, colorAttachmentInfo);
-        builder.writeToBlackboard(RenderPipeline::fgStrHandleBloomOutTexture, data.bloomOutTexHandle);
+        builder.writeToBlackboard(RenderPipeline::fgStrHandleOutColorTexture, data.bloomOutTexHandle);
 
         // Update intensity
         data.bloomUBO       = stage->getCombineUBO();

@@ -46,8 +46,6 @@
 #include "scene/Sphere.h"
 #include "scene/SphereLight.h"
 
-#include "../common/CustomEngine.h"
-
 namespace cc {
 namespace pipeline {
 namespace {
