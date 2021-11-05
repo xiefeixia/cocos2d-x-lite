@@ -16832,25 +16832,6 @@ static bool js_gfx_CommandBuffer_blitTexture(se::State& s) // NOLINT(readability
 }
 SE_BIND_FUNC(js_gfx_CommandBuffer_blitTexture)
 
-static bool js_gfx_CommandBuffer_completeQuery(se::State& s) // NOLINT(readability-identifier-naming)
-{
-    auto* cobj = SE_THIS_OBJECT<cc::gfx::CommandBuffer>(s);
-    SE_PRECONDITION2(cobj, false, "js_gfx_CommandBuffer_completeQuery : Invalid Native Object");
-    const auto& args = s.args();
-    size_t argc = args.size();
-    CC_UNUSED bool ok = true;
-    if (argc == 1) {
-        HolderType<cc::gfx::QueryPool*, false> arg0 = {};
-        ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
-        SE_PRECONDITION2(ok, false, "js_gfx_CommandBuffer_completeQuery : Error processing arguments");
-        cobj->completeQuery(arg0.value());
-        return true;
-    }
-    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
-    return false;
-}
-SE_BIND_FUNC(js_gfx_CommandBuffer_completeQuery)
-
 static bool js_gfx_CommandBuffer_destroy(se::State& s) // NOLINT(readability-identifier-naming)
 {
     auto* cobj = SE_THIS_OBJECT<cc::gfx::CommandBuffer>(s);
@@ -17170,7 +17151,7 @@ static bool js_gfx_CommandBuffer_resetQuery(se::State& s) // NOLINT(readability-
         HolderType<cc::gfx::QueryPool*, false> arg0 = {};
         ok &= sevalue_to_native(args[0], &arg0, s.thisObject());
         SE_PRECONDITION2(ok, false, "js_gfx_CommandBuffer_resetQuery : Error processing arguments");
-        cobj->resetQuery(arg0.value());
+        cobj->resetQueryPool(arg0.value());
         return true;
     }
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
@@ -17378,7 +17359,6 @@ bool js_register_gfx_CommandBuffer(se::Object* obj) // NOLINT(readability-identi
     cls->defineFunction("bindInputAssembler", _SE(js_gfx_CommandBuffer_bindInputAssembler));
     cls->defineFunction("bindPipelineState", _SE(js_gfx_CommandBuffer_bindPipelineState));
     cls->defineFunction("blitTexture", _SE(js_gfx_CommandBuffer_blitTexture));
-    cls->defineFunction("completeQuery", _SE(js_gfx_CommandBuffer_completeQuery));
     cls->defineFunction("destroy", _SE(js_gfx_CommandBuffer_destroy));
     cls->defineFunction("dispatch", _SE(js_gfx_CommandBuffer_dispatch));
     cls->defineFunction("draw", _SE(js_gfx_CommandBuffer_draw));

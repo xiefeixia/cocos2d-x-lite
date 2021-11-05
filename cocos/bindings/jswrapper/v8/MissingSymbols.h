@@ -1,5 +1,5 @@
 /****************************************************************************
- Copyright (c) 2020-2021 Huawei Technologies Co., Ltd.
+ Copyright (c) 2020-2021 Xiamen Yaji Software Co., Ltd.
 
  http://www.cocos.com
 
@@ -22,50 +22,25 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 ****************************************************************************/
+#include <cstddef>
+#include <cerrno>
+#include <cstring>
 
-#pragma once
-
-#include "gfx-base/GFXFramebuffer.h"
-#include "pipeline/RenderStage.h"
-
-namespace cc {
-namespace scene {
-struct Camera;
+#if SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_V8
+#if CC_PLATFORM == CC_PLATFORM_ANDROID
+#if __ANDROID_API__ < 21
+extern "C" {
+int localSigemptyset(void *set) {
+    if (set == NULL) { // NOLINT(modernize-use-nullptr)
+        errno = EINVAL;
+        return -1;
+    }
+    memset(set, 0, sizeof(unsigned long)); // NOLINT(google-runtime-int)
+    return 0;
 }
-namespace pipeline {
 
-class RenderFlow;
-class RenderBatchedQueue;
-class RenderInstancedQueue;
-class RenderAdditiveLightQueue;
-class PlanarShadowQueue;
-struct DeferredRenderData;
-class DeferredPipeline;
-struct RenderPass;
-
-class CC_DLL GbufferStage : public RenderStage {
-public:
-    static const RenderStageInfo &getInitializeInfo();
-
-    GbufferStage();
-    ~GbufferStage() override;
-
-    bool initialize(const RenderStageInfo &info) override;
-    void activate(RenderPipeline *pipeline, RenderFlow *flow) override;
-    void destroy() override;
-    void render(scene::Camera *camera) override;
-
-private:
-    void dispenseRenderObject2Queues();
-    void recordCommands(DeferredPipeline *pipeline, scene::Camera *camera, gfx::RenderPass *renderPass);
-
-    static RenderStageInfo initInfo;
-    PlanarShadowQueue *    _planarShadowQueue = nullptr;
-    RenderBatchedQueue *   _batchedQueue      = nullptr;
-    RenderInstancedQueue * _instancedQueue    = nullptr;
-    uint                   _phaseID = 0;
-    uint                   _overdrawID = 0;
-};
-
-} // namespace pipeline
-} // namespace cc
+int sigemptyset(void *set) __attribute__((weak, alias("localSigemptyset")));
+}
+#endif
+#endif
+#endif // #if SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_V8

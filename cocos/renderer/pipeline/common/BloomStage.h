@@ -67,9 +67,6 @@ public:
     }
 
 private:
-    bool _inited = false;
-    void init();
-
     gfx::Rect _renderArea;
     uint      _phaseID = 0;
 

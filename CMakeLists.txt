@@ -1644,6 +1644,8 @@ if(USE_SE_V8)
                      cocos/bindings/jswrapper/v8/SeApi.h
         NO_WERROR    cocos/bindings/jswrapper/v8/Utils.cpp
                      cocos/bindings/jswrapper/v8/Utils.h
+                     cocos/bindings/jswrapper/v8/MissingSymbols.cpp
+                     cocos/bindings/jswrapper/v8/MissingSymbols.h
     )
     if(USE_V8_DEBUGGER)
     cocos_source_files(MODULE ccbindings
@@ -2119,6 +2121,7 @@ if(APPLE)
         "-lsqlite3"
         "-framework Security"
         "-framework SystemConfiguration"
+        "$(inherited)"
         ${CC_EXTERNAL_LIBS}
     )
     set_target_properties(cocos2d PROPERTIES
